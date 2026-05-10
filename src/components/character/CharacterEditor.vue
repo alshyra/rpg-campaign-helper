@@ -1,7 +1,7 @@
 <template>
   <AppCard>
     <form class="character-editor grid gap-4" @submit.prevent="submitCharacter">
-      <div class="wizard-steps grid grid-cols-4 gap-2 max-[420px]:grid-cols-1">
+      <div class="wizard-steps grid grid-cols-3 gap-2 max-[420px]:grid-cols-1">
         <div
           v-for="(step, index) in steps"
           :key="step.id"
@@ -46,7 +46,6 @@
         </div>
         <p class="character-editor__hint">Chaque catégorie dispose de 2 emplacements avant de passer à la suivante.</p>
       </div>
-
       <div v-if="currentStepId === 'stats'" class="character-editor__section grid gap-3 border-t border-white/5 pt-1">
         <div class="character-editor__section-head flex items-end justify-between gap-3 max-[420px]:grid max-[420px]:grid-cols-1">
           <p class="section-heading__eyebrow">Caractéristiques</p>
@@ -111,12 +110,11 @@ import type { CharacterState } from '../../types/character'
 import { useCharacterDraftWizard } from '../../composables/useCharacterDraftWizard'
 import AppCard from '../ui/AppCard.vue'
 
-const props = withDefaults(
-  defineProps<{
+const props = defineProps<{
     character: CharacterState
     submitLabel: string
-  }>(),
-)
+}>()
+
 
 const emit = defineEmits<{
   submit: [character: CharacterState]
@@ -127,9 +125,6 @@ const {
   currentStep,
   currentStepId,
   draft,
-  injuries,
-  usedInjurySlots,
-  adjustInjuries,
   nextStep,
   previousStep,
   updateStat,
@@ -138,7 +133,7 @@ const {
   updateSkillValue,
   updateSkillText,
   snapshot
-} = useCharacterDraftWizard(toRef(props, 'character'), toRef(props, 'includeInjuries'))
+} = useCharacterDraftWizard(toRef(props, 'character'))
 
 const submitCharacter = () => {
   emit('submit', snapshot())

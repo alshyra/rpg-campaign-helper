@@ -1,8 +1,8 @@
 import { computed, reactive, ref, watch, type Ref } from 'vue'
-import type { CharacterState, Profile, Skill, Stat } from '../types/character'
+import type { CharacterState, Skill, Stat } from '../types/character'
 
 type WizardStep = {
-  id: 'identity' | 'injuries' | 'stats' | 'skills'
+  id: 'identity' | 'stats' | 'skills'
   label: string
 }
 
@@ -10,36 +10,12 @@ const cloneCharacter = (source: CharacterState) => JSON.parse(JSON.stringify(sou
 
 const makeSkillId = () => `skill-${Math.random().toString(36).slice(2, 10)}`
 
-const injuries: Array<{ key: keyof Profile['injuries']; label: string }> = [
-  { key: 'light', label: 'Légères' },
-  { key: 'minor', label: 'Mineures' },
-  { key: 'major', label: 'Majeures' },
-  { key: 'fatal', label: 'Fatales' }
-]
-
-const mapTotalToInjuries = (total: number): Profile['injuries'] => {
-  const normalized = Math.max(0, Math.min(8, total))
-  const light = Math.min(2, normalized)
-  const minor = Math.min(2, Math.max(0, normalized - 2))
-  const major = Math.min(2, Math.max(0, normalized - 4))
-  const fatal = Math.min(2, Math.max(0, normalized - 6))
-
-  return { light, minor, major, fatal }
-}
-
-export const useCharacterDraftWizard = (character: Ref<CharacterState>, includeInjuries: Ref<boolean>) => {
-  const steps = computed<WizardStep[]>(() => {
-    const base: WizardStep[] = [{ id: 'identity', label: 'Identité' }]
-
-    if (includeInjuries.value) {
-      base.push({ id: 'injuries', label: 'Blessures' })
-    }
-
-    base.push({ id: 'stats', label: 'Stats' })
-    base.push({ id: 'skills', label: 'Compétences' })
-
-    return base
-  })
+export const useCharacterDraftWizard = (character: Ref<CharacterState>) => {
+  const steps = computed<WizardStep[]>(() => [
+    { id: 'identity', label: 'Identité' },
+    { id: 'stats', label: 'Stats' },
+    { id: 'skills', label: 'Compétences' },
+  ])
 
   const currentStep = ref(0)
   const currentStepId = computed(() => steps.value[currentStep.value]?.id)
@@ -55,18 +31,7 @@ export const useCharacterDraftWizard = (character: Ref<CharacterState>, includeI
     { deep: true }
   )
 
-  const usedInjurySlots = computed(() =>
-    Object.values(draft.profile.injuries).reduce((total, value) => total + value, 0)
-  )
-
-  const adjustInjuries = (delta: number) => {
-    draft.profile.injuries = mapTotalToInjuries(usedInjurySlots.value + delta)
-  }
-
   const nextStep = () => {
-    if (currentStepId.value === 'identity' && (!draft.profile.characterName.trim() || !draft.profile.role.trim())) {
-      return
-    }
     currentStep.value = Math.min(steps.value.length - 1, currentStep.value + 1)
   }
 
@@ -110,9 +75,6 @@ export const useCharacterDraftWizard = (character: Ref<CharacterState>, includeI
     currentStep,
     currentStepId,
     draft,
-    injuries,
-    usedInjurySlots,
-    adjustInjuries,
     nextStep,
     previousStep,
     updateStat,
