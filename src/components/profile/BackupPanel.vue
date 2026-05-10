@@ -40,8 +40,8 @@
 
       <!-- Import JSON -->
       <FileImportLabel
-        variant="icon-button"
-        class="block! w-full! rounded-xl! border! border-white/5! bg-stone-800! p-4! text-left! font-bold! text-amber-400! hover:bg-stone-700!"
+        variant="button"
+        class="w-full rounded-xl border-white/5 bg-stone-800 p-4 text-left font-bold text-amber-400 hover:bg-stone-700"
         aria-label="Importer un JSON"
         @file-selected="onFileChange"
       >
