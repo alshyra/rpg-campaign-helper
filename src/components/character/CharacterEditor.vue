@@ -28,14 +28,14 @@
           <strong>Base du personnage</strong>
         </div>
         <div class="grid grid-cols-2 gap-3 max-[420px]:grid-cols-1">
-          <FormField
+          <StatsStepper
             v-for="stat in draft.stats"
             :key="stat.key"
             :model-value="stat.value"
             :label="stat.label"
             type="number"
-            min="-5"
-            max="5"
+            :min="-5"
+            :max="5"
             @update:model-value="(v) => updateStat(stat.key, v)"
           />
         </div>
@@ -68,12 +68,12 @@
               placeholder="Ex: Exploration"
               @update:model-value="(v) => updateSkillText(skill.id, 'category', String(v))"
             />
-            <FormField
+            <StatsStepper
               :model-value="skill.value"
               label="Val."
               type="number"
-              min="0"
-              max="10"
+              :min="0"
+              :max="10"
               @update:model-value="(v) => updateSkillValue(skill.id, v)"
             />
             <IconButton type="button" @click="removeSkill(skill.id)">Retirer</IconButton>
@@ -109,6 +109,7 @@ import AppCard from '../ui/AppCard.vue'
 import Button from '../ui/Button.vue'
 import FormField from '../ui/FormField.vue'
 import IconButton from '../ui/IconButton.vue'
+import StatsStepper from '../ui/StatStepper.vue'
 
 const props = defineProps<{
     character: CharacterState

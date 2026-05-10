@@ -4,7 +4,7 @@
 
     <CharacterEditor
       :character="workingCharacter"
-      :submit-label="hasCharacter ? 'Enregistrer les modifications' : 'Créer le personnage'"
+      :submit-label="hasCharacter ? 'Enregistrer' : 'Créer le personnage'"
       @submit="saveCharacter"
     />
 

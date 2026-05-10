@@ -1,5 +1,12 @@
 <template>
-  <div class="grid gap-8">
+  <!-- center the div below in the middle of the page -->
+<div class="flex flex-col gap-8 items-stretch justify-center min-h-screen -mt-16">
+    <CampaignManager
+      :campaigns="campaigns"
+      :active-campaign-id="activeCampaignId"
+      @select="selectCampaign"
+      @delete="deleteCampaign"
+    />
     <section class="grid gap-3">
       <button
         class="flex w-full items-center justify-center gap-3 rounded-2xl bg-amber-600 p-5 text-lg font-black text-black shadow-lg shadow-amber-900/20 transition-all hover:bg-amber-500 active:scale-95"
@@ -20,13 +27,6 @@
         </FileImportLabel>
       </div>
     </section>
-
-    <CampaignManager
-      :campaigns="campaigns"
-      :active-campaign-id="activeCampaignId"
-      @select="selectCampaign"
-      @delete="deleteCampaign"
-    />
   </div>
 </template>
 

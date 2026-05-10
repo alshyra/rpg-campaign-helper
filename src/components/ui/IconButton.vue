@@ -1,21 +1,41 @@
 <template>
-  <button 
-    :class="['icon-button', { 'icon-button--square': square }]"
+  <button
+    :class="['icon-button', { 'icon-button--square': square, 'icon-button--ghost': ghost }]"
     :type="type"
     v-bind="$attrs"
   >
-    <slot />
+    <component
+      :is="resolvedIcon"
+      v-if="resolvedIcon"
+      :size="size"
+      :stroke-width="strokeWidth"
+    />
+    <slot v-else />
   </button>
 </template>
 
 <script setup lang="ts">
-withDefaults(defineProps<{
+import { computed } from 'vue'
+import * as LucideIcons from '@lucide/vue'
+
+const props = withDefaults(defineProps<{
   square?: boolean
+  ghost?: boolean
   type?: 'button' | 'submit' | 'reset'
+  icon?: string
+  size?: number
+  strokeWidth?: number
 }>(), {
   square: false,
+  ghost: false,
   type: 'button',
+  size: 18,
+  strokeWidth: 1.8,
 })
+
+const resolvedIcon = computed(() =>
+  props.icon ? ((LucideIcons as Record<string, unknown>)[props.icon] ?? null) : null
+)
 </script>
 
 <style scoped>
@@ -38,6 +58,11 @@ withDefaults(defineProps<{
   height: 40px;
   padding: 0;
   border-radius: 12px;
+}
+
+.icon-button--ghost {
+  border-color: transparent;
+  background: transparent;
 }
 
 .icon-button--square :deep(svg) {
