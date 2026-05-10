@@ -18,6 +18,10 @@
       </section>
 
       <!-- Section Compétences -->
+        <!-- Section État Vital -->
+        <HealthPanel :profile="profile" @update="characterStore.updateProfile" />
+
+        <!-- Section Compétences -->
       <section class="grid gap-4">
         <h3 class="px-2 text-[10px] font-black uppercase tracking-[0.2em] text-amber-600">Compétences spéciales</h3>
         <SkillsTable :skills="skills" readonly />
@@ -28,6 +32,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import HealthPanel from '../components/profile/HealthPanel.vue'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import NoCharacterEmpty from '../components/character/NoCharacterEmpty.vue'
@@ -41,6 +46,7 @@ const { state } = storeToRefs(characterStore)
 const router = useRouter()
 
 const character = computed(() => state.value)
+const profile = computed(() => state.value!.profile)
 const stats = computed(() => state.value?.stats ?? [])
 const skills = computed(() => state.value?.skills ?? [])
 
