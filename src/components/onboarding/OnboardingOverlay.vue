@@ -3,7 +3,7 @@
     <transition name="fade">
       <div
         v-if="isVisible"
-        class="onboarding fixed inset-0 z-[60] grid place-items-center px-3.5 py-5"
+        class="onboarding fixed inset-0 z-60 grid place-items-center px-3.5 py-5"
         role="dialog"
         aria-modal="true"
         aria-labelledby="onboarding-title"
@@ -30,8 +30,7 @@
                 Bienvenue dans rpg-player-helper
               </h2>
               <p class="m-0 leading-relaxed text-(--text-soft)">
-                Une fiche de personnage mobile-first, entièrement locale, pensée pour suivre ton perso sans base de
-                données.
+                Une fiche de personnage qui te suit partout, sans compte ni serveur.
               </p>
             </div>
 
