@@ -1,7 +1,7 @@
 <template>
   <AppCard>
     <form
-      class="character-editor grid gap-4"
+      class="character-editor flex min-h-[calc(100dvh-8rem)] flex-col gap-4"
       @submit.prevent="submitCharacter"
     >
       <!-- Indicateur d'étapes -->
@@ -35,109 +35,112 @@
         </template>
       </div>
 
-      <!-- Étape : Identité -->
-      <div
-        v-if="currentStepId === 'identity'"
-        class="grid grid-cols-2 gap-3.5 max-[420px]:grid-cols-1"
-      >
-        <FormField
-          v-model="draft.profile.characterName"
-          label="Nom"
-          required
-        />
-        <FormField
-          v-model="draft.profile.role"
-          label="Rôle / classe"
-          required
-        />
-        <FormField
-          v-model="draft.profile.mood"
-          label="Ambiance"
-          type="textarea"
-          :full="true"
-          rows="3"
-        />
-      </div>
-
-      <!-- Étape : Stats -->
-      <div
-        v-if="currentStepId === 'stats'"
-        class="grid gap-3 border-t border-white/5 pt-1"
-      >
-        <div class="flex items-end justify-between gap-3 max-[420px]:grid max-[420px]:grid-cols-1">
-          <p class="section-heading__eyebrow">Caractéristiques</p>
-          <strong>Base du personnage</strong>
-        </div>
-        <div class="grid grid-cols-2 gap-3 max-[420px]:grid-cols-1">
-          <StatsStepper
-            v-for="stat in draft.stats"
-            :key="stat.key"
-            :model-value="stat.value"
-            :label="stat.label"
-            type="number"
-            :min="-5"
-            :max="5"
-            @update:model-value="(v) => updateStat(stat.key, v)"
+      <!-- Étapes (prend l'espace disponible) -->
+      <div class="flex-1">
+        <!-- Étape : Identité -->
+        <div
+          v-if="currentStepId === 'identity'"
+          class="grid grid-cols-2 gap-3.5 max-[420px]:grid-cols-1"
+        >
+          <FormField
+            v-model="draft.profile.characterName"
+            label="Nom"
+            required
+          />
+          <FormField
+            v-model="draft.profile.role"
+            label="Rôle / classe"
+            required
+          />
+          <FormField
+            v-model="draft.profile.mood"
+            label="Ambiance"
+            type="textarea"
+            :full="true"
+            rows="3"
           />
         </div>
-      </div>
 
-      <!-- Étape : Compétences -->
-      <div
-        v-if="currentStepId === 'skills'"
-        class="grid gap-3 border-t border-white/5 pt-1"
-      >
-        <div class="flex items-end justify-between gap-3 max-[420px]:grid max-[420px]:grid-cols-1">
-          <p class="section-heading__eyebrow">Compétences</p>
-          <IconButton
-            type="button"
-            @click="addSkill"
-            >Ajouter une compétence</IconButton
-          >
-        </div>
-        <p
-          v-if="draft.skills.length === 0"
-          class="text-sm opacity-50"
+        <!-- Étape : Stats -->
+        <div
+          v-if="currentStepId === 'stats'"
+          class="grid gap-3 border-t border-white/5 pt-1"
         >
-          Aucune compétence pour le moment. Ajoute celles que ton joueur veut utiliser.
-        </p>
-        <div class="grid gap-3">
-          <div
-            v-for="skill in draft.skills"
-            :key="skill.id"
-            class="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_84px_auto] items-end gap-3 rounded-xl border border-[rgba(221,187,123,0.1)] bg-[rgba(13,10,8,0.5)] p-3 max-[420px]:grid-cols-1"
-          >
-            <FormField
-              :model-value="skill.name"
-              label="Nom"
-              placeholder="Ex: Pistage"
-              @update:model-value="(v) => updateSkillText(skill.id, 'name', String(v))"
-            />
-            <FormField
-              :model-value="skill.category"
-              label="Catégorie"
-              placeholder="Ex: Exploration"
-              @update:model-value="(v) => updateSkillText(skill.id, 'category', String(v))"
-            />
+          <div class="flex items-end justify-between gap-3 max-[420px]:grid max-[420px]:grid-cols-1">
+            <p class="section-heading__eyebrow">Caractéristiques</p>
+            <strong>Base du personnage</strong>
+          </div>
+          <div class="grid grid-cols-2 gap-3 max-[420px]:grid-cols-1">
             <StatsStepper
-              :model-value="skill.value"
-              label="Val."
+              v-for="stat in draft.stats"
+              :key="stat.key"
+              :model-value="stat.value"
+              :label="stat.label"
               type="number"
-              :min="0"
-              :max="10"
-              @update:model-value="(v) => updateSkillValue(skill.id, v)"
+              :min="-5"
+              :max="5"
+              @update:model-value="(v) => updateStat(stat.key, v)"
             />
+          </div>
+        </div>
+
+        <!-- Étape : Compétences -->
+        <div
+          v-if="currentStepId === 'skills'"
+          class="grid gap-3 border-t border-white/5 pt-1"
+        >
+          <div class="flex items-end justify-between gap-3 max-[420px]:grid max-[420px]:grid-cols-1">
+            <p class="section-heading__eyebrow">Compétences</p>
             <IconButton
               type="button"
-              @click="removeSkill(skill.id)"
-              >Retirer</IconButton
+              @click="addSkill"
+              >Ajouter une compétence</IconButton
             >
+          </div>
+          <p
+            v-if="draft.skills.length === 0"
+            class="text-sm opacity-50"
+          >
+            Aucune compétence pour le moment. Ajoute celles que ton joueur veut utiliser.
+          </p>
+          <div class="grid gap-3">
+            <div
+              v-for="skill in draft.skills"
+              :key="skill.id"
+              class="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_84px_auto] items-end gap-3 rounded-xl border border-[rgba(221,187,123,0.1)] bg-[rgba(13,10,8,0.5)] p-3 max-[420px]:grid-cols-1"
+            >
+              <FormField
+                :model-value="skill.name"
+                label="Nom"
+                placeholder="Ex: Pistage"
+                @update:model-value="(v) => updateSkillText(skill.id, 'name', String(v))"
+              />
+              <FormField
+                :model-value="skill.category"
+                label="Catégorie"
+                placeholder="Ex: Exploration"
+                @update:model-value="(v) => updateSkillText(skill.id, 'category', String(v))"
+              />
+              <StatsStepper
+                :model-value="skill.value"
+                label="Val."
+                type="number"
+                :min="0"
+                :max="10"
+                @update:model-value="(v) => updateSkillValue(skill.id, v)"
+              />
+              <IconButton
+                type="button"
+                @click="removeSkill(skill.id)"
+                >Retirer</IconButton
+              >
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Navigation wizard -->
-      <div class="wizard-actions grid grid-cols-2 gap-2.5 max-[420px]:grid-cols-1">
+      <div class="wizard-actions mt-auto grid grid-cols-2 gap-2.5 pt-4 max-[420px]:grid-cols-1">
         <Button
           v-if="currentStep > 0"
           variant="secondary"

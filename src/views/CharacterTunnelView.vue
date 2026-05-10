@@ -1,10 +1,5 @@
 <template>
-  <div class="stack-xl grid gap-6">
-    <SectionHeading
-      eyebrow="Tunnel"
-      :title="isCreating ? 'Création du personnage' : 'Édition du personnage'"
-    />
-
+  <div>
     <CharacterEditor />
   </div>
 </template>
@@ -14,7 +9,6 @@ import { computed } from "vue";
 import { useRoute } from "vue-router";
 
 import CharacterEditor from "../components/character/CharacterEditor.vue";
-import SectionHeading from "../components/ui/SectionHeading.vue";
 
 const route = useRoute();
 
