@@ -37,24 +37,17 @@
             <p class="m-0 text-xs italic text-stone-500">{{ campaign.role }}</p>
           </div>
         </div>
-        <svg
-          viewBox="0 0 24 24"
+        <ChevronRight
           class="h-5 w-5 shrink-0 text-stone-700 transition-all group-hover:text-amber-500"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <path d="M9 6l6 6-6 6" />
-        </svg>
+          :stroke-width="1.8"
+        />
       </article>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
+import { ChevronRight } from "@lucide/vue";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 

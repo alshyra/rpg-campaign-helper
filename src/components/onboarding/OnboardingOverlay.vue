@@ -44,14 +44,10 @@
               <div
                 class="onboarding__feature-icon grid h-12 w-12 place-items-center rounded-2xl border border-[rgba(221,187,123,0.15)] bg-white/3 text-amber-400"
               >
-                <svg
-                  viewBox="0 0 24 24"
+                <component
+                  :is="steps[currentStep - 1].icon"
                   class="h-6 w-6"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.6"
-                  stroke-linecap="round"
-                  v-html="steps[currentStep - 1].icon"
+                  :stroke-width="1.6"
                   aria-hidden="true"
                 />
               </div>
@@ -103,6 +99,7 @@
 </template>
 
 <script setup lang="ts">
+import { Backpack, NotebookText, Save, UserRound } from "@lucide/vue";
 import { onMounted, ref } from "vue";
 
 import Button from "../ui/Button.vue";
@@ -117,25 +114,25 @@ const steps = [
     id: "profil",
     title: "Profil",
     desc: "Consulte et modifie en direct l'identité, les statistiques et les compétences de ton personnage.",
-    icon: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+    icon: UserRound,
   },
   {
     id: "inventaire",
     title: "Inventaire",
     desc: "Ajoute, retire et ajuste rapidement la quantité de tes objets pendant la partie.",
-    icon: '<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>',
+    icon: Backpack,
   },
   {
     id: "notes",
     title: "Notes",
     desc: "Journal de session, indices, PNJ et rappels toujours disponibles hors ligne.",
-    icon: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>',
+    icon: NotebookText,
   },
   {
     id: "sauvegarde",
     title: "Sauvegarde",
     desc: "Exporte ou réimporte un JSON pour garder une copie de ton personnage, sans compte ni serveur.",
-    icon: '<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v14a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>',
+    icon: Save,
   },
 ];
 

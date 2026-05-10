@@ -9,17 +9,7 @@
         :class="showAddForm ? 'bg-red-500/20 text-red-500 rotate-45' : 'bg-amber-500/10 text-amber-500'"
         @click="showAddForm = !showAddForm"
       >
-        <svg
-          viewBox="0 0 24 24"
-          class="h-6 w-6"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.2"
-          stroke-linecap="round"
-          aria-hidden="true"
-        >
-          <path d="M12 5v14M5 12h14" />
-        </svg>
+        <Plus class="h-6 w-6" :stroke-width="2.2" />
       </IconButton>
     </div>
 
@@ -36,17 +26,7 @@
           class="h-8 w-8 p-0 text-stone-500 hover:text-white"
           @click="showAddForm = false"
         >
-          <svg
-            viewBox="0 0 24 24"
-            class="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            aria-hidden="true"
-          >
-            <path d="M18 6L6 18M6 6l12 12" />
-          </svg>
+          <X class="h-4 w-4" :stroke-width="2" />
         </IconButton>
       </div>
       <FormField
@@ -64,20 +44,7 @@
         class="w-full gap-2 py-3 font-black text-black transition-all hover:bg-amber-500 active:scale-[0.98]"
         @click="submitItem"
       >
-        <svg
-          viewBox="0 0 24 24"
-          class="h-5 w-5"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.2"
-          stroke-linecap="round"
-          aria-hidden="true"
-        >
-          <path
-            d="M21 16V8a2 2 0 0 0-1-1.73L13 2.27a2 2 0 0 0-2 0L4 6.27A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73L11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
-          />
-          <path d="M12 8v4M12 16h.01" />
-        </svg>
+        <Package class="h-5 w-5" :stroke-width="2.2" />
         AJOUTER AU SAC
       </Button>
     </section>
@@ -87,18 +54,7 @@
       v-if="inventory.length === 0"
       class="rounded-3xl border-2 border-dashed border-white/5 py-12 text-center text-stone-600"
     >
-      <svg
-        viewBox="0 0 24 24"
-        class="mx-auto mb-2 h-12 w-12 opacity-20"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.2"
-        stroke-linecap="round"
-        aria-hidden="true"
-      >
-        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
-        <path d="M3 6h18M16 10a4 4 0 0 1-8 0" />
-      </svg>
+      <Backpack class="mx-auto mb-2 h-12 w-12 opacity-20" :stroke-width="1.2" />
       <p class="text-sm italic">Le sac est vide...</p>
     </div>
 
@@ -127,30 +83,16 @@
             @click="decrement(item)"
           >
             <!-- Trash si qty=1, Minus sinon -->
-            <svg
+            <Trash2
               v-if="item.quantity === 1"
-              viewBox="0 0 24 24"
               class="h-3.5 w-3.5"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              aria-hidden="true"
-            >
-              <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-            </svg>
-            <svg
+              :stroke-width="1.8"
+            />
+            <Minus
               v-else
-              viewBox="0 0 24 24"
               class="h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.2"
-              stroke-linecap="round"
-              aria-hidden="true"
-            >
-              <path d="M5 12h14" />
-            </svg>
+              :stroke-width="2.2"
+            />
           </IconButton>
           <span class="w-8 text-center font-mono font-black text-amber-500">{{ item.quantity }}</span>
           <IconButton
@@ -158,17 +100,7 @@
             class="h-8 w-8 rounded-lg border-transparent bg-transparent p-0 text-stone-400 transition-all hover:bg-white/5 hover:text-emerald-500"
             @click="increment(item)"
           >
-            <svg
-              viewBox="0 0 24 24"
-              class="h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.2"
-              stroke-linecap="round"
-              aria-hidden="true"
-            >
-              <path d="M12 5v14M5 12h14" />
-            </svg>
+            <Plus class="h-4 w-4" :stroke-width="2.2" />
           </IconButton>
         </div>
       </div>
@@ -177,6 +109,7 @@
 </template>
 
 <script setup lang="ts">
+import { Backpack, Minus, Package, Plus, Trash2, X } from "@lucide/vue";
 import { storeToRefs } from "pinia";
 import { computed, reactive, ref } from "vue";
 

@@ -10,17 +10,19 @@
       class="bottom-nav__item grid justify-items-center gap-1.5 rounded-[18px] px-2 py-2.5 text-(--text-soft) transition-colors"
       :class="route.path === item.to ? 'bottom-nav__item--active bg-[rgba(210,160,51,0.14)] text-(--gold)' : ''"
     >
-      <span
+      <component
+        :is="item.icon"
         class="bottom-nav__icon h-5.5 w-5.5"
+        :stroke-width="1.8"
         aria-hidden="true"
-        v-html="item.icon"
-      ></span>
+      />
       <span class="bottom-nav__label text-[0.72rem] uppercase tracking-[0.08em]">{{ item.label }}</span>
     </RouterLink>
   </nav>
 </template>
 
 <script setup lang="ts">
+import { Backpack, NotebookText, UserRound } from "@lucide/vue";
 import { RouterLink, useRoute } from "vue-router";
 
 const route = useRoute();
@@ -29,17 +31,17 @@ const items = [
   {
     to: "/profil",
     label: "Profil",
-    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>',
+    icon: UserRound,
   },
   {
     to: "/inventaire",
     label: "Inventaire",
-    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12"/><path d="M8 4h8l1 4H7l1-4Z"/><path d="M6 8v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8"/></svg>',
+    icon: Backpack,
   },
   {
     to: "/notes",
     label: "Notes",
-    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h10"/><path d="M8 10h10"/><path d="M8 14h6"/><path d="M5 4h14a1 1 0 0 1 1 1v14l-4-3H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z"/></svg>',
+    icon: NotebookText,
   },
 ];
 </script>

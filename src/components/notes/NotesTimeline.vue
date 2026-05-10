@@ -25,19 +25,7 @@
             class="w-full gap-2 py-3 font-black text-black transition-all hover:bg-amber-500 active:scale-[0.98]"
             type="submit"
           >
-            <svg
-              viewBox="0 0 24 24"
-              class="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-              <path d="M17 21v-8H7v8M7 3v5h8" />
-            </svg>
+            <Save class="h-5 w-5" :stroke-width="1.8" />
             SCELER LA NOTE
           </Button>
         </form>
@@ -57,17 +45,7 @@
           aria-label="Supprimer cette note"
           @click="removeNote(note.id)"
         >
-          <svg
-            viewBox="0 0 24 24"
-            class="h-3.5 w-3.5"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            aria-hidden="true"
-          >
-            <path d="M18 6L6 18M6 6l12 12" />
-          </svg>
+          <X class="h-3.5 w-3.5" :stroke-width="1.8" />
         </IconButton>
         <span class="font-mono text-[10px] uppercase text-stone-500">{{ note.createdAt }}</span>
         <h4 class="m-0 mt-0.5 font-(family-name:--serif) text-lg text-amber-200">
@@ -80,6 +58,7 @@
 </template>
 
 <script setup lang="ts">
+import { Save, X } from "@lucide/vue";
 import { storeToRefs } from "pinia";
 import { computed, reactive } from "vue";
 

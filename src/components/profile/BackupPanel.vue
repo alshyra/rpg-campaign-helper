@@ -9,33 +9,10 @@
         @click="exportJson"
       >
         <div class="flex items-center gap-3">
-          <svg
-            viewBox="0 0 24 24"
-            class="h-5 w-5"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-            <polyline points="14 2 14 8 20 8" />
-            <path d="M12 18v-6M9 15l3 3 3-3" />
-          </svg>
+          <FileDown class="h-5 w-5" :stroke-width="1.8" />
           <span>Exporter JSON</span>
         </div>
-        <svg
-          viewBox="0 0 24 24"
-          class="h-4 w-4 opacity-60"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          aria-hidden="true"
-        >
-          <path d="M12 4v10M8.5 10.5L12 14l3.5-3.5M5 18h14" />
-        </svg>
+        <Download class="h-4 w-4 opacity-60" :stroke-width="1.8" />
       </Button>
 
       <!-- Import JSON -->
@@ -46,20 +23,7 @@
         @file-selected="onFileChange"
       >
         <div class="flex items-center gap-3">
-          <svg
-            viewBox="0 0 24 24"
-            class="h-5 w-5"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-            <polyline points="14 2 14 8 20 8" />
-            <path d="M12 12v6M9 15l3-3 3 3" />
-          </svg>
+          <FileUp class="h-5 w-5" :stroke-width="1.8" />
           <span>Importer JSON</span>
         </div>
       </FileImportLabel>
@@ -70,18 +34,7 @@
         class="w-full justify-start gap-3 rounded-xl border-transparent bg-stone-800/30 p-4 font-bold text-red-500/50 transition-all hover:text-red-500"
         @click="deleteCharacter"
       >
-        <svg
-          viewBox="0 0 24 24"
-          class="h-5 w-5"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-          <path d="M5 7h14M9 7V5h6v2M8 7v11h8V7M10.5 10.5v5M13.5 10.5v5" />
-        </svg>
+        <Trash2 class="h-5 w-5" :stroke-width="1.8" />
         <span>Supprimer ce personnage</span>
       </Button>
     </div>
@@ -90,6 +43,7 @@
 </template>
 
 <script setup lang="ts">
+import { Download, FileDown, FileUp, Trash2 } from "@lucide/vue";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
 import { useRouter } from "vue-router";

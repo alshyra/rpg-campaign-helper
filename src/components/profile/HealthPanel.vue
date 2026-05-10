@@ -4,20 +4,11 @@
     <div class="mb-6 flex items-end justify-between px-1">
       <div class="space-y-1">
         <div class="flex items-center gap-2">
-          <!-- HeartPulse icon -->
-          <svg
-            viewBox="0 0 24 24"
+          <HeartPulse
             class="h-4 w-4"
             :class="status.color"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-          </svg>
+            :stroke-width="1.8"
+          />
           <h3 class="m-0 text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">État Vital</h3>
         </div>
         <p
@@ -59,6 +50,7 @@
 </template>
 
 <script setup lang="ts">
+import { HeartPulse } from "@lucide/vue";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
 

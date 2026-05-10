@@ -8,33 +8,12 @@
         class="w-full gap-3 p-5 text-lg font-black shadow-lg shadow-amber-900/20 transition-all hover:bg-amber-500 active:scale-95"
         @click="goToTunnel"
       >
-        <svg
-          viewBox="0 0 24 24"
-          class="h-6 w-6"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.2"
-          stroke-linecap="round"
-          aria-hidden="true"
-        >
-          <path d="M12 5v14M5 12h14" />
-        </svg>
+        <Plus class="h-6 w-6" :stroke-width="2.2" />
         NOUVEAU HÉROS
       </Button>
       <div class="relative">
         <FileImportLabel @file-selected="onFileChange">
-          <svg
-            viewBox="0 0 24 24"
-            class="h-5 w-5 text-amber-500"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M12 4v10M8.5 10.5L12 14l3.5-3.5M5 18h14" />
-          </svg>
+          <Download class="h-5 w-5 text-amber-500" :stroke-width="1.8" />
           IMPORTER JSON
         </FileImportLabel>
       </div>
@@ -43,6 +22,7 @@
 </template>
 
 <script setup lang="ts">
+import { Download, Plus } from "@lucide/vue";
 import { useRouter } from "vue-router";
 
 import CampaignManager from "../components/character/CampaignManager.vue";
