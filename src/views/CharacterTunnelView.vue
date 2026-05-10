@@ -5,7 +5,6 @@
     <CharacterEditor
       :character="workingCharacter"
       :submit-label="hasCharacter ? 'Enregistrer les modifications' : 'Créer le personnage'"
-      :include-injuries="hasCharacter && !isNewMode"
       @submit="saveCharacter"
     />
 

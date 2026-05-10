@@ -115,11 +115,7 @@ const props = withDefaults(
   defineProps<{
     character: CharacterState
     submitLabel: string
-    includeInjuries?: boolean
   }>(),
-  {
-    includeInjuries: true
-  }
 )
 
 const emit = defineEmits<{
