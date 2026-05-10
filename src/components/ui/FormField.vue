@@ -24,6 +24,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
+defineOptions({ inheritAttrs: false })
+
 interface Props {
   id?: string
   label?: string

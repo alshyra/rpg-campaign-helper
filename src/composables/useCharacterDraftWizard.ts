@@ -39,10 +39,9 @@ export const useCharacterDraftWizard = (character: Ref<CharacterState>) => {
     currentStep.value = Math.max(0, currentStep.value - 1)
   }
 
-  const updateStat = (key: Stat['key'], event: Event) => {
-    const target = event.target as HTMLInputElement
+  const updateStat = (key: Stat['key'], value: string | number) => {
     draft.stats = draft.stats.map((stat) =>
-      stat.key === key ? { ...stat, value: Number(target.value) } : stat
+      stat.key === key ? { ...stat, value: Number(value) } : stat
     )
   }
 
@@ -54,17 +53,15 @@ export const useCharacterDraftWizard = (character: Ref<CharacterState>) => {
     draft.skills = draft.skills.filter((skill) => skill.id !== id)
   }
 
-  const updateSkillValue = (id: string, event: Event) => {
-    const target = event.target as HTMLInputElement
+  const updateSkillValue = (id: string, value: string | number) => {
     draft.skills = draft.skills.map((skill) =>
-      skill.id === id ? { ...skill, value: Math.max(0, Math.min(10, Number(target.value))) } : skill
+      skill.id === id ? { ...skill, value: Math.max(0, Math.min(10, Number(value))) } : skill
     )
   }
 
-  const updateSkillText = (id: string, field: 'name' | 'category', event: Event) => {
-    const target = event.target as HTMLInputElement
+  const updateSkillText = (id: string, field: 'name' | 'category', value: string) => {
     draft.skills = draft.skills.map((skill) =>
-      skill.id === id ? ({ ...skill, [field]: target.value } as Skill) : skill
+      skill.id === id ? ({ ...skill, [field]: value } as Skill) : skill
     )
   }
 
