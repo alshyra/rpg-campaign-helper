@@ -1,3 +1,25 @@
+
+<style scoped>
+.stat-box__label {
+  margin: 0;
+  color: var(--gold);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-family: var(--serif);
+  font-size: 0.76rem;
+}
+
+.stat-box__value {
+  margin: 0;
+  font-family: var(--serif);
+}
+
+.stat-box__readonly {
+  margin: 8px 0 0;
+  color: var(--text-soft);
+  font-size: 0.84rem;
+}
+</style>
 <template>
   <div class="stats-grid grid grid-cols-2 gap-3.5 max-[420px]:grid-cols-1">
     <AppCard v-for="stat in stats" :key="stat.key">

@@ -133,3 +133,34 @@ const valuePoints = computed(() =>
     .join(' ')
 )
 </script>
+<style scoped>
+.radar-chart__ring,
+.radar-chart__axis {
+	fill: none;
+	stroke: rgba(220, 183, 116, 0.14);
+	stroke-width: 1;
+}
+
+.radar-chart__shape {
+	fill: rgba(210, 160, 51, 0.18);
+	stroke: var(--gold);
+	stroke-width: 2;
+}
+
+.radar-chart__dot {
+	fill: var(--gold);
+}
+
+.radar-chart__label {
+	fill: var(--text-soft);
+	font-size: 12px;
+	text-anchor: middle;
+}
+
+.radar-chart__value {
+	fill: var(--gold);
+	font-size: 11px;
+	font-weight: 700;
+	text-anchor: middle;
+}
+</style>

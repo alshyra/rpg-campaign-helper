@@ -55,4 +55,28 @@ const onNumber = (key: keyof Profile['injuries'], event: Event) => {
     }
   })
 }
+
+  <style scoped>
+  .health-bar {
+    height: 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.07);
+    overflow: hidden;
+  }
+
+  .health-bar__fill {
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #2a8d5b 0%, #4fc080 100%);
+  }
+
+  .health-panel__pill {
+    align-self: center;
+    padding: 7px 11px;
+    border-radius: 999px;
+    background: var(--gold-soft);
+    color: var(--gold);
+    font-size: 0.82rem;
+  }
+  </style>
 </script>

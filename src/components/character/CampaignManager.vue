@@ -10,31 +10,15 @@
       </div>
 
       <div v-else class="campaign-manager__list grid gap-2.5">
-        <article
+        <CampaignItem
           v-for="campaign in campaigns"
           :key="campaign.id"
-          class="campaign-item grid cursor-pointer grid-cols-[minmax(0,1fr)_auto] items-center gap-3"
-          :class="{ 'campaign-item--active': campaign.id === activeCampaignId }"
-          role="button"
-          tabindex="0"
-          @click="emit('select', campaign.id)"
-          @keydown.enter.prevent="emit('select', campaign.id)"
-          @keydown.space.prevent="emit('select', campaign.id)"
-        >
-          <div>
-            <strong>{{ campaign.characterName }}</strong>
-            <p>{{ campaign.role }}</p>
-          </div>
-          <button class="icon-button icon-button--square campaign-item__delete" type="button" aria-label="Supprimer ce personnage" @click.stop="emit('delete', campaign.id)">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M5 7h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-              <path d="M9 7V5h6v2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
-              <path d="M8 7v11h8V7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
-              <path d="M10.5 10.5v5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-              <path d="M13.5 10.5v5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-            </svg>
-          </button>
-        </article>
+          :character-name="campaign.characterName"
+          :role="campaign.role"
+          :is-active="campaign.id === activeCampaignId"
+          @select="emit('select', campaign.id)"
+          @delete="emit('delete', campaign.id)"
+        />
       </div>
     </div>
   </AppCard>
@@ -42,6 +26,7 @@
 
 <script setup lang="ts">
 import AppCard from '../ui/AppCard.vue'
+import CampaignItem from './CampaignItem.vue'
 
 defineProps<{
   campaigns: Array<{

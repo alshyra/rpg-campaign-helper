@@ -45,3 +45,40 @@ const goToSettings = () => {
   router.push('/parametres')
 }
 </script>
+<style scoped>
+.app-shell__glow {
+	position: fixed;
+	width: 220px;
+	height: 220px;
+	border-radius: 999px;
+	pointer-events: none;
+	filter: blur(40px);
+	opacity: 0.45;
+}
+
+.app-shell__glow--top {
+	top: -90px;
+	right: -40px;
+	background: rgba(180, 110, 30, 0.18);
+}
+
+.app-shell__glow--bottom {
+	bottom: 30px;
+	left: -80px;
+	background: rgba(140, 88, 40, 0.16);
+}
+
+.app-topbar__title {
+	border: 0;
+	padding: 0;
+	background: transparent;
+	color: var(--text-soft);
+	font-family: var(--serif);
+	font-size: 1rem;
+	cursor: pointer;
+}
+
+.app-topbar__title:hover {
+	color: var(--gold);
+}
+</style>

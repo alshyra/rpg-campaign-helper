@@ -148,3 +148,70 @@ const submitCharacter = () => {
   emit('submit', snapshot())
 }
 </script>
+<style scoped>
+.wizard-steps__item--active,
+.wizard-steps__item--done {
+	color: var(--gold);
+	border-color: rgba(221, 187, 123, 0.35);
+}
+
+.wizard-steps__item--done span,
+.wizard-steps__item--active span {
+	border-color: rgba(221, 187, 123, 0.55);
+}
+
+.injury-pill {
+	display: grid;
+	gap: 6px;
+	padding: 10px 12px;
+	border-radius: 12px;
+	border: 1px solid rgba(221, 187, 123, 0.16);
+	background: rgba(13, 10, 8, 0.82);
+}
+
+.injury-pill span {
+	color: var(--text-soft);
+	font-size: 0.82rem;
+}
+
+.injury-stepper strong {
+	text-align: center;
+	font-family: var(--serif);
+	color: var(--gold);
+	font-size: 1.2rem;
+}
+
+.field {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 0.4rem;
+}
+
+.field span {
+	opacity: 0.6;
+	font-size: 0.9rem;
+}
+
+.field input,
+.field textarea {
+	min-height: 36px;
+	padding: 8px 12px;
+	border-radius: 8px;
+	border: 1px solid rgba(221, 187, 123, 0.18);
+	background: rgba(13, 10, 8, 0.88);
+	color: var(--text);
+	font: inherit;
+}
+
+.field input:focus,
+.field textarea:focus {
+	outline: none;
+	border-color: rgba(221, 187, 123, 0.35);
+	background: rgba(13, 10, 8, 0.95);
+}
+
+.field--full {
+	grid-column: 1 / -1;
+}
+
+</style>
