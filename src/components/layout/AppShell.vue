@@ -29,7 +29,11 @@
 
       <!-- Centre : titre + crayon collé -->
       <div class="flex items-center justify-center gap-1.5">
-        <div class="text-center">
+        <div
+          class="text-center"
+          :class="{ 'cursor-pointer': characterId }"
+          @click="characterId ? router.push(`/characters/${characterId}/profile`) : undefined"
+        >
           <p class="m-0 text-[10px] font-black uppercase leading-tight tracking-[0.3em] text-amber-600">
             {{ eyebrow }}
           </p>
@@ -108,10 +112,10 @@ const title = computed(() => {
   return characterName.value || "Héros";
 });
 
-const showHeader = computed(() => route.name !== "character-edit");
+const showHeader = computed(() => true);
 
 const showBottomNav = computed(
-  () => hasCharacter.value && !["character-edit", "characters", "settings"].includes(route.name as string),
+  () => hasCharacter.value && !["character-edit", "character-create", "characters", "settings"].includes(route.name as string),
 );
 
 const showEditButton = computed(() => route.name === "character-profile" || route.name === "character-inventory" || route.name === "character-notes" || route.name === "character-spells");
