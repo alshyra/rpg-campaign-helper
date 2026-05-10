@@ -2,7 +2,7 @@
   <div class="stack-xl grid gap-6">
     <SectionHeading
       eyebrow="Tunnel"
-      :title="hasCharacter ? 'Édition du personnage' : 'Création du personnage'"
+      :title="isCreating ? 'Création du personnage' : 'Édition du personnage'"
     />
 
     <CharacterEditor />
@@ -11,7 +11,7 @@
       type="button"
       @click="goBack"
     >
-      {{ hasCharacter ? "Retour au profil" : "Retour" }}
+      {{ isCreating ? "Annuler" : "Retour au profil" }}
     </Button>
   </div>
 </template>
@@ -31,13 +31,18 @@ const { hasCharacter, state } = storeToRefs(characterStore);
 const route = useRoute();
 const router = useRouter();
 
-const isNewMode = computed(() => route.query.new === "1");
+const characterId = computed(() => route.params.id as string);
+const isCreating = computed(() => route.name === "character-create");
 
 const goBack = () => {
-  if (hasCharacter.value && !isNewMode.value) {
-    router.push("/profil");
+  if (isCreating.value) {
+    router.push("/characters");
     return;
   }
-  router.push("/persos");
+  if (hasCharacter.value && characterId.value) {
+    router.push(`/characters/${characterId.value}/profile`);
+    return;
+  }
+  router.push("/characters");
 };
 </script>

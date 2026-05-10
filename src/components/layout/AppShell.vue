@@ -17,7 +17,7 @@
         square
         ghost
         @click="goHome"
-        v-if="route.name !== 'persos'"
+        v-if="route.name !== 'characters'"
         aria-label="Retour accueil"
         icon="House"
         :size="16"
@@ -51,7 +51,7 @@
 
       <!-- Droite -->
       <IconButton
-        v-if="route.name !== 'parametres'"
+        v-if="route.name !== 'settings'"
         class="icon-button icon-button--square justify-self-end"
         type="button"
         ghost
@@ -94,37 +94,40 @@ const route = useRoute();
 const router = useRouter();
 
 const characterName = computed(() => state.value?.profile.characterName || "");
+const characterId = computed(() => route.params.id as string);
 
 const eyebrow = computed(() => {
-  if (route.name === "persos") return "Compendium";
-  if (route.name === "parametres") return "Système";
+  if (route.name === "characters") return "Compendium";
+  if (route.name === "settings") return "Système";
   return "Aventurier";
 });
 
 const title = computed(() => {
-  if (route.name === "persos") return "Mes Héros";
-  if (route.name === "parametres") return "Réglages";
+  if (route.name === "characters") return "Mes Héros";
+  if (route.name === "settings") return "Réglages";
   return characterName.value || "Héros";
 });
 
-const showHeader = computed(() => route.name !== "character-tunnel");
+const showHeader = computed(() => route.name !== "character-edit");
 
 const showBottomNav = computed(
-  () => hasCharacter.value && !["character-tunnel", "persos", "parametres"].includes(route.name as string),
+  () => hasCharacter.value && !["character-edit", "characters", "settings"].includes(route.name as string),
 );
 
-const showEditButton = computed(() => route.name === "profil" || route.name === "inventaire" || route.name === "notes");
+const showEditButton = computed(() => route.name === "character-profile" || route.name === "character-inventory" || route.name === "character-notes");
 
 const goHome = () => {
-  router.push("/persos");
+  router.push("/characters");
 };
 
 const goToSettings = () => {
-  router.push("/parametres");
+  router.push("/settings");
 };
 
 const goToTunnel = () => {
-  router.push("/personnage/tunnel");
+  if (characterId.value) {
+    router.push(`/characters/${characterId.value}/edit`);
+  }
 };
 </script>
 

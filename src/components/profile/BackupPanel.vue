@@ -105,6 +105,6 @@ const deleteCharacter = () => {
   }
 
   characterStore.deleteCampaign(activeCampaignId);
-  router.push("/persos");
+  router.push("/characters");
 };
 </script>

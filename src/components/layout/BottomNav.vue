@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="bottom-nav fixed bottom-3.5 left-1/2 z-10 grid w-[min(92vw,528px)] -translate-x-1/2 grid-cols-3 gap-2 rounded-3xl border border-(--line) bg-[rgba(17,12,9,0.94)] p-2.5 shadow-[0_22px_50px_rgba(0,0,0,0.45)] backdrop-blur-[18px]"
+    class="bottom-nav fixed bottom-3.5 left-1/2 z-10 grid w-[min(92vw,528px)] -translate-x-1/2 md:left-0 md:w-full md:translate-x-0 grid-cols-3 gap-2 rounded-3xl border border-(--line) bg-[rgba(17,12,9,0.94)] p-2.5 shadow-[0_22px_50px_rgba(0,0,0,0.45)] backdrop-blur-[18px]"
     aria-label="Navigation principale"
   >
     <RouterLink
@@ -23,25 +23,30 @@
 
 <script setup lang="ts">
 import { Backpack, NotebookText, UserRound } from "@lucide/vue";
+import { storeToRefs } from "pinia";
+import { computed } from "vue";
 import { RouterLink, useRoute } from "vue-router";
 
-const route = useRoute();
+import { useCharacterStore } from "../../stores/character";
 
-const items = [
-  {
-    to: "/profil",
-    label: "Profil",
-    icon: UserRound,
-  },
-  {
-    to: "/inventaire",
-    label: "Inventaire",
-    icon: Backpack,
-  },
-  {
-    to: "/notes",
-    label: "Notes",
-    icon: NotebookText,
-  },
+const route = useRoute();
+const characterStore = useCharacterStore();
+const { activeCampaignId } = storeToRefs(characterStore);
+
+const characterId = computed(() => activeCampaignId.value || (route.params.id as string));
+
+const itemDefs = [
+  { name: "profile", label: "Profil", icon: UserRound },
+  { name: "inventory", label: "Inventaire", icon: Backpack },
+  { name: "notes", label: "Notes", icon: NotebookText },
 ];
+
+const getItemPath = (name: string) => `/characters/${characterId.value}/${name}`;
+
+const items = computed(() =>
+  itemDefs.map((def) => ({
+    ...def,
+    to: getItemPath(def.name),
+  })),
+);
 </script>

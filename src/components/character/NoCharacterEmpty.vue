@@ -32,10 +32,10 @@ import Button from "../ui/Button.vue";
 const router = useRouter();
 
 const goPersos = () => {
-  router.push("/persos");
+  router.push("/characters");
 };
 
 const goTunnel = () => {
-  router.push("/personnage/tunnel?new=1");
+  router.push("/characters/create");
 };
 </script>

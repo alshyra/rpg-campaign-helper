@@ -41,7 +41,7 @@ const characterStore = useCharacterStore();
 const router = useRouter();
 
 const goToTunnel = () => {
-  router.push("/personnage/tunnel?new=1");
+  router.push("/characters/create");
 };
 
 const onFileChange = async (event: Event) => {

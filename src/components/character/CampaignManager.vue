@@ -59,7 +59,7 @@ const router = useRouter();
 
 const selectCampaign = (id: string) => {
   characterStore.selectCampaign(id);
-  router.push("/profil");
+  router.push(`/characters/${id}/profile`);
 };
 
 </script>
