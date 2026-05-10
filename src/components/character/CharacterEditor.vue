@@ -5,21 +5,34 @@
       @submit.prevent="submitCharacter"
     >
       <!-- Indicateur d'étapes -->
-      <div class="wizard-steps grid grid-cols-3 gap-2 max-[420px]:grid-cols-1">
-        <div
+      <div class="wizard-steps flex items-center gap-1.5">
+        <template
           v-for="(step, index) in steps"
           :key="step.id"
-          class="wizard-steps__item grid justify-items-center gap-1.5 rounded-xl border border-[rgba(221,187,123,0.12)] bg-[rgba(13,10,8,0.72)] px-2 py-2 text-(--text-soft)"
-          :class="{
-            'wizard-steps__item--active': currentStep === index,
-            'wizard-steps__item--done': currentStep > index,
-          }"
         >
-          <span class="grid h-6 w-6 place-items-center rounded-full border border-[rgba(221,187,123,0.2)] text-xs">{{
-            index + 1
-          }}</span>
-          <strong class="text-[0.76rem] uppercase tracking-[0.06em]">{{ step.label }}</strong>
-        </div>
+          <div
+            class="wizard-steps__item flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-(--text-soft) transition-all duration-200"
+            :class="{
+              'wizard-steps__item--active': currentStep === index,
+              'wizard-steps__item--done': currentStep > index,
+              'flex-1': currentStep === index,
+              'shrink-0': currentStep !== index,
+            }"
+          >
+            <span class="grid h-5 w-5 shrink-0 place-items-center rounded-full border border-[rgba(221,187,123,0.2)] text-[0.65rem] font-bold">{{
+              index + 1
+            }}</span>
+            <strong
+              v-if="currentStep === index"
+              class="truncate text-[0.7rem] uppercase tracking-[0.06em]"
+            >{{ step.label }}</strong>
+          </div>
+          <div
+            v-if="index < steps.length - 1"
+            class="h-px flex-1 shrink-0 bg-white/10"
+            :class="{ 'max-w-6': currentStep !== index && currentStep !== index + 1 }"
+          />
+        </template>
       </div>
 
       <!-- Étape : Identité -->
@@ -168,7 +181,7 @@ import IconButton from "../ui/IconButton.vue";
 import StatsStepper from "../ui/StatStepper.vue";
 
 const characterStore = useCharacterStore();
-const { hasCharacter, state } = storeToRefs(characterStore);
+const { hasCharacter, state, activeCampaignId } = storeToRefs(characterStore);
 const route = useRoute();
 const router = useRouter();
 
@@ -227,7 +240,8 @@ const submitCharacter = () => {
     characterStore.saveActiveCharacter(payload);
   }
 
-  router.replace("/profil");
+  const id = activeCampaignId.value;
+  router.replace(id ? `/characters/${id}/profile` : "/characters");
 };
 </script>
 <style scoped>
