@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 
-import type { CharacterState, InventoryItem, NoteEntry, Profile, Stat } from "../types/character";
+import type { CharacterState, InventoryItem, NoteEntry, Profile, Spell, Stat } from "../types/character";
 import {
   CAMPAIGNS_STORAGE_KEY,
   SINGLE_STORAGE_KEY,
@@ -183,6 +183,30 @@ export const useCharacterStore = defineStore("character", () => {
     }));
   };
 
+  const addSpell = (spell: Omit<Spell, "id">) => {
+    updateActiveCharacter((character) => ({
+      ...character,
+      spells: [{ ...spell, id: makeId("spell") }, ...character.spells],
+      updatedAt: new Date().toISOString(),
+    }));
+  };
+
+  const removeSpell = (id: string) => {
+    updateActiveCharacter((character) => ({
+      ...character,
+      spells: character.spells.filter((spell) => spell.id !== id),
+      updatedAt: new Date().toISOString(),
+    }));
+  };
+
+  const updateSpell = (id: string, patch: Partial<Omit<Spell, "id">>) => {
+    updateActiveCharacter((character) => ({
+      ...character,
+      spells: character.spells.map((spell) => (spell.id === id ? { ...spell, ...patch } : spell)),
+      updatedAt: new Date().toISOString(),
+    }));
+  };
+
   const serialize = () => JSON.stringify(state.value, null, 2);
 
   const importFromObject = (payload: unknown) => {
@@ -222,6 +246,9 @@ export const useCharacterStore = defineStore("character", () => {
     updateInventoryItem,
     addNote,
     removeNote,
+    addSpell,
+    removeSpell,
+    updateSpell,
     serialize,
     importFromObject,
     clearCharacter,

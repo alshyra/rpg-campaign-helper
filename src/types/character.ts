@@ -27,6 +27,13 @@ export interface NoteEntry {
   createdAt: string;
 }
 
+export interface Spell {
+  id: string;
+  name: string;
+  school: string;
+  description: string;
+}
+
 export interface Profile {
   characterName: string;
   role: string;
@@ -45,5 +52,6 @@ export interface CharacterState {
   skills: Skill[];
   inventory: InventoryItem[];
   notes: NoteEntry[];
+  spells: Spell[];
   updatedAt: string;
 }

@@ -1,6 +1,7 @@
 import type { RouterOptions } from "vue-router";
 
 import CharacterTunnelView from "../views/CharacterTunnelView.vue";
+import GrimoireView from "../views/GrimoireView.vue";
 import InventoryView from "../views/InventoryView.vue";
 import NotesView from "../views/NotesView.vue";
 import PersosView from "../views/PersosView.vue";
@@ -41,6 +42,12 @@ export const routes: RouterOptions["routes"] = [
     name: "character-notes",
     component: NotesView,
     meta: { label: "Notes" },
+  },
+  {
+    path: "/characters/:id/spells",
+    name: "character-spells",
+    component: GrimoireView,
+    meta: { label: "Grimoire" },
   },
   {
     path: "/characters/:id/edit",

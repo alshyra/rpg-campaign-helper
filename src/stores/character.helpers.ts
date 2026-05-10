@@ -1,4 +1,4 @@
-import type { CharacterState, InventoryItem, NoteEntry, Skill, Stat } from "../types/character";
+import type { CharacterState, InventoryItem, NoteEntry, Skill, Spell, Stat } from "../types/character";
 
 export const SINGLE_STORAGE_KEY = "rpg-player-helper::character";
 export const CAMPAIGNS_STORAGE_KEY = "rpg-player-helper::campaigns";
@@ -36,6 +36,7 @@ export const defaultState = (): CharacterState => ({
   skills: [],
   inventory: [],
   notes: [],
+  spells: [],
   updatedAt: new Date().toISOString(),
 });
 

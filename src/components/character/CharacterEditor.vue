@@ -195,6 +195,7 @@ const emptyCharacter = (): CharacterState => ({
   skills: [],
   inventory: [],
   notes: [],
+  spells: [],
   updatedAt: new Date().toISOString(),
 });
 
