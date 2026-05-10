@@ -1,8 +1,11 @@
 <template>
-  <label :class="['file-import-label', `file-import-label--${variant}`]" v-bind="$attrs">
+  <label
+    :class="['file-import-label', `file-import-label--${variant}`]"
+    v-bind="$attrs"
+  >
     <slot>{{ label }}</slot>
-    <input 
-      type="file" 
+    <input
+      type="file"
       accept=".json"
       @change="$emit('file-selected', $event)"
     />
@@ -10,17 +13,20 @@
 </template>
 
 <script setup lang="ts">
-withDefaults(defineProps<{
-  label?: string
-  variant?: 'button' | 'icon-button'
-}>(), {
-  variant: 'button',
-  label: 'Importer',
-})
+withDefaults(
+  defineProps<{
+    label?: string;
+    variant?: "button" | "icon-button";
+  }>(),
+  {
+    variant: "button",
+    label: "Importer",
+  },
+);
 
 defineEmits<{
-  'file-selected': [event: Event]
-}>()
+  "file-selected": [event: Event];
+}>();
 </script>
 
 <style scoped>

@@ -15,27 +15,30 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import * as LucideIcons from '@lucide/vue'
+import * as LucideIcons from "@lucide/vue";
+import { computed } from "vue";
 
-const props = withDefaults(defineProps<{
-  square?: boolean
-  ghost?: boolean
-  type?: 'button' | 'submit' | 'reset'
-  icon?: string
-  size?: number
-  strokeWidth?: number
-}>(), {
-  square: false,
-  ghost: false,
-  type: 'button',
-  size: 18,
-  strokeWidth: 1.8,
-})
+const props = withDefaults(
+  defineProps<{
+    square?: boolean;
+    ghost?: boolean;
+    type?: "button" | "submit" | "reset";
+    icon?: string;
+    size?: number;
+    strokeWidth?: number;
+  }>(),
+  {
+    square: false,
+    ghost: false,
+    type: "button",
+    size: 18,
+    strokeWidth: 1.8,
+  },
+);
 
 const resolvedIcon = computed(() =>
-  props.icon ? ((LucideIcons as Record<string, unknown>)[props.icon] ?? null) : null
-)
+  props.icon ? ((LucideIcons as Record<string, unknown>)[props.icon] ?? null) : null,
+);
 </script>
 
 <style scoped>

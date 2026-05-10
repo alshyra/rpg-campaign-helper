@@ -3,10 +3,10 @@ name: Deploy to Netlify
 on:
   push:
     branches:
-      - main        # déploiement en production sur main
+      - main # déploiement en production sur main
   pull_request:
     branches:
-      - main        # déploiement preview sur chaque PR
+      - main # déploiement preview sur chaque PR
 
 jobs:
   build-and-deploy:

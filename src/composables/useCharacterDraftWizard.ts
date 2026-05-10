@@ -1,71 +1,68 @@
-import { computed, reactive, ref, watch, type Ref } from 'vue'
-import type { CharacterState, Skill, Stat } from '../types/character'
+import { computed, reactive, ref, watch, type Ref } from "vue";
+
+import type { CharacterState, Skill, Stat } from "../types/character";
 
 type WizardStep = {
-  id: 'identity' | 'stats' | 'skills'
-  label: string
-}
+  id: "identity" | "stats" | "skills";
+  label: string;
+};
 
-const cloneCharacter = (source: CharacterState) => JSON.parse(JSON.stringify(source)) as CharacterState
+const cloneCharacter = (source: CharacterState) => JSON.parse(JSON.stringify(source)) as CharacterState;
 
-const makeSkillId = () => `skill-${Math.random().toString(36).slice(2, 10)}`
+const makeSkillId = () => `skill-${Math.random().toString(36).slice(2, 10)}`;
 
 export const useCharacterDraftWizard = (character: Ref<CharacterState>) => {
   const steps = computed<WizardStep[]>(() => [
-    { id: 'identity', label: 'Identité' },
-    { id: 'stats', label: 'Stats' },
-    { id: 'skills', label: 'Compétences' },
-  ])
+    { id: "identity", label: "Identité" },
+    { id: "stats", label: "Stats" },
+    { id: "skills", label: "Compétences" },
+  ]);
 
-  const currentStep = ref(0)
-  const currentStepId = computed(() => steps.value[currentStep.value]?.id)
+  const currentStep = ref(0);
+  const currentStepId = computed(() => steps.value[currentStep.value]?.id);
 
-  const draft = reactive<CharacterState>(cloneCharacter(character.value))
+  const draft = reactive<CharacterState>(cloneCharacter(character.value));
 
   watch(
     character,
     (nextCharacter) => {
-      Object.assign(draft, cloneCharacter(nextCharacter))
-      currentStep.value = 0
+      Object.assign(draft, cloneCharacter(nextCharacter));
+      currentStep.value = 0;
     },
-    { deep: true }
-  )
+    { deep: true },
+  );
 
   const nextStep = () => {
-    currentStep.value = Math.min(steps.value.length - 1, currentStep.value + 1)
-  }
+    currentStep.value = Math.min(steps.value.length - 1, currentStep.value + 1);
+  };
 
   const previousStep = () => {
-    currentStep.value = Math.max(0, currentStep.value - 1)
-  }
+    currentStep.value = Math.max(0, currentStep.value - 1);
+  };
 
-  const updateStat = (key: Stat['key'], value: string | number) => {
-    draft.stats = draft.stats.map((stat) =>
-      stat.key === key ? { ...stat, value: Number(value) } : stat
-    )
-  }
+  const updateStat = (key: Stat["key"], value: string | number) => {
+    draft.stats = draft.stats.map((stat) => (stat.key === key ? { ...stat, value: Number(value) } : stat));
+  };
 
   const addSkill = () => {
-    draft.skills = [...draft.skills, { id: makeSkillId(), name: '', category: '', value: 0 }]
-  }
+    draft.skills = [...draft.skills, { id: makeSkillId(), name: "", category: "", value: 0 }];
+  };
 
   const removeSkill = (id: string) => {
-    draft.skills = draft.skills.filter((skill) => skill.id !== id)
-  }
+    draft.skills = draft.skills.filter((skill) => skill.id !== id);
+  };
 
   const updateSkillValue = (id: string, value: string | number) => {
     draft.skills = draft.skills.map((skill) =>
-      skill.id === id ? { ...skill, value: Math.max(0, Math.min(10, Number(value))) } : skill
-    )
-  }
+      skill.id === id ? { ...skill, value: Math.max(0, Math.min(10, Number(value))) } : skill,
+    );
+  };
 
-  const updateSkillText = (id: string, field: 'name' | 'category', value: string) => {
-    draft.skills = draft.skills.map((skill) =>
-      skill.id === id ? ({ ...skill, [field]: value } as Skill) : skill
-    )
-  }
+  const updateSkillText = (id: string, field: "name" | "category", value: string) => {
+    draft.skills = draft.skills.map((skill) => (skill.id === id ? ({ ...skill, [field]: value } as Skill) : skill));
+  };
 
-  const snapshot = () => cloneCharacter(draft as CharacterState)
+  const snapshot = () => cloneCharacter(draft as CharacterState);
 
   return {
     steps,
@@ -79,6 +76,6 @@ export const useCharacterDraftWizard = (character: Ref<CharacterState>) => {
     removeSkill,
     updateSkillValue,
     updateSkillText,
-    snapshot
-  }
-}
+    snapshot,
+  };
+};

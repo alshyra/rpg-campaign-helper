@@ -13,19 +13,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { storeToRefs } from 'pinia'
-import NoCharacterEmpty from '../components/character/NoCharacterEmpty.vue'
-import InventoryList from '../components/inventory/InventoryList.vue'
-import { useCharacterStore } from '../stores/character'
+import { storeToRefs } from "pinia";
+import { computed } from "vue";
 
-const characterStore = useCharacterStore()
-const { state } = storeToRefs(characterStore)
+import NoCharacterEmpty from "../components/character/NoCharacterEmpty.vue";
+import InventoryList from "../components/inventory/InventoryList.vue";
+import { useCharacterStore } from "../stores/character";
 
-const character = computed(() => state.value)
-const inventory = computed(() => state.value?.inventory ?? [])
+const characterStore = useCharacterStore();
+const { state } = storeToRefs(characterStore);
+
+const character = computed(() => state.value);
+const inventory = computed(() => state.value?.inventory ?? []);
 
 const updateQuantity = (id: string, quantity: number) => {
-  characterStore.updateInventoryItem(id, { quantity })
-}
+  characterStore.updateInventoryItem(id, { quantity });
+};
 </script>

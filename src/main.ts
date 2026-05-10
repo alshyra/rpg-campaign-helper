@@ -1,20 +1,22 @@
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-import { createRouter, createWebHistory } from 'vue-router'
-import { registerSW } from 'virtual:pwa-register'
-import App from './App.vue'
-import { routerOptions } from './router'
-import './tailwind.css'
+import { createPinia } from "pinia";
+import { registerSW } from "virtual:pwa-register";
+import { createApp } from "vue";
+import { createRouter, createWebHistory } from "vue-router";
 
-const app = createApp(App)
-const pinia = createPinia()
+import App from "./App.vue";
+import { routerOptions } from "./router";
+
+import "./tailwind.css";
+
+const app = createApp(App);
+const pinia = createPinia();
 const router = createRouter({
   history: createWebHistory(),
-  ...routerOptions
-})
+  ...routerOptions,
+});
 
-registerSW({ immediate: true })
+registerSW({ immediate: true });
 
-app.use(pinia)
-app.use(router)
-app.mount('#app')
+app.use(pinia);
+app.use(router);
+app.mount("#app");

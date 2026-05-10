@@ -10,16 +10,29 @@
   >
     <div class="flex items-center gap-4">
       <!-- Avatar initiale -->
-      <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-amber-500/20 bg-amber-950/50 font-(family-name:--serif) text-xl text-amber-500">
+      <div
+        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-amber-500/20 bg-amber-950/50 font-(family-name:--serif) text-xl text-amber-500"
+      >
         {{ characterName[0] }}
       </div>
       <div>
-        <h4 class="m-0 text-lg font-bold text-amber-100 transition-colors group-hover:text-amber-400">{{ characterName }}</h4>
+        <h4 class="m-0 text-lg font-bold text-amber-100 transition-colors group-hover:text-amber-400">
+          {{ characterName }}
+        </h4>
         <p class="m-0 text-xs italic text-stone-500">{{ role }}</p>
       </div>
     </div>
     <!-- Chevron droit -->
-    <svg viewBox="0 0 24 24" class="h-5 w-5 shrink-0 text-stone-700 transition-all group-hover:text-amber-500" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      class="h-5 w-5 shrink-0 text-stone-700 transition-all group-hover:text-amber-500"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
       <path d="M9 6l6 6-6 6" />
     </svg>
   </article>
@@ -27,16 +40,15 @@
 
 <script setup lang="ts">
 defineProps<{
-  characterName: string
-  role: string
-  isActive?: boolean
-}>()
+  characterName: string;
+  role: string;
+  isActive?: boolean;
+}>();
 
 const emit = defineEmits<{
-  select: []
-  delete: []
-}>()
+  select: [];
+  delete: [];
+}>();
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

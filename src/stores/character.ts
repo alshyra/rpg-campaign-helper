@@ -1,106 +1,109 @@
-import { computed, ref, watch } from 'vue'
-import { defineStore } from 'pinia'
-import type { CharacterState, InventoryItem, NoteEntry, Profile, Stat } from '../types/character'
+import { defineStore } from "pinia";
+import { computed, ref, watch } from "vue";
+
+import type { CharacterState, InventoryItem, NoteEntry, Profile, Stat } from "../types/character";
 import {
   CAMPAIGNS_STORAGE_KEY,
   SINGLE_STORAGE_KEY,
   type StoredState,
   makeId,
   parseStoredState,
-  sanitizeState
-} from './character.helpers'
+  sanitizeState,
+} from "./character.helpers";
 
-export const useCharacterStore = defineStore('character', () => {
-  const stored = ref<StoredState>(parseStoredState())
+export const useCharacterStore = defineStore("character", () => {
+  const stored = ref<StoredState>(parseStoredState());
 
   const state = computed<CharacterState | null>(() => {
     if (!stored.value.activeCampaignId) {
-      return null
+      return null;
     }
 
-    const active = stored.value.campaigns.find((campaign) => campaign.id === stored.value.activeCampaignId)
-    return active?.character ?? null
-  })
+    const active = stored.value.campaigns.find((campaign) => campaign.id === stored.value.activeCampaignId);
+    return active?.character ?? null;
+  });
 
-  const hasCharacter = computed(() => state.value !== null)
+  const hasCharacter = computed(() => state.value !== null);
 
   const campaigns = computed(() =>
     stored.value.campaigns.map((campaign) => ({
       id: campaign.id,
-      characterName: campaign.character.profile.characterName || 'Sans nom',
-      role: campaign.character.profile.role || 'Sans rôle',
-      updatedAt: campaign.character.updatedAt
-    }))
-  )
+      characterName: campaign.character.profile.characterName || "Sans nom",
+      role: campaign.character.profile.role || "Sans rôle",
+      updatedAt: campaign.character.updatedAt,
+    })),
+  );
 
-  const activeCampaignId = computed(() => stored.value.activeCampaignId)
+  const activeCampaignId = computed(() => stored.value.activeCampaignId);
 
   const injuryRatio = computed(() => {
     if (!state.value) {
-      return 0
+      return 0;
     }
 
-    const { light, minor, major, fatal } = state.value.profile.injuries
-    const usedSlots = light + minor + major + fatal
-    const totalSlots = 8
+    const { light, minor, major, fatal } = state.value.profile.injuries;
+    const usedSlots = light + minor + major + fatal;
+    const totalSlots = 8;
 
-    return Math.max(0, Math.min(1, usedSlots / totalSlots))
-  })
+    return Math.max(0, Math.min(1, usedSlots / totalSlots));
+  });
 
   const updateActiveCharacter = (updater: (character: CharacterState) => CharacterState) => {
-    const activeId = stored.value.activeCampaignId
+    const activeId = stored.value.activeCampaignId;
     if (!activeId) {
-      return
+      return;
     }
 
     stored.value.campaigns = stored.value.campaigns.map((campaign) =>
       campaign.id === activeId
         ? {
             ...campaign,
-            character: updater(campaign.character)
+            character: updater(campaign.character),
           }
-        : campaign
-    )
-  }
+        : campaign,
+    );
+  };
 
   const saveActiveCharacter = (payload: Partial<CharacterState>) => {
-    const activeId = stored.value.activeCampaignId
+    const activeId = stored.value.activeCampaignId;
     if (!activeId) {
-      return
+      return;
     }
 
-    updateActiveCharacter((character) => sanitizeState({ ...character, ...payload, updatedAt: new Date().toISOString() }))
-  }
+    updateActiveCharacter((character) =>
+      sanitizeState({ ...character, ...payload, updatedAt: new Date().toISOString() }),
+    );
+  };
 
   const createNewCharacter = (payload: Partial<CharacterState>) => {
-    const id = makeId('camp')
-    const character = sanitizeState({ ...payload, updatedAt: new Date().toISOString() })
-    stored.value.campaigns = [{ id, character }, ...stored.value.campaigns]
-    stored.value.activeCampaignId = id
-  }
+    const id = makeId("camp");
+    const character = sanitizeState({ ...payload, updatedAt: new Date().toISOString() });
+    stored.value.campaigns = [{ id, character }, ...stored.value.campaigns];
+    stored.value.activeCampaignId = id;
+  };
 
   const createCharacter = (payload: Partial<CharacterState>) => {
     if (stored.value.activeCampaignId) {
-      saveActiveCharacter(payload)
-      return
+      saveActiveCharacter(payload);
+      return;
     }
-    createNewCharacter(payload)
-  }
+    createNewCharacter(payload);
+  };
 
   const selectCampaign = (id: string) => {
     if (stored.value.campaigns.some((campaign) => campaign.id === id)) {
-      stored.value.activeCampaignId = id
+      stored.value.activeCampaignId = id;
     }
-  }
+  };
 
   const deleteCampaign = (id: string) => {
-    const nextCampaigns = stored.value.campaigns.filter((campaign) => campaign.id !== id)
-    stored.value.campaigns = nextCampaigns
+    const nextCampaigns = stored.value.campaigns.filter((campaign) => campaign.id !== id);
+    stored.value.campaigns = nextCampaigns;
 
     if (stored.value.activeCampaignId === id) {
-      stored.value.activeCampaignId = nextCampaigns[0]?.id ?? null
+      stored.value.activeCampaignId = nextCampaigns[0]?.id ?? null;
     }
-  }
+  };
 
   const updateProfile = (patch: Partial<Profile>) => {
     updateActiveCharacter((character) => ({
@@ -110,95 +113,95 @@ export const useCharacterStore = defineStore('character', () => {
         ...patch,
         injuries: {
           ...character.profile.injuries,
-          ...patch.injuries
-        }
+          ...patch.injuries,
+        },
       },
-      updatedAt: new Date().toISOString()
-    }))
-  }
+      updatedAt: new Date().toISOString(),
+    }));
+  };
 
-  const updateStat = (key: Stat['key'], value: number) => {
+  const updateStat = (key: Stat["key"], value: number) => {
     updateActiveCharacter((character) => ({
       ...character,
       stats: character.stats.map((stat) => (stat.key === key ? { ...stat, value } : stat)),
-      updatedAt: new Date().toISOString()
-    }))
-  }
+      updatedAt: new Date().toISOString(),
+    }));
+  };
 
   const updateSkill = (id: string, value: number) => {
     updateActiveCharacter((character) => ({
       ...character,
       skills: character.skills.map((skill) => (skill.id === id ? { ...skill, value } : skill)),
-      updatedAt: new Date().toISOString()
-    }))
-  }
+      updatedAt: new Date().toISOString(),
+    }));
+  };
 
-  const addInventoryItem = (item: Omit<InventoryItem, 'id'>) => {
+  const addInventoryItem = (item: Omit<InventoryItem, "id">) => {
     updateActiveCharacter((character) => ({
       ...character,
-      inventory: [{ ...item, id: makeId('item') }, ...character.inventory],
-      updatedAt: new Date().toISOString()
-    }))
-  }
+      inventory: [{ ...item, id: makeId("item") }, ...character.inventory],
+      updatedAt: new Date().toISOString(),
+    }));
+  };
 
   const removeInventoryItem = (id: string) => {
     updateActiveCharacter((character) => ({
       ...character,
       inventory: character.inventory.filter((item) => item.id !== id),
-      updatedAt: new Date().toISOString()
-    }))
-  }
+      updatedAt: new Date().toISOString(),
+    }));
+  };
 
-  const updateInventoryItem = (id: string, patch: Partial<Omit<InventoryItem, 'id'>>) => {
+  const updateInventoryItem = (id: string, patch: Partial<Omit<InventoryItem, "id">>) => {
     updateActiveCharacter((character) => ({
       ...character,
       inventory: character.inventory.map((item) => (item.id === id ? { ...item, ...patch } : item)),
-      updatedAt: new Date().toISOString()
-    }))
-  }
+      updatedAt: new Date().toISOString(),
+    }));
+  };
 
-  const addNote = (note: Omit<NoteEntry, 'id' | 'createdAt'>) => {
+  const addNote = (note: Omit<NoteEntry, "id" | "createdAt">) => {
     updateActiveCharacter((character) => ({
       ...character,
       notes: [
         {
           ...note,
-          id: makeId('note'),
-          createdAt: new Date().toISOString().slice(0, 10)
+          id: makeId("note"),
+          createdAt: new Date().toISOString().slice(0, 10),
         },
-        ...character.notes
+        ...character.notes,
       ],
-      updatedAt: new Date().toISOString()
-    }))
-  }
+      updatedAt: new Date().toISOString(),
+    }));
+  };
 
   const removeNote = (id: string) => {
     updateActiveCharacter((character) => ({
       ...character,
       notes: character.notes.filter((note) => note.id !== id),
-      updatedAt: new Date().toISOString()
-    }))
-  }
+      updatedAt: new Date().toISOString(),
+    }));
+  };
 
-  const serialize = () => JSON.stringify(state.value, null, 2)
+  const serialize = () => JSON.stringify(state.value, null, 2);
 
   const importFromObject = (payload: unknown) => {
-    const parsed = payload as Partial<CharacterState>
-    createNewCharacter(sanitizeState(parsed))
-  }
+    const parsed = payload as Partial<CharacterState>;
+    createNewCharacter(sanitizeState(parsed));
+  };
 
   const clearCharacter = () => {
-    stored.value.activeCampaignId = null
-  }
+    stored.value.activeCampaignId = null;
+  };
 
   watch(
     stored,
     (value) => {
-      window.localStorage.setItem(CAMPAIGNS_STORAGE_KEY, JSON.stringify(value))
-      window.localStorage.removeItem(SINGLE_STORAGE_KEY)
+      window.localStorage.setItem(CAMPAIGNS_STORAGE_KEY, JSON.stringify(value));
+      window.localStorage.removeItem(SINGLE_STORAGE_KEY);
     },
-    { deep: true }
-  )
+    { deep: true },
+  );
 
   return {
     state,
@@ -221,6 +224,6 @@ export const useCharacterStore = defineStore('character', () => {
     removeNote,
     serialize,
     importFromObject,
-    clearCharacter
-  }
-})
+    clearCharacter,
+  };
+});

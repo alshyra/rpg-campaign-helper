@@ -1,15 +1,27 @@
 <template>
   <div class="entry-gate stack-xl grid gap-6">
-    <SectionHeading eyebrow="Compagnon" title="Créer ou restaurer un personnage" />
+    <SectionHeading
+      eyebrow="Compagnon"
+      title="Créer ou restaurer un personnage"
+    />
 
     <AppCard>
       <div class="entry-gate__hero grid gap-3">
         <p class="m-0 leading-relaxed text-(--text-soft)">
-          Aucun personnage détecté dans ce navigateur. Tu peux repartir d'un JSON existant ou ouvrir un tunnel de création.
+          Aucun personnage détecté dans ce navigateur. Tu peux repartir d'un JSON existant ou ouvrir un tunnel de
+          création.
         </p>
         <div class="entry-gate__actions grid gap-2.5">
-          <FileImportLabel label="Importer un JSON" @file-selected="onFileChange" />
-          <Button variant="primary" type="button" @click="goToTunnel">Créer un personnage</Button>
+          <FileImportLabel
+            label="Importer un JSON"
+            @file-selected="onFileChange"
+          />
+          <Button
+            variant="primary"
+            type="button"
+            @click="goToTunnel"
+            >Créer un personnage</Button
+          >
         </div>
       </div>
     </AppCard>
@@ -17,34 +29,35 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-import AppCard from '../ui/AppCard.vue'
-import SectionHeading from '../ui/SectionHeading.vue'
-import Button from '../ui/Button.vue'
-import FileImportLabel from '../ui/FileImportLabel.vue'
-import { useCharacterStore } from '../../stores/character'
+import { useRouter } from "vue-router";
 
-const characterStore = useCharacterStore()
-const router = useRouter()
+import { useCharacterStore } from "../../stores/character";
+import AppCard from "../ui/AppCard.vue";
+import Button from "../ui/Button.vue";
+import FileImportLabel from "../ui/FileImportLabel.vue";
+import SectionHeading from "../ui/SectionHeading.vue";
+
+const characterStore = useCharacterStore();
+const router = useRouter();
 
 const goToTunnel = () => {
-  router.push('/personnage/tunnel?new=1')
-}
+  router.push("/personnage/tunnel?new=1");
+};
 
 const onFileChange = async (event: Event) => {
-  const target = event.target as HTMLInputElement
-  const [file] = target.files ?? []
+  const target = event.target as HTMLInputElement;
+  const [file] = target.files ?? [];
   if (!file) {
-    return
+    return;
   }
 
   try {
-    const text = await file.text()
-    characterStore.importFromObject(JSON.parse(text) as unknown)
+    const text = await file.text();
+    characterStore.importFromObject(JSON.parse(text) as unknown);
   } catch {
-    window.alert('Le fichier JSON est invalide ou illisible.')
+    window.alert("Le fichier JSON est invalide ou illisible.");
   } finally {
-    target.value = ''
+    target.value = "";
   }
-}
+};
 </script>

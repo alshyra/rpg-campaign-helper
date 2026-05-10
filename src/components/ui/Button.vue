@@ -1,9 +1,6 @@
 <template>
-  <button 
-    :class="[
-      'button',
-      `button--${variant}`,
-    ]"
+  <button
+    :class="['button', `button--${variant}`]"
     :type="type"
     v-bind="$attrs"
   >
@@ -12,13 +9,16 @@
 </template>
 
 <script setup lang="ts">
-withDefaults(defineProps<{
-  variant?: 'primary' | 'secondary'
-  type?: 'button' | 'submit' | 'reset'
-}>(), {
-  variant: 'secondary',
-  type: 'button',
-})
+withDefaults(
+  defineProps<{
+    variant?: "primary" | "secondary";
+    type?: "button" | "submit" | "reset";
+  }>(),
+  {
+    variant: "secondary",
+    type: "button",
+  },
+);
 </script>
 
 <style scoped>

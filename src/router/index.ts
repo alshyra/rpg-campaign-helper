@@ -1,54 +1,55 @@
-import type { RouterOptions } from 'vue-router'
-import PersosView from '../views/PersosView.vue'
-import ProfileView from '../views/ProfileView.vue'
-import InventoryView from '../views/InventoryView.vue'
-import NotesView from '../views/NotesView.vue'
-import CharacterTunnelView from '../views/CharacterTunnelView.vue'
-import SettingsView from '../views/SettingsView.vue'
+import type { RouterOptions } from "vue-router";
 
-export const routes: RouterOptions['routes'] = [
+import CharacterTunnelView from "../views/CharacterTunnelView.vue";
+import InventoryView from "../views/InventoryView.vue";
+import NotesView from "../views/NotesView.vue";
+import PersosView from "../views/PersosView.vue";
+import ProfileView from "../views/ProfileView.vue";
+import SettingsView from "../views/SettingsView.vue";
+
+export const routes: RouterOptions["routes"] = [
   {
-    path: '/',
-    redirect: '/persos'
+    path: "/",
+    redirect: "/persos",
   },
   {
-    path: '/persos',
-    name: 'persos',
+    path: "/persos",
+    name: "persos",
     component: PersosView,
-    meta: { label: 'Persos' }
+    meta: { label: "Persos" },
   },
   {
-    path: '/profil',
-    name: 'profil',
+    path: "/profil",
+    name: "profil",
     component: ProfileView,
-    meta: { label: 'Profil' }
+    meta: { label: "Profil" },
   },
   {
-    path: '/inventaire',
-    name: 'inventaire',
+    path: "/inventaire",
+    name: "inventaire",
     component: InventoryView,
-    meta: { label: 'Inventaire' }
+    meta: { label: "Inventaire" },
   },
   {
-    path: '/notes',
-    name: 'notes',
+    path: "/notes",
+    name: "notes",
     component: NotesView,
-    meta: { label: 'Notes' }
+    meta: { label: "Notes" },
   },
   {
-    path: '/parametres',
-    name: 'parametres',
+    path: "/parametres",
+    name: "parametres",
     component: SettingsView,
-    meta: { label: 'Paramètres' }
+    meta: { label: "Paramètres" },
   },
   {
-    path: '/personnage/tunnel',
-    name: 'character-tunnel',
+    path: "/personnage/tunnel",
+    name: "character-tunnel",
     component: CharacterTunnelView,
-    meta: { label: 'Tunnel personnage' }
-  }
-]
+    meta: { label: "Tunnel personnage" },
+  },
+];
 
-export const routerOptions: Pick<RouterOptions, 'routes'> = {
-  routes
-}
+export const routerOptions: Pick<RouterOptions, "routes"> = {
+  routes,
+};

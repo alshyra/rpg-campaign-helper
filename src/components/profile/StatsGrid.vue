@@ -1,4 +1,3 @@
-
 <style scoped>
 .stat-box__label {
   margin: 0;
@@ -22,7 +21,10 @@
 </style>
 <template>
   <div class="stats-grid grid grid-cols-2 gap-3.5 max-[420px]:grid-cols-1">
-    <AppCard v-for="stat in stats" :key="stat.key">
+    <AppCard
+      v-for="stat in stats"
+      :key="stat.key"
+    >
       <div class="stat-box grid grid-cols-[1fr_auto] items-center">
         <div>
           <p class="stat-box__label">{{ stat.label }}</p>
@@ -36,7 +38,12 @@
             step="1"
             @input="onInput(stat.key, $event)"
           />
-          <p v-else class="stat-box__readonly">Valeur fixe dans la fiche</p>
+          <p
+            v-else
+            class="stat-box__readonly"
+          >
+            Valeur fixe dans la fiche
+          </p>
         </div>
         <strong class="stat-box__value">{{ formatValue(stat.value) }}</strong>
       </div>
@@ -45,22 +52,22 @@
 </template>
 
 <script setup lang="ts">
-import type { Stat } from '../../types/character'
-import AppCard from '../ui/AppCard.vue'
+import type { Stat } from "../../types/character";
+import AppCard from "../ui/AppCard.vue";
 
 defineProps<{
-  stats: Stat[]
-  readonly?: boolean
-}>()
+  stats: Stat[];
+  readonly?: boolean;
+}>();
 
 const emit = defineEmits<{
-  update: [key: Stat['key'], value: number]
-}>()
+  update: [key: Stat["key"], value: number];
+}>();
 
-const onInput = (key: Stat['key'], event: Event) => {
-  const target = event.target as HTMLInputElement
-  emit('update', key, Number(target.value))
-}
+const onInput = (key: Stat["key"], event: Event) => {
+  const target = event.target as HTMLInputElement;
+  emit("update", key, Number(target.value));
+};
 
-const formatValue = (value: number) => (value >= 0 ? `+${value}` : `${value}`)
+const formatValue = (value: number) => (value >= 0 ? `+${value}` : `${value}`);
 </script>

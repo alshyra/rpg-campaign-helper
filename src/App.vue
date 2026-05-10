@@ -9,14 +9,15 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
-import { RouterView, useRoute } from 'vue-router'
-import AppShell from './components/layout/AppShell.vue'
-import OnboardingOverlay from './components/onboarding/OnboardingOverlay.vue'
-import StartOnboardingView from './views/StartOnboardingView.vue'
-import { useCharacterStore } from './stores/character'
+import { storeToRefs } from "pinia";
+import { RouterView, useRoute } from "vue-router";
 
-const characterStore = useCharacterStore()
-const { hasCharacter } = storeToRefs(characterStore)
-const route = useRoute()
+import AppShell from "./components/layout/AppShell.vue";
+import OnboardingOverlay from "./components/onboarding/OnboardingOverlay.vue";
+import { useCharacterStore } from "./stores/character";
+import StartOnboardingView from "./views/StartOnboardingView.vue";
+
+const characterStore = useCharacterStore();
+const { hasCharacter } = storeToRefs(characterStore);
+const route = useRoute();
 </script>

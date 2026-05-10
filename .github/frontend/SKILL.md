@@ -64,17 +64,20 @@ src/
 ```vue
 <!-- ✅ View allégée -->
 <script setup lang="ts">
-import { onMounted, onUnmounted } from "vue"
-import { useJobsStore } from "@/stores/jobs"
-import { useBackupTrigger } from "@/composables/useBackupTrigger"
-import { useJobActions } from "@/composables/useJobActions"
+import { onMounted, onUnmounted } from "vue";
+import { useJobsStore } from "@/stores/jobs";
+import { useBackupTrigger } from "@/composables/useBackupTrigger";
+import { useJobActions } from "@/composables/useJobActions";
 
-const store = useJobsStore()
-const trigger = useBackupTrigger()
-const actions = useJobActions()
+const store = useJobsStore();
+const trigger = useBackupTrigger();
+const actions = useJobActions();
 
-onMounted(() => { store.fetchBackups(); store.connectBackupsWs() })
-onUnmounted(() => store.disconnectBackupsWs())
+onMounted(() => {
+  store.fetchBackups();
+  store.connectBackupsWs();
+});
+onUnmounted(() => store.disconnectBackupsWs());
 </script>
 ```
 
@@ -88,29 +91,33 @@ onUnmounted(() => store.disconnectBackupsWs())
 
 ```ts
 // ✅ Pattern loading/error par domaine (issu de jobs.ts)
-const backupsLoading = ref(false)
-const backupsError = ref<string | null>(null)
-const derivationsLoading = ref(false)
-const derivationsError = ref<string | null>(null)
+const backupsLoading = ref(false);
+const backupsError = ref<string | null>(null);
+const derivationsLoading = ref(false);
+const derivationsError = ref<string | null>(null);
 
 // ✅ Helper privé partagé entre fetch HTTP et WebSocket
 const _applyBackupsData = (data: JobsResponse) => {
-  backupJobs.value = data.jobs
-  backupMetrics.value = { total: data.total, complete: data.complete,
-                          failed: data.failed, running: data.running }
-  backupsLoading.value = false
-  backupsError.value = null
-}
+  backupJobs.value = data.jobs;
+  backupMetrics.value = {
+    total: data.total,
+    complete: data.complete,
+    failed: data.failed,
+    running: data.running,
+  };
+  backupsLoading.value = false;
+  backupsError.value = null;
+};
 ```
 
 **Découpage recommandé pour `jobs.ts`** (trop gros) :
 
-| Nouveau store | Contenu |
-|---------------|---------|
-| `stores/backups.ts` | `backupJobs`, `backupMetrics`, filtres, `fetchBackups`, `deleteBackup`, `triggerBackup`, WS backups |
-| `stores/derivations.ts` | `derivationVmbdds`, `currentDerivation`, `fetchDerivations`, `fetchDerivation` |
-| `stores/restore.ts` | `clientBackupPoints`, `currentRestoreJob`, `fetchBackupPoints`, `triggerRestore`, `fetchRestoreJob` |
-| `stores/operators.ts` | `operators`, `fetchOperators` |
+| Nouveau store           | Contenu                                                                                             |
+| ----------------------- | --------------------------------------------------------------------------------------------------- |
+| `stores/backups.ts`     | `backupJobs`, `backupMetrics`, filtres, `fetchBackups`, `deleteBackup`, `triggerBackup`, WS backups |
+| `stores/derivations.ts` | `derivationVmbdds`, `currentDerivation`, `fetchDerivations`, `fetchDerivation`                      |
+| `stores/restore.ts`     | `clientBackupPoints`, `currentRestoreJob`, `fetchBackupPoints`, `triggerRestore`, `fetchRestoreJob` |
+| `stores/operators.ts`   | `operators`, `fetchOperators`                                                                       |
 
 ### Composables (`composables/`)
 
@@ -121,32 +128,34 @@ const _applyBackupsData = (data: JobsResponse) => {
 ```ts
 // ✅ Pattern issu de useJobActions.ts — logique d'action extraite de la view
 export const useJobActions = () => {
-  const store = useJobsStore()
-  const router = useRouter()
-  const deleteTarget = ref<string | null>(null)
+  const store = useJobsStore();
+  const router = useRouter();
+  const deleteTarget = ref<string | null>(null);
   // ... état local de l'action
 
-  return { deleteTarget, confirmDelete, executeDelete, goToLogs }
+  return { deleteTarget, confirmDelete, executeDelete, goToLogs };
   // Seuls les éléments utiles à la view sont exposés
-}
+};
 ```
 
 **Composables à créer lors du refacto de `BackupsView`** :
 
-| Composable | Responsabilité extraite |
-|------------|------------------------|
+| Composable         | Responsabilité extraite                                                                                                                      |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | `useBackupTrigger` | État modal trigger : `selectedCronJob`, `availableClients`, `selectedClientKeys`, `loadTriggerClients`, `executeTrigger`, `openReplayModal`… |
-| `useBackupFilters` | `applyFilters`, `resetFilters`, binding des filtres store |
+| `useBackupFilters` | `applyFilters`, `resetFilters`, binding des filtres store                                                                                    |
 
 ### Skeletons
 
 Deux niveaux distincts, qui ne se mélangent pas :
 
 **Niveau UI (`components/ui/`)** — briques atomiques sans contexte métier :
+
 - `UiSkeleton` : bloc générique (width/height configurables)
 - `UiMetricCardSkeleton`, `UiTableSkeleton` : formes fixes réutilisables dans n'importe quel contexte
 
 **Niveau métier (`views/`)** — skeleton colocalisé avec sa view :
+
 - `BackupsView.skeleton.vue` vit à côté de `BackupsView.vue`
 - Il assemble les `UiXxxSkeleton` pour reproduire fidèlement la mise en page de la view
 - Il ne connaît pas le store, ne reçoit aucune prop — pur présentatif
@@ -174,6 +183,7 @@ views/
 ```
 
 Règles :
+
 - Toujours 3 états : `loading` → skeleton / `error` → `UiAlert` / nominal → contenu
 - Le skeleton métier n'importe jamais le store
 - Un skeleton métier par view (pas de skeleton sur les composants feature isolés)
@@ -207,15 +217,15 @@ Le store dépasse ~200 lignes ?
 
 ## Anti-patterns à éviter
 
-| ❌ Anti-pattern | ✅ Alternative |
-|----------------|---------------|
-| Store monolithique (ex: `jobs.ts` ~400 lignes) | Découper : `backups.ts`, `derivations.ts`, `restore.ts` |
-| Logique modale/trigger dans `<script setup>` d'une view | Composable `useXxxTrigger` |
-| `loading` global unique pour des domaines distincts | `backupsLoading`, `derivationsLoading`… séparés |
-| Props drillées sur 3+ niveaux | Store Pinia |
-| Skeleton métier qui importe le store | Skeleton purement présentatif, sans props |
-| Skeleton dans `components/` sans lien à une view | Colocalisé dans `views/` à côté de sa view |
-| Logique métier dans le `<template>` | `computed` ou composable |
+| ❌ Anti-pattern                                         | ✅ Alternative                                          |
+| ------------------------------------------------------- | ------------------------------------------------------- |
+| Store monolithique (ex: `jobs.ts` ~400 lignes)          | Découper : `backups.ts`, `derivations.ts`, `restore.ts` |
+| Logique modale/trigger dans `<script setup>` d'une view | Composable `useXxxTrigger`                              |
+| `loading` global unique pour des domaines distincts     | `backupsLoading`, `derivationsLoading`… séparés         |
+| Props drillées sur 3+ niveaux                           | Store Pinia                                             |
+| Skeleton métier qui importe le store                    | Skeleton purement présentatif, sans props               |
+| Skeleton dans `components/` sans lien à une view        | Colocalisé dans `views/` à côté de sa view              |
+| Logique métier dans le `<template>`                     | `computed` ou composable                                |
 
 ---
 

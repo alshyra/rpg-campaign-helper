@@ -26,18 +26,18 @@ Une application web mobile-first pour gérer tes personnages de jeu de rôle —
 ### Prérequis
 
 - Node.js ≥ 18
-- npm
+- bun
 
 ### Installation
 
 ```bash
-npm install
+bun install
 ```
 
 ### Développement
 
 ```bash
-npm run dev
+bun run dev
 ```
 
 L'application est accessible sur [http://localhost:5173](http://localhost:5173).
@@ -45,11 +45,11 @@ L'application est accessible sur [http://localhost:5173](http://localhost:5173).
 ### Build de production
 
 ```bash
-npm run build
+bun run build
 ```
 
 ### Prévisualiser le build
 
 ```bash
-npm run preview
+bun run preview
 ```

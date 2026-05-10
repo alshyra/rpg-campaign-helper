@@ -1,9 +1,12 @@
 <template>
   <div :class="['field', { 'field--full': full }]">
-    <label v-if="label" :for="id">
+    <label
+      v-if="label"
+      :for="id"
+    >
       <span>{{ label }}</span>
     </label>
-    <input 
+    <input
       v-if="type !== 'textarea'"
       :id="id"
       :type="type"
@@ -11,7 +14,7 @@
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
       v-bind="$attrs"
     />
-    <textarea 
+    <textarea
       v-else
       :id="id"
       :value="modelValue"
@@ -22,29 +25,29 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed } from "vue";
 
-defineOptions({ inheritAttrs: false })
+defineOptions({ inheritAttrs: false });
 
 interface Props {
-  id?: string
-  label?: string
-  type?: string
-  modelValue?: string | number
-  full?: boolean
+  id?: string;
+  label?: string;
+  type?: string;
+  modelValue?: string | number;
+  full?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  type: 'text',
-  modelValue: '',
+  type: "text",
+  modelValue: "",
   full: false,
-})
+});
 
 defineEmits<{
-  'update:modelValue': [value: string | number]
-}>()
+  "update:modelValue": [value: string | number];
+}>();
 
-const id = computed(() => props.id || `field-${Math.random().toString(36).slice(2, 9)}`)
+const id = computed(() => props.id || `field-${Math.random().toString(36).slice(2, 9)}`);
 </script>
 
 <style scoped>

@@ -22,19 +22,18 @@
         icon="House"
         :size="16"
       />
-      <div v-else class="w-10" />
+      <div
+        v-else
+        class="w-10"
+      />
 
       <!-- Centre : titre + crayon collé -->
       <div class="flex items-center justify-center gap-1.5">
         <div class="text-center">
-          <p
-            class="m-0 text-[10px] font-black uppercase leading-tight tracking-[0.3em] text-amber-600"
-          >
+          <p class="m-0 text-[10px] font-black uppercase leading-tight tracking-[0.3em] text-amber-600">
             {{ eyebrow }}
           </p>
-          <p
-            class="m-0 mt-0.5 font-(family-name:--serif) text-xl leading-none tracking-wide text-amber-100"
-          >
+          <p class="m-0 mt-0.5 font-(family-name:--serif) text-xl leading-none tracking-wide text-amber-100">
             {{ title }}
           </p>
         </div>
@@ -45,7 +44,8 @@
           :size="16"
           @click="goToTunnel"
           icon="Pencil"
-          ghost />
+          ghost
+        />
       </div>
 
       <!-- Droite -->
@@ -59,7 +59,10 @@
         @click="goToSettings"
       >
       </IconButton>
-      <div v-else class="w-10" />
+      <div
+        v-else
+        class="w-10"
+      />
     </header>
 
     <div class="mx-auto w-full max-w-140 px-5 pb-28 pt-3">
@@ -73,14 +76,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { House, Settings, Pencil } from "@lucide/vue";
 import { storeToRefs } from "pinia";
+import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import BottomNav from "./BottomNav.vue";
+
 import { useCharacterStore } from "../../stores/character";
 import Button from "../ui/Button.vue";
-import { House, Settings, Pencil } from "@lucide/vue";
 import IconButton from "../ui/IconButton.vue";
+import BottomNav from "./BottomNav.vue";
 
 const characterStore = useCharacterStore();
 const { hasCharacter, state } = storeToRefs(characterStore);
@@ -102,10 +106,9 @@ const title = computed(() => {
 });
 
 const showHeader = computed(() => route.name !== "character-tunnel");
+
 const showBottomNav = computed(
-  () =>
-    hasCharacter.value &&
-    !["character-tunnel", "persos", "parametres"].includes(route.name as string),
+  () => hasCharacter.value && !["character-tunnel", "persos", "parametres"].includes(route.name as string),
 );
 
 const goHome = () => {

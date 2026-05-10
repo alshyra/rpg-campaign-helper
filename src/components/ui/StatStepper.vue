@@ -8,52 +8,60 @@
         :disabled="modelValue <= min"
         :aria-label="`Diminuer ${label}`"
         @click="decrement"
-      >–</button>
+      >
+        –
+      </button>
       <span
         class="stat-stepper__value"
         :class="valueClass"
-      >{{ formatted }}</span>
+        >{{ formatted }}</span
+      >
       <button
         type="button"
         class="stat-stepper__btn"
         :disabled="modelValue >= max"
         :aria-label="`Augmenter ${label}`"
         @click="increment"
-      >+</button>
+      >
+        +
+      </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed } from "vue";
 
-const props = withDefaults(defineProps<{
-  label: string
-  modelValue: number
-  min?: number
-  max?: number
-}>(), {
-  min: -5,
-  max: 5,
-})
+const props = withDefaults(
+  defineProps<{
+    label: string;
+    modelValue: number;
+    min?: number;
+    max?: number;
+  }>(),
+  {
+    min: -5,
+    max: 5,
+  },
+);
 
 const emit = defineEmits<{
-  'update:modelValue': [value: number]
-}>()
+  "update:modelValue": [value: number];
+}>();
 
-const decrement = () => emit('update:modelValue', Math.max(props.min, props.modelValue - 1))
-const increment = () => emit('update:modelValue', Math.min(props.max, props.modelValue + 1))
+const decrement = () => emit("update:modelValue", Math.max(props.min, props.modelValue - 1));
+const increment = () => emit("update:modelValue", Math.min(props.max, props.modelValue + 1));
 
 const formatted = computed(() => {
-  if (props.modelValue > 0) return `+${props.modelValue}`
-  return String(props.modelValue)
-})
+  if (props.modelValue > 0) return `+${props.modelValue}`;
+  return String(props.modelValue);
+});
 
 const valueClass = computed(() => {
-  if (props.modelValue > 0) return 'stat-stepper__value--positive'
-  if (props.modelValue < 0) return 'stat-stepper__value--negative'
-  return ''
-})
+  if (props.modelValue > 0) return "stat-stepper__value--positive";
+  if (props.modelValue < 0) return "stat-stepper__value--negative";
+  return "";
+});
 </script>
 
 <style scoped>
@@ -87,7 +95,9 @@ const valueClass = computed(() => {
   color: var(--text-soft);
   font-size: 1.2rem;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
   font: inherit;
 }
 
