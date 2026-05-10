@@ -28,15 +28,15 @@
       <div class="stat-box grid grid-cols-[1fr_auto] items-center">
         <div>
           <p class="stat-box__label">{{ stat.label }}</p>
-          <input
+          <FormField
             v-if="!readonly"
             class="stat-box__input"
-            :value="stat.value"
             type="range"
+            :model-value="stat.value"
             min="-5"
             max="5"
             step="1"
-            @input="onInput(stat.key, $event)"
+            @update:model-value="onInput(stat.key, $event)"
           />
           <p
             v-else
@@ -54,6 +54,7 @@
 <script setup lang="ts">
 import type { Stat } from "../../types/character";
 import AppCard from "../ui/AppCard.vue";
+import FormField from "../ui/FormField.vue";
 
 defineProps<{
   stats: Stat[];
@@ -64,9 +65,8 @@ const emit = defineEmits<{
   update: [key: Stat["key"], value: number];
 }>();
 
-const onInput = (key: Stat["key"], event: Event) => {
-  const target = event.target as HTMLInputElement;
-  emit("update", key, Number(target.value));
+const onInput = (key: Stat["key"], value: string | number) => {
+  emit("update", key, Number(value));
 };
 
 const formatValue = (value: number) => (value >= 0 ? `+${value}` : `${value}`);

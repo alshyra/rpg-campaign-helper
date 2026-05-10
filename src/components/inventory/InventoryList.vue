@@ -3,8 +3,8 @@
     <!-- Header avec toggle -->
     <div class="flex items-center justify-between px-2">
       <h2 class="m-0 font-(family-name:--serif) text-2xl italic text-amber-100">Sac à dos</h2>
-      <button
-        type="button"
+      <IconButton
+        square
         class="rounded-full p-2 transition-all"
         :class="showAddForm ? 'bg-red-500/20 text-red-500 rotate-45' : 'bg-amber-500/10 text-amber-500'"
         @click="showAddForm = !showAddForm"
@@ -20,7 +20,7 @@
         >
           <path d="M12 5v14M5 12h14" />
         </svg>
-      </button>
+      </IconButton>
     </div>
 
     <!-- Formulaire ajout (collapsible) -->
@@ -30,9 +30,10 @@
     >
       <div class="flex items-center justify-between">
         <h3 class="m-0 text-[10px] font-black uppercase tracking-widest text-amber-400">Nouvel Objet</h3>
-        <button
-          type="button"
-          class="text-stone-500 hover:text-white"
+        <IconButton
+          ghost
+          square
+          class="h-8 w-8 p-0 text-stone-500 hover:text-white"
           @click="showAddForm = false"
         >
           <svg
@@ -46,23 +47,21 @@
           >
             <path d="M18 6L6 18M6 6l12 12" />
           </svg>
-        </button>
+        </IconButton>
       </div>
-      <input
+      <FormField
         v-model="draft.name"
-        type="text"
         placeholder="Nom..."
-        class="w-full rounded-xl border border-white/10 bg-black/60 px-4 py-3 text-sm text-amber-100 outline-none placeholder:text-stone-600 focus:border-amber-500"
+        class="inventory-field"
       />
-      <input
+      <FormField
         v-model="draft.details"
-        type="text"
         placeholder="Détails (poids, effet...)"
-        class="w-full rounded-xl border border-white/10 bg-black/60 px-4 py-3 text-sm text-amber-100 outline-none placeholder:text-stone-600 focus:border-amber-500"
+        class="inventory-field"
       />
-      <button
-        type="button"
-        class="flex w-full items-center justify-center gap-2 rounded-xl bg-amber-600 py-3 font-black text-black transition-all hover:bg-amber-500 active:scale-[0.98]"
+      <Button
+        variant="primary"
+        class="w-full gap-2 py-3 font-black text-black transition-all hover:bg-amber-500 active:scale-[0.98]"
         @click="submitItem"
       >
         <svg
@@ -80,7 +79,7 @@
           <path d="M12 8v4M12 16h.01" />
         </svg>
         AJOUTER AU SAC
-      </button>
+      </Button>
     </section>
 
     <!-- État vide -->
@@ -121,9 +120,9 @@
         </div>
         <!-- Contrôle quantité -->
         <div class="flex items-center gap-1 rounded-xl border border-white/5 bg-black/40 p-1">
-          <button
-            type="button"
-            class="flex h-8 w-8 items-center justify-center rounded-lg text-stone-400 transition-all hover:bg-white/5"
+          <IconButton
+            square
+            class="h-8 w-8 rounded-lg border-transparent bg-transparent p-0 text-stone-400 transition-all hover:bg-white/5"
             :class="item.quantity === 1 ? 'hover:text-red-500' : 'hover:text-red-400'"
             @click="decrement(item)"
           >
@@ -152,11 +151,11 @@
             >
               <path d="M5 12h14" />
             </svg>
-          </button>
+          </IconButton>
           <span class="w-8 text-center font-mono font-black text-amber-500">{{ item.quantity }}</span>
-          <button
-            type="button"
-            class="flex h-8 w-8 items-center justify-center rounded-lg text-stone-400 transition-all hover:bg-white/5 hover:text-emerald-500"
+          <IconButton
+            square
+            class="h-8 w-8 rounded-lg border-transparent bg-transparent p-0 text-stone-400 transition-all hover:bg-white/5 hover:text-emerald-500"
             @click="emit('quantity', item.id, item.quantity + 1)"
           >
             <svg
@@ -170,7 +169,7 @@
             >
               <path d="M12 5v14M5 12h14" />
             </svg>
-          </button>
+          </IconButton>
         </div>
       </div>
     </section>
@@ -181,6 +180,9 @@
 import { reactive, ref } from "vue";
 
 import type { InventoryItem } from "../../types/character";
+import Button from "../ui/Button.vue";
+import FormField from "../ui/FormField.vue";
+import IconButton from "../ui/IconButton.vue";
 
 defineProps<{
   items: InventoryItem[];
@@ -219,8 +221,27 @@ const submitItem = () => {
 const decrement = (item: InventoryItem) => {
   if (item.quantity <= 1) {
     emit("remove", item.id);
-  } else {
-    emit("quantity", item.id, item.quantity - 1);
+    return;
   }
+
+  emit("quantity", item.id, item.quantity - 1);
 };
 </script>
+
+<style scoped>
+.inventory-field :deep(input) {
+  border-color: rgb(255 255 255 / 0.1);
+  background: rgb(0 0 0 / 0.6);
+  color: rgb(254 243 199 / 1);
+  padding: 0.75rem 1rem;
+}
+
+.inventory-field :deep(input)::placeholder {
+  color: rgb(87 83 78 / 1);
+}
+
+.inventory-field :deep(input:focus) {
+  border-color: rgb(245 158 11 / 1);
+  outline: none;
+}
+</style>

@@ -6,20 +6,18 @@
         Sélectionne ou crée un personnage pour accéder à cette section.
       </p>
       <div class="no-character-empty__actions grid grid-cols-2 gap-2.5 max-[420px]:grid-cols-1">
-        <button
-          class="secondary-button"
-          type="button"
+        <Button
+          variant="secondary"
           @click="goPersos"
         >
           Aller à Persos
-        </button>
-        <button
-          class="primary-button"
-          type="button"
+        </Button>
+        <Button
+          variant="primary"
           @click="goTunnel"
         >
           Créer un perso
-        </button>
+        </Button>
       </div>
     </div>
   </AppCard>
@@ -29,6 +27,7 @@
 import { useRouter } from "vue-router";
 
 import AppCard from "../ui/AppCard.vue";
+import Button from "../ui/Button.vue";
 
 const router = useRouter();
 

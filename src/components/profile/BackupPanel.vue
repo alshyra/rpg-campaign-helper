@@ -3,9 +3,9 @@
     <h3 class="m-0 font-(family-name:--serif) text-lg text-amber-100">Données de {{ characterName }}</h3>
     <div class="grid gap-3">
       <!-- Export JSON -->
-      <button
-        class="group flex w-full items-center justify-between rounded-xl border border-white/5 bg-stone-800 p-4 font-bold text-amber-400 transition-all hover:bg-stone-700"
-        type="button"
+      <Button
+        variant="secondary"
+        class="group w-full justify-between rounded-xl border-white/5 bg-stone-800 p-4 font-bold text-amber-400 transition-all hover:bg-stone-700"
         @click="emit('export')"
       >
         <div class="flex items-center gap-3">
@@ -36,7 +36,7 @@
         >
           <path d="M12 4v10M8.5 10.5L12 14l3.5-3.5M5 18h14" />
         </svg>
-      </button>
+      </Button>
 
       <!-- Import JSON -->
       <FileImportLabel
@@ -65,9 +65,9 @@
       </FileImportLabel>
 
       <!-- Supprimer le personnage -->
-      <button
-        class="flex w-full items-center gap-3 rounded-xl border border-transparent bg-stone-800/30 p-4 font-bold text-red-500/50 transition-all hover:text-red-500"
-        type="button"
+      <Button
+        variant="secondary"
+        class="w-full justify-start gap-3 rounded-xl border-transparent bg-stone-800/30 p-4 font-bold text-red-500/50 transition-all hover:text-red-500"
         @click="emit('delete')"
       >
         <svg
@@ -83,7 +83,7 @@
           <path d="M5 7h14M9 7V5h6v2M8 7v11h8V7M10.5 10.5v5M13.5 10.5v5" />
         </svg>
         <span>Supprimer ce personnage</span>
-      </button>
+      </Button>
     </div>
     <p class="m-0 text-xs text-stone-600">Dernière mise à jour : {{ updatedAtLabel }}</p>
   </section>
@@ -91,6 +91,7 @@
 
 <script setup lang="ts">
 import FileImportLabel from "../ui/FileImportLabel.vue";
+import Button from "../ui/Button.vue";
 
 defineProps<{
   characterName: string;

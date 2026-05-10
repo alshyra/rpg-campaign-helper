@@ -8,9 +8,9 @@
       @delete="deleteCampaign"
     />
     <section class="grid gap-3">
-      <button
-        class="flex w-full items-center justify-center gap-3 rounded-2xl bg-amber-600 p-5 text-lg font-black text-black shadow-lg shadow-amber-900/20 transition-all hover:bg-amber-500 active:scale-95"
-        type="button"
+      <Button
+        variant="primary"
+        class="w-full gap-3 p-5 text-lg font-black shadow-lg shadow-amber-900/20 transition-all hover:bg-amber-500 active:scale-95"
         @click="goToTunnel"
       >
         <svg
@@ -25,7 +25,7 @@
           <path d="M12 5v14M5 12h14" />
         </svg>
         NOUVEAU HÉROS
-      </button>
+      </Button>
       <div class="relative">
         <FileImportLabel @file-selected="onFileChange">
           <svg
@@ -52,6 +52,7 @@ import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 
 import CampaignManager from "../components/character/CampaignManager.vue";
+import Button from "../components/ui/Button.vue";
 import FileImportLabel from "../components/ui/FileImportLabel.vue";
 import { useCharacterStore } from "../stores/character";
 

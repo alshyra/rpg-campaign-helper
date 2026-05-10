@@ -69,11 +69,12 @@
 
           <!-- Indicateur de progression -->
           <div class="flex items-center justify-center gap-1.5">
-            <button
+            <IconButton
               v-for="(_, i) in totalSteps"
               :key="i"
-              type="button"
-              class="h-1.5 rounded-full transition-all duration-300"
+              square
+              ghost
+              class="rounded-full border-transparent p-0 transition-all duration-300"
               :class="i === currentStep ? 'w-5 bg-amber-500' : 'w-1.5 bg-white/15'"
               :aria-label="`Aller à l'étape ${i + 1}`"
               @click="currentStep = i"
@@ -82,20 +83,18 @@
 
           <!-- Actions -->
           <div class="onboarding__actions grid grid-cols-2 gap-2.5">
-            <button
-              class="secondary-button"
-              type="button"
+            <Button
+              variant="secondary"
               @click="dismiss(false)"
             >
               Passer
-            </button>
-            <button
-              class="primary-button"
-              type="button"
+            </Button>
+            <Button
+              variant="primary"
               @click="currentStep < totalSteps - 1 ? currentStep++ : dismiss(true)"
             >
               {{ currentStep < totalSteps - 1 ? "Suivant" : "Commencer" }}
-            </button>
+            </Button>
           </div>
         </section>
       </div>
@@ -105,6 +104,9 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+
+import Button from "../ui/Button.vue";
+import IconButton from "../ui/IconButton.vue";
 
 const STORAGE_KEY = "rpg-player-helper::onboarding-seen";
 const isVisible = ref(false);

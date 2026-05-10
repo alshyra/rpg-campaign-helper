@@ -40,11 +40,11 @@
           tier.label
         }}</span>
         <div class="grid grid-cols-2 gap-2">
-          <button
+          <Button
             v-for="boxIdx in [0, 1]"
             :key="boxIdx"
-            type="button"
-            class="relative h-10 overflow-hidden rounded-xl border-2 transition-all duration-300"
+            variant="secondary"
+            class="relative h-10 overflow-hidden rounded-xl border-2 p-0 transition-all duration-300"
             :class="
               (profile.injuries[tier.key] || 0) > boxIdx
                 ? `bg-linear-to-br ${tier.color} border-transparent scale-[1.02]`
@@ -62,6 +62,7 @@
 import { computed } from "vue";
 
 import type { Profile } from "../../types/character";
+import Button from "../ui/Button.vue";
 
 const props = defineProps<{
   profile: Profile;
@@ -96,10 +97,8 @@ const handleBoxClick = (tierId: keyof Profile["injuries"], boxIdx: number) => {
   const currentVal = newInjuries[tierId] || 0;
 
   if (boxIdx < currentVal) {
-    // Case déjà active → décrémenter
     newInjuries[tierId] = Math.max(0, currentVal - 1);
   } else {
-    // Case inactive → remplir le premier slot dispo à partir de ce tier
     const startIdx = tierOrder.indexOf(tierId);
     for (let i = startIdx; i < tierOrder.length; i++) {
       const tId = tierOrder[i];

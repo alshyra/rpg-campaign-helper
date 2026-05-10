@@ -39,6 +39,7 @@
         </div>
 
         <IconButton
+          v-if="showEditButton"
           type="button"
           aria-label="Modifier le personnage"
           :size="16"
@@ -53,6 +54,7 @@
         v-if="route.name !== 'parametres'"
         class="icon-button icon-button--square justify-self-end"
         type="button"
+        ghost
         aria-label="Ouvrir les paramètres"
         icon="Settings"
         :size="16"
@@ -110,6 +112,8 @@ const showHeader = computed(() => route.name !== "character-tunnel");
 const showBottomNav = computed(
   () => hasCharacter.value && !["character-tunnel", "persos", "parametres"].includes(route.name as string),
 );
+
+const showEditButton = computed(() => route.name === "profil" || route.name === "inventaire" || route.name === "notes");
 
 const goHome = () => {
   router.push("/persos");
