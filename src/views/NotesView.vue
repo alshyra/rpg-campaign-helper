@@ -2,11 +2,7 @@
   <div class="stack-xl grid gap-6">
     <NoCharacterEmpty v-if="!character" />
     <template v-else>
-      <NotesTimeline
-        :notes="notes"
-        @add="characterStore.addNote"
-        @remove="characterStore.removeNote"
-      />
+      <NotesTimeline />
     </template>
   </div>
 </template>
@@ -23,5 +19,4 @@ const characterStore = useCharacterStore();
 const { state } = storeToRefs(characterStore);
 
 const character = computed(() => state.value);
-const notes = computed(() => state.value?.notes ?? []);
 </script>

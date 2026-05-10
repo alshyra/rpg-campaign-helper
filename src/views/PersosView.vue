@@ -1,12 +1,7 @@
 <template>
   <!-- center the div below in the middle of the page -->
   <div class="flex flex-col gap-8 items-stretch justify-center min-h-screen -mt-16">
-    <CampaignManager
-      :campaigns="campaigns"
-      :active-campaign-id="activeCampaignId"
-      @select="selectCampaign"
-      @delete="deleteCampaign"
-    />
+    <CampaignManager />
     <section class="grid gap-3">
       <Button
         variant="primary"
@@ -48,7 +43,6 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 
 import CampaignManager from "../components/character/CampaignManager.vue";
@@ -57,24 +51,10 @@ import FileImportLabel from "../components/ui/FileImportLabel.vue";
 import { useCharacterStore } from "../stores/character";
 
 const characterStore = useCharacterStore();
-const { activeCampaignId, campaigns } = storeToRefs(characterStore);
 const router = useRouter();
 
 const goToTunnel = () => {
   router.push("/personnage/tunnel?new=1");
-};
-
-const selectCampaign = (id: string) => {
-  characterStore.selectCampaign(id);
-  router.push("/profil");
-};
-
-const deleteCampaign = (id: string) => {
-  const confirmed = window.confirm("Supprimer ce personnage de campagne ? Cette action est définitive.");
-  if (!confirmed) {
-    return;
-  }
-  characterStore.deleteCampaign(id);
 };
 
 const onFileChange = async (event: Event) => {

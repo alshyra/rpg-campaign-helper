@@ -154,9 +154,12 @@
 </template>
 
 <script setup lang="ts">
-import { toRef } from "vue";
+import { storeToRefs } from "pinia";
+import { computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 import { useCharacterDraftWizard } from "../../composables/useCharacterDraftWizard";
+import { useCharacterStore } from "../../stores/character";
 import type { CharacterState } from "../../types/character";
 import AppCard from "../ui/AppCard.vue";
 import Button from "../ui/Button.vue";
@@ -164,14 +167,40 @@ import FormField from "../ui/FormField.vue";
 import IconButton from "../ui/IconButton.vue";
 import StatsStepper from "../ui/StatStepper.vue";
 
-const props = defineProps<{
-  character: CharacterState;
-  submitLabel: string;
-}>();
+const characterStore = useCharacterStore();
+const { hasCharacter, state } = storeToRefs(characterStore);
+const route = useRoute();
+const router = useRouter();
 
-const emit = defineEmits<{
-  submit: [character: CharacterState];
-}>();
+const emptyCharacter = (): CharacterState => ({
+  profile: {
+    characterName: "",
+    role: "",
+    mood: "",
+    injuries: {
+      light: 0,
+      minor: 0,
+      major: 0,
+      fatal: 0,
+    },
+  },
+  stats: [
+    { key: "dex", label: "DEX", value: 0 },
+    { key: "for", label: "FOR", value: 0 },
+    { key: "con", label: "CON", value: 0 },
+    { key: "int", label: "INT", value: 0 },
+    { key: "sag", label: "SAG", value: 0 },
+    { key: "cha", label: "CHA", value: 0 },
+  ],
+  skills: [],
+  inventory: [],
+  notes: [],
+  updatedAt: new Date().toISOString(),
+});
+
+const isNewMode = computed(() => route.query.new === "1");
+const character = computed(() => (isNewMode.value || !state.value ? emptyCharacter() : state.value));
+const submitLabel = computed(() => (hasCharacter.value ? "Enregistrer" : "Créer le personnage"));
 
 const {
   steps,
@@ -186,10 +215,18 @@ const {
   updateSkillValue,
   updateSkillText,
   snapshot,
-} = useCharacterDraftWizard(toRef(props, "character"));
+} = useCharacterDraftWizard(character);
 
 const submitCharacter = () => {
-  emit("submit", snapshot());
+  const payload = snapshot();
+
+  if (isNewMode.value || !hasCharacter.value) {
+    characterStore.createNewCharacter(payload);
+  } else {
+    characterStore.saveActiveCharacter(payload);
+  }
+
+  router.replace("/profil");
 };
 </script>
 <style scoped>

@@ -55,7 +55,7 @@
           square
           class="absolute -left-3.5 top-1.5 h-7 w-7 rounded-full border-white/10 bg-stone-900/80 p-0 text-stone-600 opacity-0 transition-all group-hover:opacity-100 hover:bg-white/5 hover:text-red-500!"
           aria-label="Supprimer cette note"
-          @click="emit('remove', note.id)"
+          @click="removeNote(note.id)"
         >
           <svg
             viewBox="0 0 24 24"
@@ -80,22 +80,19 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from "vue";
+import { storeToRefs } from "pinia";
+import { computed, reactive } from "vue";
 
-import type { NoteEntry } from "../../types/character";
+import { useCharacterStore } from "../../stores/character";
 import AppCard from "../ui/AppCard.vue";
 import Button from "../ui/Button.vue";
 import FormField from "../ui/FormField.vue";
 import IconButton from "../ui/IconButton.vue";
 
-defineProps<{
-  notes: NoteEntry[];
-}>();
+const characterStore = useCharacterStore();
+const { state } = storeToRefs(characterStore);
 
-const emit = defineEmits<{
-  add: [note: Omit<NoteEntry, "id" | "createdAt">];
-  remove: [id: string];
-}>();
+const notes = computed(() => state.value?.notes ?? []);
 
 const draft = reactive({
   title: "",
@@ -107,13 +104,17 @@ const submitNote = () => {
     return;
   }
 
-  emit("add", {
+  characterStore.addNote({
     title: draft.title.trim(),
     content: draft.content.trim(),
   });
 
   draft.title = "";
   draft.content = "";
+};
+
+const removeNote = (id: string) => {
+  characterStore.removeNote(id);
 };
 </script>
 

@@ -84,7 +84,7 @@
 
     <!-- État vide -->
     <div
-      v-if="items.length === 0"
+      v-if="inventory.length === 0"
       class="rounded-3xl border-2 border-dashed border-white/5 py-12 text-center text-stone-600"
     >
       <svg
@@ -105,7 +105,7 @@
     <!-- Liste des objets -->
     <section class="grid gap-3">
       <div
-        v-for="item in items"
+        v-for="item in inventory"
         :key="item.id"
         class="flex items-center justify-between rounded-2xl border border-white/5 bg-stone-900/40 p-4"
       >
@@ -156,7 +156,7 @@
           <IconButton
             square
             class="h-8 w-8 rounded-lg border-transparent bg-transparent p-0 text-stone-400 transition-all hover:bg-white/5 hover:text-emerald-500"
-            @click="emit('quantity', item.id, item.quantity + 1)"
+            @click="increment(item)"
           >
             <svg
               viewBox="0 0 24 24"
@@ -177,22 +177,19 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { storeToRefs } from "pinia";
+import { computed, reactive, ref } from "vue";
 
 import type { InventoryItem } from "../../types/character";
+import { useCharacterStore } from "../../stores/character";
 import Button from "../ui/Button.vue";
 import FormField from "../ui/FormField.vue";
 import IconButton from "../ui/IconButton.vue";
 
-defineProps<{
-  items: InventoryItem[];
-}>();
+const characterStore = useCharacterStore();
+const { state } = storeToRefs(characterStore);
 
-const emit = defineEmits<{
-  add: [item: Omit<InventoryItem, "id">];
-  remove: [id: string];
-  quantity: [id: string, quantity: number];
-}>();
+const inventory = computed(() => state.value?.inventory ?? []);
 
 const showAddForm = ref(false);
 
@@ -207,7 +204,7 @@ const submitItem = () => {
     return;
   }
 
-  emit("add", {
+  characterStore.addInventoryItem({
     name: draft.name.trim(),
     details: draft.details.trim(),
     quantity: Math.max(1, draft.quantity),
@@ -220,11 +217,15 @@ const submitItem = () => {
 
 const decrement = (item: InventoryItem) => {
   if (item.quantity <= 1) {
-    emit("remove", item.id);
+    characterStore.removeInventoryItem(item.id);
     return;
   }
 
-  emit("quantity", item.id, item.quantity - 1);
+  characterStore.updateInventoryItem(item.id, { quantity: item.quantity - 1 });
+};
+
+const increment = (item: InventoryItem) => {
+  characterStore.updateInventoryItem(item.id, { quantity: item.quantity + 1 });
 };
 </script>
 

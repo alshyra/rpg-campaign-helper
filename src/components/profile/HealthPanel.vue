@@ -40,11 +40,11 @@
           tier.label
         }}</span>
         <div class="grid grid-cols-2 gap-2">
-          <Button
+          <button
             v-for="boxIdx in [0, 1]"
             :key="boxIdx"
-            variant="secondary"
-            class="relative h-10 overflow-hidden rounded-xl border-2 p-0 transition-all duration-300"
+            type="button"
+            class="relative h-10 w-full overflow-hidden rounded-xl border-2 p-0 transition-all duration-300"
             :class="
               (profile.injuries[tier.key] || 0) > boxIdx
                 ? `bg-linear-to-br ${tier.color} border-transparent scale-[1.02]`
@@ -59,18 +59,23 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import { computed } from "vue";
 
 import type { Profile } from "../../types/character";
-import Button from "../ui/Button.vue";
+import { useCharacterStore } from "../../stores/character";
 
-const props = defineProps<{
-  profile: Profile;
-}>();
+const characterStore = useCharacterStore();
+const { state } = storeToRefs(characterStore);
 
-const emit = defineEmits<{
-  update: [patch: Partial<Profile>];
-}>();
+const emptyProfileInjuries: Profile["injuries"] = {
+  light: 0,
+  minor: 0,
+  major: 0,
+  fatal: 0,
+};
+
+const profile = computed(() => state.value?.profile ?? { injuries: emptyProfileInjuries });
 
 const tiers: Array<{ key: keyof Profile["injuries"]; label: string; color: string }> = [
   { key: "light", label: "Légère", color: "from-emerald-500 to-emerald-700" },
@@ -81,10 +86,10 @@ const tiers: Array<{ key: keyof Profile["injuries"]; label: string; color: strin
 
 const tierOrder = ["light", "minor", "major", "fatal"] as const;
 
-const usedSlots = computed(() => Object.values(props.profile.injuries).reduce((total, value) => total + value, 0));
+const usedSlots = computed(() => Object.values(profile.value.injuries).reduce((total, value) => total + value, 0));
 
 const status = computed(() => {
-  const inj = props.profile.injuries;
+  const inj = profile.value.injuries;
   if ((inj.fatal || 0) >= 2) return { text: "AGONISANT / MORT", color: "text-red-600" };
   if ((inj.major || 0) >= 1) return { text: "BLESSURES GRAVES", color: "text-orange-500" };
   if ((inj.minor || 0) >= 1) return { text: "MAL EN POINT", color: "text-amber-500" };
@@ -93,7 +98,7 @@ const status = computed(() => {
 });
 
 const handleBoxClick = (tierId: keyof Profile["injuries"], boxIdx: number) => {
-  const newInjuries = { ...props.profile.injuries };
+  const newInjuries = { ...profile.value.injuries };
   const currentVal = newInjuries[tierId] || 0;
 
   if (boxIdx < currentVal) {
@@ -109,6 +114,6 @@ const handleBoxClick = (tierId: keyof Profile["injuries"], boxIdx: number) => {
     }
   }
 
-  emit("update", { injuries: newInjuries });
+  characterStore.updateProfile({ injuries: newInjuries });
 };
 </script>

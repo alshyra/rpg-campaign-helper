@@ -2,12 +2,7 @@
   <div class="stack-xl grid gap-6">
     <NoCharacterEmpty v-if="!character" />
     <template v-else>
-      <InventoryList
-        :items="inventory"
-        @add="characterStore.addInventoryItem"
-        @remove="characterStore.removeInventoryItem"
-        @quantity="updateQuantity"
-      />
+      <InventoryList />
     </template>
   </div>
 </template>
@@ -24,9 +19,4 @@ const characterStore = useCharacterStore();
 const { state } = storeToRefs(characterStore);
 
 const character = computed(() => state.value);
-const inventory = computed(() => state.value?.inventory ?? []);
-
-const updateQuantity = (id: string, quantity: number) => {
-  characterStore.updateInventoryItem(id, { quantity });
-};
 </script>

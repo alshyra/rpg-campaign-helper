@@ -6,7 +6,7 @@
       <Button
         variant="secondary"
         class="group w-full justify-between rounded-xl border-white/5 bg-stone-800 p-4 font-bold text-amber-400 transition-all hover:bg-stone-700"
-        @click="emit('export')"
+        @click="exportJson"
       >
         <div class="flex items-center gap-3">
           <svg
@@ -68,7 +68,7 @@
       <Button
         variant="secondary"
         class="w-full justify-start gap-3 rounded-xl border-transparent bg-stone-800/30 p-4 font-bold text-red-500/50 transition-all hover:text-red-500"
-        @click="emit('delete')"
+        @click="deleteCharacter"
       >
         <svg
           viewBox="0 0 24 24"
@@ -90,27 +90,67 @@
 </template>
 
 <script setup lang="ts">
-import FileImportLabel from "../ui/FileImportLabel.vue";
+import { storeToRefs } from "pinia";
+import { computed } from "vue";
+import { useRouter } from "vue-router";
+
+import { useCharacterStore } from "../../stores/character";
 import Button from "../ui/Button.vue";
+import FileImportLabel from "../ui/FileImportLabel.vue";
 
-defineProps<{
-  characterName: string;
-  updatedAtLabel: string;
-}>();
+const characterStore = useCharacterStore();
+const { state } = storeToRefs(characterStore);
+const router = useRouter();
 
-const emit = defineEmits<{
-  export: [];
-  import: [file: File];
-  delete: [];
-}>();
+const characterName = computed(() => state.value?.profile.characterName ?? "");
 
-const onFileChange = (event: Event) => {
+const updatedAtLabel = computed(() =>
+  new Intl.DateTimeFormat("fr-FR", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(state.value?.updatedAt ?? Date.now())),
+);
+
+const exportJson = () => {
+  const blob = new Blob([characterStore.serialize()], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = `rpg-player-helper-${new Date().toISOString().slice(0, 10)}.json`;
+  anchor.click();
+  URL.revokeObjectURL(url);
+};
+
+const onFileChange = async (event: Event) => {
   const target = event.target as HTMLInputElement;
   const [file] = target.files ?? [];
   if (!file) {
     return;
   }
-  emit("import", file);
-  target.value = "";
+
+  try {
+    const text = await file.text();
+    const payload = JSON.parse(text) as unknown;
+    characterStore.importFromObject(payload);
+  } catch {
+    window.alert("Le fichier JSON est invalide ou illisible.");
+  } finally {
+    target.value = "";
+  }
+};
+
+const deleteCharacter = () => {
+  const activeCampaignId = characterStore.activeCampaignId;
+  if (!activeCampaignId) {
+    return;
+  }
+
+  const confirmed = window.confirm("Supprimer ce personnage ? Cette action est définitive.");
+  if (!confirmed) {
+    return;
+  }
+
+  characterStore.deleteCampaign(activeCampaignId);
+  router.push("/persos");
 };
 </script>
