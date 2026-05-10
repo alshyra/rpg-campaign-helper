@@ -121,6 +121,7 @@ const showAddForm = ref(false)
 const draft = reactive({
   name: '',
   details: '',
+  quantity: 1,
 })
 
 const submitItem = () => {

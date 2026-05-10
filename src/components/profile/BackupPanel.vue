@@ -22,7 +22,7 @@
       </button>
 
       <!-- Import JSON -->
-      <FileImportLabel variant="icon-button" class="!block !w-full !rounded-xl !border !border-white/5 !bg-stone-800 !p-4 !text-left !font-bold !text-amber-400 hover:!bg-stone-700" aria-label="Importer un JSON" @file-selected="onFileChange">
+      <FileImportLabel variant="icon-button" class="block! w-full! rounded-xl! border! border-white/5! bg-stone-800! p-4! text-left! font-bold! text-amber-400! hover:bg-stone-700!" aria-label="Importer un JSON" @file-selected="onFileChange">
         <div class="flex items-center gap-3">
           <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />

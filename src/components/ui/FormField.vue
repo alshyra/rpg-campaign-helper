@@ -8,14 +8,14 @@
       :id="id"
       :type="type"
       :value="modelValue"
-      @input="$emit('update:modelValue', $event.target.value)"
+      @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
       v-bind="$attrs"
     />
     <textarea 
       v-else
       :id="id"
       :value="modelValue"
-      @input="$emit('update:modelValue', $event.target.value)"
+      @input="$emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
       v-bind="$attrs"
     />
   </div>

@@ -28,24 +28,6 @@
         </label>
       </div>
 
-      <div v-if="currentStepId === 'injuries'" class="character-editor__section grid gap-3 border-t border-white/5 pt-1">
-        <div class="character-editor__section-head flex items-end justify-between gap-3 max-[420px]:grid max-[420px]:grid-cols-1">
-          <p class="section-heading__eyebrow">Blessures</p>
-          <strong>{{ usedInjurySlots }}/8 emplacements utilisés</strong>
-        </div>
-        <div class="injury-stepper grid grid-cols-[1fr_auto_1fr] items-center gap-2.5 max-[420px]:grid-cols-1">
-          <button class="icon-button" type="button" @click="adjustInjuries(-1)">Retirer une blessure</button>
-          <strong>{{ usedInjurySlots }}</strong>
-          <button class="icon-button" type="button" @click="adjustInjuries(1)">Ajouter une blessure</button>
-        </div>
-        <div class="injury-grid injury-grid--readonly grid grid-cols-4 gap-3 max-[420px]:grid-cols-1">
-          <div v-for="injury in injuries" :key="injury.key" class="injury-pill">
-            <span>{{ injury.label }}</span>
-            <strong>{{ draft.profile.injuries[injury.key] }}/2</strong>
-          </div>
-        </div>
-        <p class="character-editor__hint">Chaque catégorie dispose de 2 emplacements avant de passer à la suivante.</p>
-      </div>
       <div v-if="currentStepId === 'stats'" class="character-editor__section grid gap-3 border-t border-white/5 pt-1">
         <div class="character-editor__section-head flex items-end justify-between gap-3 max-[420px]:grid max-[420px]:grid-cols-1">
           <p class="section-heading__eyebrow">Caractéristiques</p>

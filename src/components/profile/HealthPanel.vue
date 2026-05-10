@@ -28,7 +28,7 @@
             type="button"
             class="relative h-10 overflow-hidden rounded-xl border-2 transition-all duration-300"
             :class="(profile.injuries[tier.key] || 0) > boxIdx
-              ? `bg-gradient-to-br ${tier.color} border-transparent scale-[1.02]`
+              ? `bg-linear-to-br ${tier.color} border-transparent scale-[1.02]`
               : 'border-white/5 bg-black/40 hover:border-white/20'"
             @click="handleBoxClick(tier.key, boxIdx)"
           />

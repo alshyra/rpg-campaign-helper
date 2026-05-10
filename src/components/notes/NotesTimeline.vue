@@ -37,7 +37,7 @@
         class="group relative border-l border-amber-600/30 pl-6"
       >
         <button
-          class="absolute -left-3.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-stone-900/80 text-stone-600 opacity-0 transition-all group-hover:opacity-100 hover:!text-red-500"
+          class="absolute -left-3.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-stone-900/80 text-stone-600 opacity-0 transition-all group-hover:opacity-100 hover:text-red-500!"
           type="button"
           aria-label="Supprimer cette note"
           @click="emit('remove', note.id)"
