@@ -2,7 +2,6 @@
   <div class="stack-xl grid gap-6">
     <NoCharacterEmpty v-if="!character" />
     <template v-else>
-      <SectionHeading eyebrow="Inventaire" title="Équipement et trouvailles" />
       <InventoryList
         :items="inventory"
         @add="characterStore.addInventoryItem"
@@ -18,7 +17,6 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import NoCharacterEmpty from '../components/character/NoCharacterEmpty.vue'
 import InventoryList from '../components/inventory/InventoryList.vue'
-import SectionHeading from '../components/ui/SectionHeading.vue'
 import { useCharacterStore } from '../stores/character'
 
 const characterStore = useCharacterStore()

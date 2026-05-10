@@ -1,10 +1,15 @@
 <template>
-  <div class="stack-xl grid gap-6">
+  <div class="grid gap-6">
     <NoCharacterEmpty v-if="!character" />
 
     <template v-else>
-      <SectionHeading eyebrow="Paramètres" title="Sauvegarde" />
-      <BackupPanel :updated-at-label="formattedUpdatedAt" @export="exportJson" @import="importJson" />
+      <BackupPanel
+        :character-name="state?.profile.characterName ?? ''"
+        :updated-at-label="formattedUpdatedAt"
+        @export="exportJson"
+        @import="importJson"
+        @delete="deleteCharacter"
+      />
     </template>
   </div>
 </template>
@@ -12,13 +17,14 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
 import NoCharacterEmpty from '../components/character/NoCharacterEmpty.vue'
 import BackupPanel from '../components/profile/BackupPanel.vue'
-import SectionHeading from '../components/ui/SectionHeading.vue'
 import { useCharacterStore } from '../stores/character'
 
 const characterStore = useCharacterStore()
 const { state } = storeToRefs(characterStore)
+const router = useRouter()
 
 const character = computed(() => state.value)
 
@@ -47,5 +53,14 @@ const importJson = async (file: File) => {
   } catch {
     window.alert('Le fichier JSON est invalide ou illisible.')
   }
+}
+
+const deleteCharacter = () => {
+  const activeCampaignId = characterStore.activeCampaignId
+  if (!activeCampaignId) return
+  const confirmed = window.confirm('Supprimer ce personnage ? Cette action est définitive.')
+  if (!confirmed) return
+  characterStore.deleteCampaign(activeCampaignId)
+  router.push('/persos')
 }
 </script>

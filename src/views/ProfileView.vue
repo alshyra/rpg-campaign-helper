@@ -1,11 +1,12 @@
 <template>
-  <div class="stack-xl grid gap-6">
+  <div class="grid gap-8">
     <NoCharacterEmpty v-if="!character" />
 
     <template v-else>
-      <div class="profile-overview-head flex items-end justify-between gap-3">
-        <SectionHeading eyebrow="Profil" title="Fiche rapide" />
-        <div class="profile-overview-actions flex gap-2">
+      <!-- Section Aptitudes -->
+      <section class="grid gap-4">
+        <div class="flex items-center justify-between px-2">
+          <h2 class="m-0 font-(family-name:--serif) text-2xl text-amber-100">Aptitudes</h2>
           <IconButton square type="button" aria-label="Modifier le personnage" @click="goToTunnel">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M4 20h4l10-10-4-4L4 16v4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
@@ -13,14 +14,14 @@
             </svg>
           </IconButton>
         </div>
-      </div>
+        <StatsRadar :stats="stats" />
+      </section>
 
-      <StatsRadar :stats="stats" />
-
-      <div class="profile-section-inline-head -mb-1.5">
-        <p class="section-heading__eyebrow m-0">Compétences</p>
-      </div>
-      <SkillsTable :skills="skills" readonly />
+      <!-- Section Compétences -->
+      <section class="grid gap-4">
+        <h3 class="px-2 text-[10px] font-black uppercase tracking-[0.2em] text-amber-600">Compétences spéciales</h3>
+        <SkillsTable :skills="skills" readonly />
+      </section>
     </template>
   </div>
 </template>
@@ -32,7 +33,6 @@ import { useRouter } from 'vue-router'
 import NoCharacterEmpty from '../components/character/NoCharacterEmpty.vue'
 import SkillsTable from '../components/profile/SkillsTable.vue'
 import StatsRadar from '../components/profile/StatsRadar.vue'
-import SectionHeading from '../components/ui/SectionHeading.vue'
 import IconButton from '../components/ui/IconButton.vue'
 import { useCharacterStore } from '../stores/character'
 

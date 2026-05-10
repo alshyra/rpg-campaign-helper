@@ -1,13 +1,25 @@
 <template>
-  <div class="stack-xl grid gap-6">
-    <SectionHeading eyebrow="Campagnes" title="Personnages" />
-
-    <AppCard>
-      <div class="persos-quick-actions grid gap-2.5">
-        <FileImportLabel label="Importer un JSON" @file-selected="onFileChange" />
-        <Button variant="primary" type="button" @click="goToTunnel">Créer un personnage</Button>
+  <div class="grid gap-8">
+    <section class="grid gap-3">
+      <button
+        class="flex w-full items-center justify-center gap-3 rounded-2xl bg-amber-600 p-5 text-lg font-black text-black shadow-lg shadow-amber-900/20 transition-all hover:bg-amber-500 active:scale-95"
+        type="button"
+        @click="goToTunnel"
+      >
+        <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+        NOUVEAU HÉROS
+      </button>
+      <div class="relative">
+        <FileImportLabel @file-selected="onFileChange">
+          <svg viewBox="0 0 24 24" class="h-5 w-5 text-amber-500" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 4v10M8.5 10.5L12 14l3.5-3.5M5 18h14" />
+          </svg>
+          IMPORTER JSON
+        </FileImportLabel>
       </div>
-    </AppCard>
+    </section>
 
     <CampaignManager
       :campaigns="campaigns"
@@ -22,9 +34,6 @@
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import CampaignManager from '../components/character/CampaignManager.vue'
-import AppCard from '../components/ui/AppCard.vue'
-import SectionHeading from '../components/ui/SectionHeading.vue'
-import Button from '../components/ui/Button.vue'
 import FileImportLabel from '../components/ui/FileImportLabel.vue'
 import { useCharacterStore } from '../stores/character'
 
@@ -38,6 +47,7 @@ const goToTunnel = () => {
 
 const selectCampaign = (id: string) => {
   characterStore.selectCampaign(id)
+  router.push('/profil')
 }
 
 const deleteCampaign = (id: string) => {

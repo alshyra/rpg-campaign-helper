@@ -1,38 +1,62 @@
 <template>
-  <div class="stack-lg grid gap-4.5">
-    <AppCard>
-      <form class="notes-form grid gap-3.5" @submit.prevent="submitNote">
-        <label class="field field--full">
-          <span>Titre</span>
-          <input v-model="draft.title" type="text" placeholder="Ex. Session 3" />
-        </label>
-        <label class="field field--full">
-          <span>Note</span>
-          <textarea v-model="draft.content" rows="5" placeholder="Résumé de session, PNJ, pistes, butin..."></textarea>
-        </label>
-        <button class="primary-button" type="submit">Ajouter au journal</button>
+  <div class="grid gap-8">
+    <!-- Formulaire Journal -->
+    <section class="grid gap-4 rounded-3xl border border-white/5 bg-stone-900/40 p-6">
+      <h2 class="m-0 font-(family-name:--serif) text-2xl italic text-amber-100">Journal</h2>
+      <form class="grid gap-3" @submit.prevent="submitNote">
+        <input
+          v-model="draft.title"
+          type="text"
+          placeholder="Titre..."
+          class="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm font-bold text-amber-100 outline-none placeholder:text-stone-600 focus:border-amber-500"
+        />
+        <textarea
+          v-model="draft.content"
+          rows="4"
+          placeholder="Contenu..."
+          class="w-full resize-none rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-amber-100 outline-none placeholder:text-stone-600 focus:border-amber-500"
+        ></textarea>
+        <button
+          class="flex w-full items-center justify-center gap-2 rounded-xl bg-amber-600 py-3 font-black text-black transition-all hover:bg-amber-500 active:scale-[0.98]"
+          type="submit"
+        >
+          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+            <path d="M17 21v-8H7v8M7 3v5h8" />
+          </svg>
+          SCELER LA NOTE
+        </button>
       </form>
-    </AppCard>
+    </section>
 
-    <AppCard v-for="note in notes" :key="note.id">
-      <article class="note-entry grid gap-3.5">
-        <div class="note-entry__top flex items-start justify-between gap-3">
-          <div>
-            <p class="note-entry__date">{{ note.createdAt }}</p>
-            <h3 class="m-0 font-(family-name:--serif) text-lg">{{ note.title }}</h3>
-          </div>
-          <button class="icon-button" type="button" @click="emit('remove', note.id)">Supprimer</button>
-        </div>
-        <p class="m-0 leading-relaxed text-(--text-soft)">{{ note.content }}</p>
-      </article>
-    </AppCard>
+    <!-- Timeline des notes -->
+    <div class="grid gap-6">
+      <div
+        v-for="note in notes"
+        :key="note.id"
+        class="group relative border-l border-amber-600/30 pl-6"
+      >
+        <button
+          class="absolute -left-3.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-stone-900/80 text-stone-600 opacity-0 transition-all group-hover:opacity-100 hover:!text-red-500"
+          type="button"
+          aria-label="Supprimer cette note"
+          @click="emit('remove', note.id)"
+        >
+          <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+        <span class="font-mono text-[10px] uppercase text-stone-500">{{ note.createdAt }}</span>
+        <h4 class="m-0 mt-0.5 font-(family-name:--serif) text-lg text-amber-200">{{ note.title }}</h4>
+        <p class="m-0 mt-2 text-sm italic leading-relaxed text-stone-400">"{{ note.content }}"</p>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { reactive } from 'vue'
 import type { NoteEntry } from '../../types/character'
-import AppCard from '../ui/AppCard.vue'
 
 defineProps<{
   notes: NoteEntry[]

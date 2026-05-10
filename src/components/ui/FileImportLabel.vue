@@ -37,16 +37,23 @@ defineEmits<{
 }
 
 .file-import-label--button {
-  display: inline-flex;
+  display: flex;
+  width: 100%;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  border-radius: 14px;
-  border: 1px solid var(--line-strong);
-  padding: 12px 16px;
-  background: rgba(27, 20, 16, 0.84);
+  gap: 10px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 16px;
+  background: rgba(28, 20, 15, 0.5);
   color: var(--text);
+  font-weight: 700;
   cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.file-import-label--button:hover {
+  border-color: rgba(245, 158, 11, 0.5);
 }
 
 .file-import-label--icon-button {
