@@ -23,8 +23,12 @@ export const useCharacterStore = defineStore("character", () => {
       if (!connected) return;
       try {
         const remote = await driveSync.load();
-        if (remote && (remote.updatedAt ?? "0") > (stored.value.updatedAt ?? "0")) {
-          stored.value = remote;
+        if (remote) {
+          // Returning user restoring from Drive — skip onboarding
+          window.localStorage.setItem("rpg-player-helper::onboarding-seen", "true");
+          if ((remote.updatedAt ?? "0") > (stored.value.updatedAt ?? "0")) {
+            stored.value = remote;
+          }
         }
       } catch (e) {
         console.error("Drive on-connect load error:", e);
