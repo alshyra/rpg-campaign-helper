@@ -5,9 +5,17 @@ const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
 const SCOPE = "https://www.googleapis.com/auth/drive.appdata";
 const FILE_NAME = "campaigns.json";
 
-// ── Module-level singletons ─────────────────────────────────────────────────
+// ── Module-level singletons (shared across all composable calls) ────────────
 let accessToken: string | null = null;
 let gsiScriptPromise: Promise<void> | null = null;
+
+// isConnected is always false on page load – access token is in-memory only.
+// sessionStorage is used only to persist across HMR, not across full page reloads.
+export const isConnected = ref(false);
+export const isSyncing = ref(false);
+export const lastSyncedAt = ref<Date | null>(null);
+
+// ── Internal helpers ─────────────────────────────────────────────────────────
 
 function loadGsiScript(): Promise<void> {
   if (gsiScriptPromise) return gsiScriptPromise;
@@ -17,7 +25,6 @@ function loadGsiScript(): Promise<void> {
       resolve();
       return;
     }
-
     const script = document.createElement("script");
     script.src = "https://accounts.google.com/gsi/client";
     script.async = true;
@@ -33,31 +40,39 @@ function loadGsiScript(): Promise<void> {
   return gsiScriptPromise;
 }
 
-function requestToken(): Promise<string> {
+/**
+ * Request an OAuth2 access token.
+ * @param silent - if true, use prompt:"none" (no popup, fails if no cached grant).
+ *                 if false, open the consent popup (requires user gesture).
+ */
+async function requestToken(silent = false): Promise<string> {
+  await loadGsiScript();
   return new Promise((resolve, reject) => {
     const client = window.google.accounts.oauth2.initTokenClient({
       client_id: CLIENT_ID,
       scope: SCOPE,
       callback: (response: google.accounts.oauth2.TokenResponse) => {
-        if (response.error) {
-          reject(new Error(response.error));
+        if ("error" in response && response.error) {
+          reject(new Error(response.error as string));
           return;
         }
         accessToken = response.access_token;
         resolve(accessToken);
       },
+      error_callback: (err: { type: string }) => {
+        reject(new Error(err.type));
+      },
     });
-    client.requestAccessToken({ prompt: "" });
+    client.requestAccessToken({ prompt: silent ? "none" : "" });
   });
 }
 
 async function driveRequest(
   url: string,
   options: RequestInit = {},
-  retry = true,
 ): Promise<Response> {
   if (!accessToken) {
-    await requestToken();
+    throw new Error("No access token – user must reconnect");
   }
 
   const res = await fetch(url, {
@@ -68,12 +83,12 @@ async function driveRequest(
     },
   });
 
-  if (res.status === 401 && retry) {
+  if (res.status === 401) {
+    // Token expired – mark as disconnected. User must click "Connecter" again.
     accessToken = null;
-    await requestToken();
-    return driveRequest(url, options, false);
+    isConnected.value = false;
+    throw new Error("Token expired – please reconnect Google Drive");
   }
-
   return res;
 }
 
@@ -89,7 +104,10 @@ async function findFile(): Promise<string | null> {
 async function uploadFile(data: StoredState, fileId: string | null): Promise<void> {
   const body = JSON.stringify(data);
   const boundary = "rpg_drive_boundary";
-  const metadata = JSON.stringify({ name: FILE_NAME, parents: fileId ? undefined : ["appDataFolder"] });
+  const metadata = JSON.stringify({
+    name: FILE_NAME,
+    parents: fileId ? undefined : ["appDataFolder"],
+  });
 
   const multipart = [
     `--${boundary}`,
@@ -107,10 +125,8 @@ async function uploadFile(data: StoredState, fileId: string | null): Promise<voi
     ? `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`
     : `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&spaces=appDataFolder`;
 
-  const method = fileId ? "PATCH" : "POST";
-
   const res = await driveRequest(url, {
-    method,
+    method: fileId ? "PATCH" : "POST",
     headers: { "Content-Type": `multipart/related; boundary=${boundary}` },
     body: multipart,
   });
@@ -127,30 +143,24 @@ async function downloadFile(fileId: string): Promise<StoredState | null> {
 }
 
 // ── Composable ───────────────────────────────────────────────────────────────
+
 export function useDriveSync() {
-  const isConnected = ref(false);
-  const isSyncing = ref(false);
-  const lastSyncedAt = ref<Date | null>(null);
-
-  // Persist connection state across hot-reloads / page reloads via sessionStorage
-  const SESSION_KEY = "rpg-drive-connected";
-  if (window.sessionStorage.getItem(SESSION_KEY) === "1") {
-    isConnected.value = true;
-  }
-
+  /**
+   * Connect: loads GSI, opens OAuth popup, stores token in memory only.
+   * Must be called from a user gesture (click).
+   */
   async function connect(): Promise<void> {
     await loadGsiScript();
-    await requestToken();
+    await requestToken(false);
     isConnected.value = true;
-    window.sessionStorage.setItem(SESSION_KEY, "1");
   }
 
   function disconnect(): void {
+    const tokenToRevoke = accessToken;
     accessToken = null;
     isConnected.value = false;
-    window.sessionStorage.removeItem(SESSION_KEY);
-    if (window.google?.accounts?.oauth2) {
-      window.google.accounts.oauth2.revoke(accessToken ?? "", () => {});
+    if (tokenToRevoke && window.google?.accounts?.oauth2) {
+      window.google.accounts.oauth2.revoke(tokenToRevoke, () => {});
     }
   }
 

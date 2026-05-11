@@ -16,19 +16,21 @@ export const useCharacterStore = defineStore("character", () => {
   const stored = ref<StoredState>(parseStoredState());
   const driveSync = useDriveSync();
 
-  // Boot: pull remote data if Drive is connected and remote is newer
-  (async () => {
-    if (driveSync.isConnected.value) {
+  // When Drive connects, pull remote data and apply if newer (last-write-wins)
+  watch(
+    () => driveSync.isConnected.value,
+    async (connected) => {
+      if (!connected) return;
       try {
         const remote = await driveSync.load();
         if (remote && (remote.updatedAt ?? "0") > (stored.value.updatedAt ?? "0")) {
           stored.value = remote;
         }
       } catch (e) {
-        console.error("Drive boot load error:", e);
+        console.error("Drive on-connect load error:", e);
       }
-    }
-  })();
+    },
+  );
 
   const state = computed<CharacterState | null>(() => {
     if (!stored.value.activeCampaignId) {
@@ -256,12 +258,15 @@ export const useCharacterStore = defineStore("character", () => {
       const valueWithTs: StoredState = { ...value, updatedAt: new Date().toISOString() };
       window.localStorage.setItem(CAMPAIGNS_STORAGE_KEY, JSON.stringify(valueWithTs));
       window.localStorage.removeItem(SINGLE_STORAGE_KEY);
-
       if (driveSync.isConnected.value) {
         try {
           await driveSync.save(valueWithTs);
         } catch (e) {
           console.error("Drive save error:", e);
+          // If token is gone (e.g. expired), mark as disconnected so UI shows reconnect
+          if (e instanceof Error && e.message.includes("reconnect")) {
+            driveSync.disconnect();
+          }
         }
       }
     },
