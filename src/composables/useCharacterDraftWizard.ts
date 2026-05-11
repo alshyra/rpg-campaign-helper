@@ -1,21 +1,18 @@
 import { computed, reactive, ref, watch, type Ref } from "vue";
 
-import type { CharacterState, Skill, Stat } from "../types/character";
+import type { CharacterState, Stat } from "../types/character";
 
 type WizardStep = {
-  id: "identity" | "stats" | "skills";
+  id: "identity" | "stats";
   label: string;
 };
 
 const cloneCharacter = (source: CharacterState) => JSON.parse(JSON.stringify(source)) as CharacterState;
 
-const makeSkillId = () => `skill-${Math.random().toString(36).slice(2, 10)}`;
-
 export const useCharacterDraftWizard = (character: Ref<CharacterState>) => {
   const steps = computed<WizardStep[]>(() => [
     { id: "identity", label: "Identité" },
     { id: "stats", label: "Stats" },
-    { id: "skills", label: "Compétences" },
   ]);
 
   const currentStep = ref(0);
@@ -44,24 +41,6 @@ export const useCharacterDraftWizard = (character: Ref<CharacterState>) => {
     draft.stats = draft.stats.map((stat) => (stat.key === key ? { ...stat, value: Number(value) } : stat));
   };
 
-  const addSkill = () => {
-    draft.skills = [...draft.skills, { id: makeSkillId(), name: "", category: "", value: 0 }];
-  };
-
-  const removeSkill = (id: string) => {
-    draft.skills = draft.skills.filter((skill) => skill.id !== id);
-  };
-
-  const updateSkillValue = (id: string, value: string | number) => {
-    draft.skills = draft.skills.map((skill) =>
-      skill.id === id ? { ...skill, value: Math.max(0, Math.min(10, Number(value))) } : skill,
-    );
-  };
-
-  const updateSkillText = (id: string, field: "name" | "category", value: string) => {
-    draft.skills = draft.skills.map((skill) => (skill.id === id ? ({ ...skill, [field]: value } as Skill) : skill));
-  };
-
   const snapshot = () => cloneCharacter(draft as CharacterState);
 
   return {
@@ -72,10 +51,6 @@ export const useCharacterDraftWizard = (character: Ref<CharacterState>) => {
     nextStep,
     previousStep,
     updateStat,
-    addSkill,
-    removeSkill,
-    updateSkillValue,
-    updateSkillText,
     snapshot,
   };
 };

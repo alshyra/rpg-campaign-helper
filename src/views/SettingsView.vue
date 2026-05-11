@@ -3,6 +3,7 @@
     <NoCharacterEmpty v-if="!character" />
 
     <template v-else>
+      <DrivePanel />
       <BackupPanel />
     </template>
   </div>
@@ -14,6 +15,7 @@ import { computed } from "vue";
 
 import NoCharacterEmpty from "../components/character/NoCharacterEmpty.vue";
 import BackupPanel from "../components/profile/BackupPanel.vue";
+import DrivePanel from "../components/profile/DrivePanel.vue";
 import { useCharacterStore } from "../stores/character";
 
 const characterStore = useCharacterStore();

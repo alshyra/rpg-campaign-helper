@@ -7,6 +7,7 @@ import NotesView from "../views/NotesView.vue";
 import PersosView from "../views/PersosView.vue";
 import ProfileView from "../views/ProfileView.vue";
 import SettingsView from "../views/SettingsView.vue";
+import SkillsView from "../views/SkillsView.vue";
 
 export const routes: RouterOptions["routes"] = [
   {
@@ -48,6 +49,12 @@ export const routes: RouterOptions["routes"] = [
     name: "character-spells",
     component: GrimoireView,
     meta: { label: "Grimoire" },
+  },
+  {
+    path: "/characters/:id/skills",
+    name: "character-skills",
+    component: SkillsView,
+    meta: { label: "Compétences" },
   },
   {
     path: "/characters/:id/edit",

@@ -1,7 +1,7 @@
 <template>
   <AppCard>
     <form
-      class="character-editor flex min-h-[calc(100dvh-8rem)] flex-col gap-4"
+      class="character-editor flex min-h-[calc(100dvh-8rem)] flex-col gap-3"
       @submit.prevent="submitCharacter"
     >
       <!-- Indicateur d'étapes -->
@@ -70,7 +70,7 @@
             <p class="section-heading__eyebrow">Caractéristiques</p>
             <strong>Base du personnage</strong>
           </div>
-          <div class="grid grid-cols-2 gap-3 max-[420px]:grid-cols-1">
+          <div class="grid grid-cols-2 gap-2.5 max-[360px]:grid-cols-1">
             <StatsStepper
               v-for="stat in draft.stats"
               :key="stat.key"
@@ -84,59 +84,6 @@
           </div>
         </div>
 
-        <!-- Étape : Compétences -->
-        <div
-          v-if="currentStepId === 'skills'"
-          class="grid gap-3 border-t border-white/5 pt-1"
-        >
-          <div class="flex items-end justify-between gap-3 max-[420px]:grid max-[420px]:grid-cols-1">
-            <p class="section-heading__eyebrow">Compétences</p>
-            <IconButton
-              type="button"
-              @click="addSkill"
-              >Ajouter une compétence</IconButton
-            >
-          </div>
-          <p
-            v-if="draft.skills.length === 0"
-            class="text-sm opacity-50"
-          >
-            Aucune compétence pour le moment. Ajoute celles que ton joueur veut utiliser.
-          </p>
-          <div class="grid gap-3">
-            <div
-              v-for="skill in draft.skills"
-              :key="skill.id"
-              class="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_84px_auto] items-end gap-3 rounded-xl border border-[rgba(221,187,123,0.1)] bg-[rgba(13,10,8,0.5)] p-3 max-[420px]:grid-cols-1"
-            >
-              <FormField
-                :model-value="skill.name"
-                label="Nom"
-                placeholder="Ex: Pistage"
-                @update:model-value="(v) => updateSkillText(skill.id, 'name', String(v))"
-              />
-              <FormField
-                :model-value="skill.category"
-                label="Catégorie"
-                placeholder="Ex: Exploration"
-                @update:model-value="(v) => updateSkillText(skill.id, 'category', String(v))"
-              />
-              <StatsStepper
-                :model-value="skill.value"
-                label="Val."
-                type="number"
-                :min="0"
-                :max="10"
-                @update:model-value="(v) => updateSkillValue(skill.id, v)"
-              />
-              <IconButton
-                type="button"
-                @click="removeSkill(skill.id)"
-                >Retirer</IconButton
-              >
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- Navigation wizard -->
@@ -180,7 +127,6 @@ import type { CharacterState } from "../../types/character";
 import AppCard from "../ui/AppCard.vue";
 import Button from "../ui/Button.vue";
 import FormField from "../ui/FormField.vue";
-import IconButton from "../ui/IconButton.vue";
 import StatsStepper from "../ui/StatStepper.vue";
 
 const characterStore = useCharacterStore();
@@ -227,10 +173,6 @@ const {
   nextStep,
   previousStep,
   updateStat,
-  addSkill,
-  removeSkill,
-  updateSkillValue,
-  updateSkillText,
   snapshot,
 } = useCharacterDraftWizard(character);
 

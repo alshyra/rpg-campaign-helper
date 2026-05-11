@@ -10,11 +10,6 @@
         </div>
         <StatsRadar :stats="stats" />
       </section>
-      <!-- Section Compétences -->
-      <section class="grid gap-4">
-        <h3 class="px-2 text-[10px] font-black uppercase tracking-[0.2em] text-amber-600">Compétences spéciales</h3>
-        <SkillsTable />
-      </section>
       <!-- Section État Vital -->
       <HealthPanel />
     </template>
@@ -27,7 +22,6 @@ import { computed } from "vue";
 
 import NoCharacterEmpty from "../components/character/NoCharacterEmpty.vue";
 import HealthPanel from "../components/profile/HealthPanel.vue";
-import SkillsTable from "../components/profile/SkillsTable.vue";
 import StatsRadar from "../components/profile/StatsRadar.vue";
 import { useCharacterStore } from "../stores/character";
 

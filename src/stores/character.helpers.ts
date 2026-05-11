@@ -11,6 +11,7 @@ export type StoredCampaign = {
 export type StoredState = {
   activeCampaignId: string | null;
   campaigns: StoredCampaign[];
+  updatedAt?: string;
 };
 
 export const defaultState = (): CharacterState => ({
@@ -112,6 +113,7 @@ export const parseStoredState = (): StoredState => {
     return {
       activeCampaignId,
       campaigns,
+      updatedAt: typeof parsed.updatedAt === 'string' ? parsed.updatedAt : undefined,
     };
   } catch {
     return parseLegacySingle();

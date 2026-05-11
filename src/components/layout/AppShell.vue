@@ -118,7 +118,14 @@ const showBottomNav = computed(
   () => hasCharacter.value && !["character-edit", "character-create", "characters", "settings"].includes(route.name as string),
 );
 
-const showEditButton = computed(() => route.name === "character-profile" || route.name === "character-inventory" || route.name === "character-notes" || route.name === "character-spells");
+const showEditButton = computed(
+  () =>
+    route.name === "character-profile" ||
+    route.name === "character-inventory" ||
+    route.name === "character-notes" ||
+    route.name === "character-spells" ||
+    route.name === "character-skills",
+);
 
 const goHome = () => {
   router.push("/characters");

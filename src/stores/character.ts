@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 
-import type { CharacterState, InventoryItem, NoteEntry, Profile, Spell, Stat } from "../types/character";
+import type { CharacterState, InventoryItem, NoteEntry, Profile, Skill, Spell, Stat } from "../types/character";
+import { useDriveSync } from "../composables/useDriveSync";
 import {
   CAMPAIGNS_STORAGE_KEY,
   SINGLE_STORAGE_KEY,
@@ -13,6 +14,21 @@ import {
 
 export const useCharacterStore = defineStore("character", () => {
   const stored = ref<StoredState>(parseStoredState());
+  const driveSync = useDriveSync();
+
+  // Boot: pull remote data if Drive is connected and remote is newer
+  (async () => {
+    if (driveSync.isConnected.value) {
+      try {
+        const remote = await driveSync.load();
+        if (remote && (remote.updatedAt ?? "0") > (stored.value.updatedAt ?? "0")) {
+          stored.value = remote;
+        }
+      } catch (e) {
+        console.error("Drive boot load error:", e);
+      }
+    }
+  })();
 
   const state = computed<CharacterState | null>(() => {
     if (!stored.value.activeCampaignId) {
@@ -128,10 +144,26 @@ export const useCharacterStore = defineStore("character", () => {
     }));
   };
 
-  const updateSkill = (id: string, value: number) => {
+  const addSkill = (skill: Omit<Skill, "id">) => {
     updateActiveCharacter((character) => ({
       ...character,
-      skills: character.skills.map((skill) => (skill.id === id ? { ...skill, value } : skill)),
+      skills: [{ ...skill, id: makeId("skill") }, ...character.skills],
+      updatedAt: new Date().toISOString(),
+    }));
+  };
+
+  const removeSkill = (id: string) => {
+    updateActiveCharacter((character) => ({
+      ...character,
+      skills: character.skills.filter((skill) => skill.id !== id),
+      updatedAt: new Date().toISOString(),
+    }));
+  };
+
+  const updateSkill = (id: string, patch: Partial<Omit<Skill, "id">>) => {
+    updateActiveCharacter((character) => ({
+      ...character,
+      skills: character.skills.map((skill) => (skill.id === id ? { ...skill, ...patch } : skill)),
       updatedAt: new Date().toISOString(),
     }));
   };
@@ -220,9 +252,18 @@ export const useCharacterStore = defineStore("character", () => {
 
   watch(
     stored,
-    (value) => {
-      window.localStorage.setItem(CAMPAIGNS_STORAGE_KEY, JSON.stringify(value));
+    async (value) => {
+      const valueWithTs: StoredState = { ...value, updatedAt: new Date().toISOString() };
+      window.localStorage.setItem(CAMPAIGNS_STORAGE_KEY, JSON.stringify(valueWithTs));
       window.localStorage.removeItem(SINGLE_STORAGE_KEY);
+
+      if (driveSync.isConnected.value) {
+        try {
+          await driveSync.save(valueWithTs);
+        } catch (e) {
+          console.error("Drive save error:", e);
+        }
+      }
     },
     { deep: true },
   );
@@ -240,6 +281,8 @@ export const useCharacterStore = defineStore("character", () => {
     deleteCampaign,
     updateProfile,
     updateStat,
+    addSkill,
+    removeSkill,
     updateSkill,
     addInventoryItem,
     removeInventoryItem,
