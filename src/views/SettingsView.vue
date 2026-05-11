@@ -1,11 +1,9 @@
 <template>
   <div class="grid gap-6">
-    <NoCharacterEmpty v-if="!character" />
+    <DrivePanel />
 
-    <template v-else>
-      <DrivePanel />
-      <BackupPanel />
-    </template>
+    <NoCharacterEmpty v-if="!character" />
+    <BackupPanel v-else />
   </div>
 </template>
 
