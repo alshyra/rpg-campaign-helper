@@ -15,6 +15,35 @@ export const isConnected = ref(false);
 export const isSyncing = ref(false);
 export const lastSyncedAt = ref<Date | null>(null);
 
+function formatUnknownError(error: unknown): string {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+
+  if (typeof error === "string") {
+    return error;
+  }
+
+  if (error && typeof error === "object") {
+    const maybeError = error as { error?: unknown; details?: unknown; type?: unknown };
+    const detail = [maybeError.error, maybeError.details, maybeError.type]
+      .filter((value): value is string => typeof value === "string" && value.length > 0)
+      .join(" - ");
+    if (detail) {
+      return detail;
+    }
+  }
+
+  return String(error);
+}
+
+function requireClientId(): string {
+  if (!CLIENT_ID || CLIENT_ID.trim().length === 0) {
+    throw new Error("Google Client ID manquant (VITE_GOOGLE_CLIENT_ID)");
+  }
+  return CLIENT_ID;
+}
+
 // ── Internal helpers ─────────────────────────────────────────────────────────
 
 function loadGsiScript(): Promise<void> {
@@ -47,24 +76,54 @@ function loadGsiScript(): Promise<void> {
  */
 async function requestToken(silent = false): Promise<string> {
   await loadGsiScript();
+
   return new Promise((resolve, reject) => {
-    const client = window.google.accounts.oauth2.initTokenClient({
-      client_id: CLIENT_ID,
-      scope: SCOPE,
-      callback: (response: google.accounts.oauth2.TokenResponse) => {
-        if ("error" in response && response.error) {
-          reject(new Error(response.error as string));
-          return;
-        }
-        accessToken = response.access_token;
-        resolve(accessToken);
-      },
-      error_callback: (err: { type: string }) => {
-        reject(new Error(err.type));
-      },
-    });
-    client.requestAccessToken({ prompt: silent ? "none" : "" });
+    try {
+      const client = window.google.accounts.oauth2.initTokenClient({
+        client_id: requireClientId(),
+        scope: SCOPE,
+        callback: (response: google.accounts.oauth2.TokenResponse) => {
+          if ("error" in response && response.error) {
+            reject(new Error(formatUnknownError(response.error)));
+            return;
+          }
+          if (!response.access_token) {
+            reject(new Error("Google n'a pas renvoye de token d'acces"));
+            return;
+          }
+          accessToken = response.access_token;
+          resolve(accessToken);
+        },
+        error_callback: (err: { type?: string; details?: string }) => {
+          reject(new Error(formatUnknownError(err)));
+        },
+      });
+
+      client.requestAccessToken({ prompt: silent ? "none" : "" });
+    } catch (error) {
+      reject(new Error(formatUnknownError(error)));
+    }
   });
+}
+
+async function parseDriveError(response: Response): Promise<string> {
+  let details = "";
+
+  try {
+    const body = (await response.json()) as {
+      error?: {
+        message?: string;
+        code?: number;
+        status?: string;
+      };
+    };
+    details = body.error?.message ?? body.error?.status ?? "";
+  } catch {
+    // Ignore body parsing errors and fall back to status.
+  }
+
+  const base = `HTTP ${response.status}`;
+  return details ? `${base} - ${details}` : base;
 }
 
 async function driveRequest(
@@ -75,13 +134,18 @@ async function driveRequest(
     throw new Error("No access token – user must reconnect");
   }
 
-  const res = await fetch(url, {
-    ...options,
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      ...options.headers,
-    },
-  });
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      ...options,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        ...options.headers,
+      },
+    });
+  } catch (error) {
+    throw new Error(`Drive request failed: ${formatUnknownError(error)}`);
+  }
 
   if (res.status === 401) {
     // Token expired – mark as disconnected. User must click "Connecter" again.
@@ -93,10 +157,14 @@ async function driveRequest(
 }
 
 async function findFile(): Promise<string | null> {
-  const res = await driveRequest(
-    `https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name%3D%27${encodeURIComponent(FILE_NAME)}%27&fields=files(id)`,
-  );
-  if (!res.ok) throw new Error(`Drive list failed: ${res.status}`);
+  const params = new URLSearchParams({
+    spaces: "appDataFolder",
+    q: `name='${FILE_NAME.replace(/'/g, "\\'")}'`,
+    fields: "files(id)",
+  });
+
+  const res = await driveRequest(`https://www.googleapis.com/drive/v3/files?${params.toString()}`);
+  if (!res.ok) throw new Error(`Drive list failed: ${await parseDriveError(res)}`);
   const data = (await res.json()) as { files: { id: string }[] };
   return data.files[0]?.id ?? null;
 }
@@ -131,14 +199,14 @@ async function uploadFile(data: StoredState, fileId: string | null): Promise<voi
     body: multipart,
   });
 
-  if (!res.ok) throw new Error(`Drive upload failed: ${res.status}`);
+  if (!res.ok) throw new Error(`Drive upload failed: ${await parseDriveError(res)}`);
 }
 
 async function downloadFile(fileId: string): Promise<StoredState | null> {
   const res = await driveRequest(
     `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
   );
-  if (!res.ok) throw new Error(`Drive download failed: ${res.status}`);
+  if (!res.ok) throw new Error(`Drive download failed: ${await parseDriveError(res)}`);
   return res.json() as Promise<StoredState>;
 }
 

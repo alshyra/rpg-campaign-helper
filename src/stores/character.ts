@@ -31,7 +31,8 @@ export const useCharacterStore = defineStore("character", () => {
           }
         }
       } catch (e) {
-        console.error("Drive on-connect load error:", e);
+        const message = e instanceof Error ? e.message : String(e);
+        console.error("Drive on-connect load error:", message);
       }
     },
   );
@@ -267,7 +268,8 @@ export const useCharacterStore = defineStore("character", () => {
         try {
           await driveSync.save(valueWithTs);
         } catch (e) {
-          console.error("Drive save error:", e);
+          const message = e instanceof Error ? e.message : String(e);
+          console.error("Drive save error:", message);
           // If token is gone (e.g. expired), mark as disconnected so UI shows reconnect
           if (e instanceof Error && e.message.includes("reconnect")) {
             driveSync.disconnect();

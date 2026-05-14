@@ -65,7 +65,9 @@ async function handleConnect() {
   try {
     await driveSync.connect();
   } catch (e) {
-    console.error("Drive connect error:", e);
+    const message = e instanceof Error ? e.message : String(e);
+    console.error("Drive connect error:", message);
+    window.alert(`Impossible de se connecter a Google Drive: ${message}`);
   } finally {
     isConnecting.value = false;
   }

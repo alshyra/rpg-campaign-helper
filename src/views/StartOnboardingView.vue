@@ -76,7 +76,9 @@ const handleDriveConnect = async () => {
     await driveSync.connect();
     // character.ts watcher will load Drive data → hasCharacter becomes true → RouterView renders
   } catch (e) {
-    console.error("Drive connect error:", e);
+    const message = e instanceof Error ? e.message : String(e);
+    console.error("Drive connect error:", message);
+    window.alert(`Impossible de se connecter a Google Drive: ${message}`);
   } finally {
     isConnecting.value = false;
   }
