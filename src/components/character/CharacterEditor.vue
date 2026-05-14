@@ -42,6 +42,47 @@
           v-if="currentStepId === 'identity'"
           class="grid grid-cols-2 gap-3.5 max-[420px]:grid-cols-1"
         >
+          <div class="character-editor__avatar field field--full">
+            <span>Portrait</span>
+
+            <div class="character-editor__avatar-row">
+              <div
+                v-if="draft.profile.avatarDataUrl"
+                class="character-editor__avatar-preview"
+              >
+                <img
+                  :src="draft.profile.avatarDataUrl"
+                  alt="Aperçu du portrait"
+                />
+              </div>
+              <div
+                v-else
+                class="character-editor__avatar-fallback"
+                aria-hidden="true"
+              >
+                {{ (draft.profile.characterName || "?").slice(0, 1).toUpperCase() }}
+              </div>
+
+              <label class="character-editor__avatar-upload">
+                <span>{{ draft.profile.avatarDataUrl ? "Changer le portrait" : "Ajouter un portrait" }}</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  @change="onAvatarSelected"
+                />
+              </label>
+
+              <Button
+                v-if="draft.profile.avatarDataUrl"
+                type="button"
+                variant="secondary"
+                @click="removeAvatar"
+              >
+                Retirer
+              </Button>
+            </div>
+          </div>
+
           <FormField
             v-model="draft.profile.characterName"
             label="Nom"
@@ -139,6 +180,7 @@ const emptyCharacter = (): CharacterState => ({
     characterName: "",
     role: "",
     mood: "",
+    avatarDataUrl: "",
     injuries: {
       light: 0,
       minor: 0,
@@ -188,6 +230,69 @@ const submitCharacter = () => {
   const id = activeCampaignId.value;
   router.replace(id ? `/characters/${id}/profile` : "/characters");
 };
+
+const readAsDataUrl = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        resolve(reader.result);
+      } else {
+        reject(new Error("Impossible de lire le fichier image."));
+      }
+    };
+    reader.onerror = () => reject(new Error("Lecture de l'image échouée."));
+    reader.readAsDataURL(file);
+  });
+
+const resizeAvatar = (dataUrl: string) =>
+  new Promise<string>((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const outputSize = 256;
+      const cropSize = Math.min(img.width, img.height);
+      const sourceX = Math.floor((img.width - cropSize) / 2);
+      const sourceY = Math.floor((img.height - cropSize) / 2);
+
+      const canvas = document.createElement("canvas");
+      canvas.width = outputSize;
+      canvas.height = outputSize;
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        reject(new Error("Canvas indisponible."));
+        return;
+      }
+
+      // Crop center square then normalize to fixed output size.
+      ctx.drawImage(img, sourceX, sourceY, cropSize, cropSize, 0, 0, outputSize, outputSize);
+      resolve(canvas.toDataURL("image/jpeg", 0.82));
+    };
+    img.onerror = () => reject(new Error("Image invalide."));
+    img.src = dataUrl;
+  });
+
+const onAvatarSelected = async (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file || !file.type.startsWith("image/")) {
+    input.value = "";
+    return;
+  }
+
+  try {
+    const original = await readAsDataUrl(file);
+    draft.profile.avatarDataUrl = await resizeAvatar(original);
+  } catch (error) {
+    console.error("Avatar upload failed:", error);
+  } finally {
+    input.value = "";
+  }
+};
+
+const removeAvatar = () => {
+  draft.profile.avatarDataUrl = "";
+};
 </script>
 <style scoped>
 .wizard-steps__item--active,
@@ -199,5 +304,66 @@ const submitCharacter = () => {
 .wizard-steps__item--done span,
 .wizard-steps__item--active span {
   border-color: rgba(221, 187, 123, 0.55);
+}
+
+.character-editor__avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.character-editor__avatar-preview,
+.character-editor__avatar-fallback {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(221, 187, 123, 0.26);
+}
+
+.character-editor__avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.character-editor__avatar-fallback {
+  display: grid;
+  place-items: center;
+  color: #fcd98e;
+  background: rgba(124, 68, 16, 0.4);
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.character-editor__avatar-upload {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(28, 20, 15, 0.5);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0 14px;
+  cursor: pointer;
+}
+
+.character-editor__avatar-upload:hover {
+  border-color: rgba(245, 158, 11, 0.5);
+}
+
+.character-editor__avatar-upload input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
 }
 </style>

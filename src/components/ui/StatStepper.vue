@@ -67,33 +67,33 @@ const valueClass = computed(() => {
 <style scoped>
 .stat-stepper {
   display: grid;
-  gap: 6px;
+  gap: 4px;
 }
 
 .stat-stepper__label {
   color: var(--text-soft);
-  font-size: 0.85rem;
+  font-size: 0.78rem;
 }
 
 .stat-stepper__controls {
   display: flex;
   align-items: center;
   border: 1px solid rgba(221, 187, 123, 0.16);
-  border-radius: 12px;
+  border-radius: 10px;
   background: rgba(13, 10, 8, 0.82);
   overflow: hidden;
 }
 
 .stat-stepper__btn {
-  flex: 0 0 40px;
-  height: 42px;
+  flex: 0 0 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: transparent;
   border: none;
   color: var(--text-soft);
-  font-size: 1.2rem;
+  font-size: 1.05rem;
   cursor: pointer;
   transition:
     background 0.15s,
@@ -112,15 +112,16 @@ const valueClass = computed(() => {
 }
 
 .stat-stepper__value {
-  flex: 1;
+  min-width: 46px;
   text-align: center;
   font-family: var(--serif);
-  font-size: 1.1rem;
+  font-size: 0.98rem;
   font-weight: 700;
   color: var(--text-soft);
   border-left: 1px solid rgba(221, 187, 123, 0.1);
   border-right: 1px solid rgba(221, 187, 123, 0.1);
-  padding: 0 4px;
+  line-height: 34px;
+  padding: 0 6px;
 }
 
 .stat-stepper__value--positive {

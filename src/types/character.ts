@@ -38,6 +38,7 @@ export interface Profile {
   characterName: string;
   role: string;
   mood: string;
+  avatarDataUrl: string;
   injuries: {
     light: number;
     minor: number;

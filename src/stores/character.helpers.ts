@@ -19,6 +19,7 @@ export const defaultState = (): CharacterState => ({
     characterName: "",
     role: "",
     mood: "",
+    avatarDataUrl: "",
     injuries: {
       light: 0,
       minor: 0,
@@ -51,6 +52,8 @@ export const sanitizeState = (payload: Partial<CharacterState>): CharacterState 
   profile: {
     ...cloneDefault().profile,
     ...payload.profile,
+    avatarDataUrl:
+      typeof payload.profile?.avatarDataUrl === "string" ? payload.profile.avatarDataUrl : "",
     injuries: {
       ...cloneDefault().profile.injuries,
       ...payload.profile?.injuries,

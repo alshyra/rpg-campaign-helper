@@ -26,9 +26,14 @@
       >
         <div class="flex items-center gap-4">
           <div
-            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-amber-500/20 bg-amber-950/50 font-(family-name:--serif) text-xl text-amber-500"
+            class="campaign-item__avatar flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-amber-500/20 bg-amber-950/50 font-(family-name:--serif) text-xl text-amber-500"
           >
-            {{ campaign.characterName[0] }}
+            <img
+              v-if="campaign.avatarDataUrl"
+              :src="campaign.avatarDataUrl"
+              :alt="`Portrait de ${campaign.characterName}`"
+            />
+            <span v-else>{{ campaign.characterName[0] }}</span>
           </div>
           <div>
             <h4 class="m-0 text-lg font-bold text-amber-100 transition-colors group-hover:text-amber-400">
@@ -63,3 +68,12 @@ const selectCampaign = (id: string) => {
 };
 
 </script>
+
+<style scoped>
+.campaign-item__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+</style>

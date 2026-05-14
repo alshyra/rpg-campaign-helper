@@ -1,9 +1,10 @@
 <template>
-  <AppCard>
-    <div class="radar-card grid place-items-center">
+  <AppCard v-bind="$attrs">
+    <div class="radar-card grid h-full place-items-center">
       <svg
         viewBox="0 0 260 260"
-        class="radar-chart w-full max-w-80"
+        class="radar-chart w-full"
+        :class="compact ? 'radar-chart--compact max-w-62' : 'max-w-80'"
         role="img"
         aria-label="Radar des caractéristiques"
       >
@@ -65,9 +66,19 @@ import { computed } from "vue";
 import type { Stat } from "../../types/character";
 import AppCard from "../ui/AppCard.vue";
 
-const props = defineProps<{
-  stats: Stat[];
-}>();
+defineOptions({ inheritAttrs: false });
+
+const props = withDefaults(
+  defineProps<{
+    stats: Stat[];
+    compact?: boolean;
+  }>(),
+  {
+    compact: false,
+  },
+);
+
+const compact = computed(() => props.compact);
 
 const radius = 76;
 const rings = [0.2, 0.4, 0.6, 0.8, 1];
@@ -171,5 +182,13 @@ const valuePoints = computed(() =>
   font-size: 11px;
   font-weight: 700;
   text-anchor: middle;
+}
+
+.radar-chart--compact .radar-chart__label {
+  font-size: 10px;
+}
+
+.radar-chart--compact .radar-chart__value {
+  font-size: 10px;
 }
 </style>

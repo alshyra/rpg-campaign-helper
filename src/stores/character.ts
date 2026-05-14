@@ -52,6 +52,7 @@ export const useCharacterStore = defineStore("character", () => {
       id: campaign.id,
       characterName: campaign.character.profile.characterName || "Sans nom",
       role: campaign.character.profile.role || "Sans rôle",
+      avatarDataUrl: campaign.character.profile.avatarDataUrl || "",
       updatedAt: campaign.character.updatedAt,
     })),
   );
