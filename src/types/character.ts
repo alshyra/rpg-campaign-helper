@@ -48,7 +48,9 @@ export interface Profile {
 }
 
 export interface CharacterState {
+  systemId: string;
   profile: Profile;
+  systemData: unknown;
   stats: Stat[];
   skills: Skill[];
   inventory: InventoryItem[];

@@ -1,6 +1,5 @@
 <template>
   <div class="grid gap-6">
-    <!-- Header avec toggle -->
     <div class="flex items-center justify-between px-2">
       <h2 class="m-0 font-(family-name:--serif) text-2xl italic text-amber-100">Sac à dos</h2>
       <IconButton
@@ -13,7 +12,6 @@
       </IconButton>
     </div>
 
-    <!-- Formulaire ajout (collapsible) -->
     <section
       v-if="showAddForm"
       class="grid gap-4 rounded-3xl border border-amber-500/30 bg-stone-900/80 p-6"
@@ -49,7 +47,6 @@
       </Button>
     </section>
 
-    <!-- État vide -->
     <div
       v-if="inventory.length === 0"
       class="rounded-3xl border-2 border-dashed border-white/5 py-12 text-center text-stone-600"
@@ -58,7 +55,6 @@
       <p class="text-sm italic">Le sac est vide...</p>
     </div>
 
-    <!-- Liste des objets -->
     <section class="grid gap-3">
       <div
         v-for="item in inventory"
@@ -74,7 +70,6 @@
             {{ item.details }}
           </p>
         </div>
-        <!-- Contrôle quantité -->
         <div class="flex items-center gap-1 rounded-xl border border-white/5 bg-black/40 p-1">
           <IconButton
             square
@@ -82,7 +77,6 @@
             :class="item.quantity === 1 ? 'hover:text-red-500' : 'hover:text-red-400'"
             @click="decrement(item)"
           >
-            <!-- Trash si qty=1, Minus sinon -->
             <Trash2
               v-if="item.quantity === 1"
               class="h-3.5 w-3.5"
@@ -109,57 +103,66 @@
 </template>
 
 <script setup lang="ts">
-import { Backpack, Minus, Package, Plus, Trash2, X } from "@lucide/vue";
-import { storeToRefs } from "pinia";
-import { computed, reactive, ref } from "vue";
+import { Backpack, Minus, Package, Plus, Trash2, X } from "@lucide/vue"
+import { computed, reactive, ref } from "vue"
 
-import type { InventoryItem } from "../../types/character";
-import { useCharacterStore } from "../../stores/character";
-import Button from "../ui/Button.vue";
-import FormField from "../ui/FormField.vue";
-import IconButton from "../ui/IconButton.vue";
+import type { InventoryItem } from "../../../types/character"
+import type { GenericSystemData } from "../types"
+import { useCharacterStore } from "../../../stores/character"
+import Button from "../../../components/ui/Button.vue"
+import FormField from "../../../components/ui/FormField.vue"
+import IconButton from "../../../components/ui/IconButton.vue"
 
-const characterStore = useCharacterStore();
-const { state } = storeToRefs(characterStore);
+const characterStore = useCharacterStore()
+const systemData = computed(() => characterStore.getSystemData<GenericSystemData>())
 
-const inventory = computed(() => state.value?.inventory ?? []);
+const inventory = computed(() => systemData.value?.inventory ?? [])
 
-const showAddForm = ref(false);
+const showAddForm = ref(false)
 
 const draft = reactive({
   name: "",
   details: "",
   quantity: 1,
-});
+})
+
+const makeId = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 10)}`
 
 const submitItem = () => {
-  if (!draft.name.trim()) {
-    return;
-  }
+  if (!draft.name.trim()) return
 
-  characterStore.addInventoryItem({
-    name: draft.name.trim(),
-    details: draft.details.trim(),
-    quantity: Math.max(1, draft.quantity),
-  });
+  const current = systemData.value?.inventory ?? []
+  characterStore.updateSystemData<GenericSystemData>({
+    inventory: [
+      { id: makeId("item"), name: draft.name.trim(), details: draft.details.trim(), quantity: Math.max(1, draft.quantity) },
+      ...current,
+    ],
+  })
 
-  draft.name = "";
-  draft.details = "";
-  showAddForm.value = false;
-};
+  draft.name = ""
+  draft.details = ""
+  showAddForm.value = false
+}
 
 const decrement = (item: InventoryItem) => {
+  const current = systemData.value?.inventory ?? []
   if (item.quantity <= 1) {
-    characterStore.removeInventoryItem(item.id);
-    return;
+    characterStore.updateSystemData<GenericSystemData>({
+      inventory: current.filter((i) => i.id !== item.id),
+    })
+  } else {
+    characterStore.updateSystemData<GenericSystemData>({
+      inventory: current.map((i) => (i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i)),
+    })
   }
-
-  characterStore.updateInventoryItem(item.id, { quantity: item.quantity - 1 });
-};
+}
 
 const increment = (item: InventoryItem) => {
-  characterStore.updateInventoryItem(item.id, { quantity: item.quantity + 1 });
-};
+  const current = systemData.value?.inventory ?? []
+  characterStore.updateSystemData<GenericSystemData>({
+    inventory: current.map((i) => (i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i)),
+  })
+}
 </script>
 
 <style scoped>

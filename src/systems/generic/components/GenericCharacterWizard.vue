@@ -4,7 +4,6 @@
       class="character-editor flex min-h-[calc(100dvh-8rem)] flex-col gap-3"
       @submit.prevent="submitCharacter"
     >
-      <!-- Indicateur d'étapes -->
       <div class="wizard-steps flex items-center gap-1.5">
         <template
           v-for="(step, index) in steps"
@@ -35,9 +34,7 @@
         </template>
       </div>
 
-      <!-- Étapes (prend l'espace disponible) -->
       <div class="flex-1">
-        <!-- Étape : Identité -->
         <div
           v-if="currentStepId === 'identity'"
           class="grid grid-cols-2 gap-3.5 max-[420px]:grid-cols-1"
@@ -102,7 +99,6 @@
           />
         </div>
 
-        <!-- Étape : Stats -->
         <div
           v-if="currentStepId === 'stats'"
           class="grid gap-3 border-t border-white/5 pt-1"
@@ -124,10 +120,8 @@
             />
           </div>
         </div>
-
       </div>
 
-      <!-- Navigation wizard -->
       <div class="wizard-actions mt-auto grid grid-cols-2 gap-2.5 pt-4 max-[420px]:grid-cols-1">
         <Button
           v-if="currentStep > 0"
@@ -158,54 +152,60 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
-import { computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { storeToRefs } from "pinia"
+import { computed, reactive, ref, watch } from "vue"
+import { useRoute, useRouter } from "vue-router"
 
-import { useCharacterDraftWizard } from "../../composables/useCharacterDraftWizard";
-import { useCharacterStore } from "../../stores/character";
-import type { CharacterState } from "../../types/character";
-import AppCard from "../ui/AppCard.vue";
-import Button from "../ui/Button.vue";
-import FormField from "../ui/FormField.vue";
-import StatsStepper from "../ui/StatStepper.vue";
+import type { CharacterState, Stat } from "../../../types/character"
+import { useCharacterStore } from "../../../stores/character"
+import { useCharacterDraftWizard } from "../../../composables/useCharacterDraftWizard"
+import AppCard from "../../../components/ui/AppCard.vue"
+import Button from "../../../components/ui/Button.vue"
+import FormField from "../../../components/ui/FormField.vue"
+import StatsStepper from "../../../components/ui/StatStepper.vue"
 
-const characterStore = useCharacterStore();
-const { hasCharacter, state, activeCampaignId } = storeToRefs(characterStore);
-const route = useRoute();
-const router = useRouter();
+const characterStore = useCharacterStore()
+const { hasCharacter, state, activeCampaignId } = storeToRefs(characterStore)
+const route = useRoute()
+const router = useRouter()
+
+const blankStats = [
+  { key: "dex" as const, label: "DEX", value: 0 },
+  { key: "for" as const, label: "FOR", value: 0 },
+  { key: "con" as const, label: "CON", value: 0 },
+  { key: "int" as const, label: "INT", value: 0 },
+  { key: "sag" as const, label: "SAG", value: 0 },
+  { key: "cha" as const, label: "CHA", value: 0 },
+]
 
 const emptyCharacter = (): CharacterState => ({
+  systemId: "generic",
   profile: {
     characterName: "",
     role: "",
     mood: "",
     avatarDataUrl: "",
-    injuries: {
-      light: 0,
-      minor: 0,
-      major: 0,
-      fatal: 0,
-    },
+    injuries: { light: 0, minor: 0, major: 0, fatal: 0 },
   },
-  stats: [
-    { key: "dex", label: "DEX", value: 0 },
-    { key: "for", label: "FOR", value: 0 },
-    { key: "con", label: "CON", value: 0 },
-    { key: "int", label: "INT", value: 0 },
-    { key: "sag", label: "SAG", value: 0 },
-    { key: "cha", label: "CHA", value: 0 },
-  ],
+  systemData: {
+    stats: blankStats,
+    skills: [],
+    inventory: [],
+    notes: [],
+    spells: [],
+    injuries: { light: 0, minor: 0, major: 0, fatal: 0 },
+  },
+  stats: blankStats,
   skills: [],
   inventory: [],
   notes: [],
   spells: [],
   updatedAt: new Date().toISOString(),
-});
+})
 
-const isNewMode = computed(() => route.query.new === "1");
-const character = computed(() => (isNewMode.value || !state.value ? emptyCharacter() : state.value));
-const submitLabel = computed(() => (hasCharacter.value ? "Enregistrer" : "Créer le personnage"));
+const isNewMode = computed(() => route.query.new === "1")
+const character = computed(() => (isNewMode.value || !state.value ? emptyCharacter() : state.value))
+const submitLabel = computed(() => (hasCharacter.value ? "Enregistrer" : "Créer le personnage"))
 
 const {
   steps,
@@ -216,84 +216,84 @@ const {
   previousStep,
   updateStat,
   snapshot,
-} = useCharacterDraftWizard(character);
+} = useCharacterDraftWizard(character)
 
 const submitCharacter = () => {
-  const payload = snapshot();
+  const payload = snapshot()
 
   if (isNewMode.value || !hasCharacter.value) {
-    characterStore.createNewCharacter(payload);
+    characterStore.createNewCharacter(payload)
   } else {
-    characterStore.saveActiveCharacter(payload);
+    characterStore.saveActiveCharacter(payload)
   }
 
-  const id = activeCampaignId.value;
-  router.replace(id ? `/characters/${id}/profile` : "/characters");
-};
+  const id = activeCampaignId.value
+  router.replace(id ? `/characters/${id}/profile` : "/characters")
+}
 
 const readAsDataUrl = (file: File) =>
   new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
+    const reader = new FileReader()
     reader.onload = () => {
       if (typeof reader.result === "string") {
-        resolve(reader.result);
+        resolve(reader.result)
       } else {
-        reject(new Error("Impossible de lire le fichier image."));
+        reject(new Error("Impossible de lire le fichier image."))
       }
-    };
-    reader.onerror = () => reject(new Error("Lecture de l'image échouée."));
-    reader.readAsDataURL(file);
-  });
+    }
+    reader.onerror = () => reject(new Error("Lecture de l'image échouée."))
+    reader.readAsDataURL(file)
+  })
 
 const resizeAvatar = (dataUrl: string) =>
   new Promise<string>((resolve, reject) => {
-    const img = new Image();
+    const img = new Image()
     img.onload = () => {
-      const outputSize = 256;
-      const cropSize = Math.min(img.width, img.height);
-      const sourceX = Math.floor((img.width - cropSize) / 2);
-      const sourceY = Math.floor((img.height - cropSize) / 2);
+      const outputSize = 256
+      const cropSize = Math.min(img.width, img.height)
+      const sourceX = Math.floor((img.width - cropSize) / 2)
+      const sourceY = Math.floor((img.height - cropSize) / 2)
 
-      const canvas = document.createElement("canvas");
-      canvas.width = outputSize;
-      canvas.height = outputSize;
+      const canvas = document.createElement("canvas")
+      canvas.width = outputSize
+      canvas.height = outputSize
 
-      const ctx = canvas.getContext("2d");
+      const ctx = canvas.getContext("2d")
       if (!ctx) {
-        reject(new Error("Canvas indisponible."));
-        return;
+        reject(new Error("Canvas indisponible."))
+        return
       }
 
-      // Crop center square then normalize to fixed output size.
-      ctx.drawImage(img, sourceX, sourceY, cropSize, cropSize, 0, 0, outputSize, outputSize);
-      resolve(canvas.toDataURL("image/jpeg", 0.82));
-    };
-    img.onerror = () => reject(new Error("Image invalide."));
-    img.src = dataUrl;
-  });
+      ctx.drawImage(img, sourceX, sourceY, cropSize, cropSize, 0, 0, outputSize, outputSize)
+      resolve(canvas.toDataURL("image/jpeg", 0.82))
+    }
+    img.onerror = () => reject(new Error("Image invalide."))
+    img.src = dataUrl
+  })
 
 const onAvatarSelected = async (event: Event) => {
-  const input = event.target as HTMLInputElement;
-  const file = input.files?.[0];
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
   if (!file || !file.type.startsWith("image/")) {
-    input.value = "";
-    return;
+    input.value = ""
+    return
   }
 
   try {
-    const original = await readAsDataUrl(file);
-    draft.profile.avatarDataUrl = await resizeAvatar(original);
+    const original = await readAsDataUrl(file)
+    draft.profile.avatarDataUrl = await resizeAvatar(original)
   } catch (error) {
-    console.error("Avatar upload failed:", error);
+    console.error("Avatar upload failed:", error)
   } finally {
-    input.value = "";
+    input.value = ""
   }
-};
+}
 
 const removeAvatar = () => {
-  draft.profile.avatarDataUrl = "";
-};
+  draft.profile.avatarDataUrl = ""
+}
 </script>
+
 <style scoped>
 .wizard-steps__item--active,
 .wizard-steps__item--done {

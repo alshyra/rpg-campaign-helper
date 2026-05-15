@@ -14,27 +14,33 @@ export type StoredState = {
   updatedAt?: string;
 };
 
+const blankStats: Stat[] = [
+  { key: "dex", label: "DEX", value: 0 },
+  { key: "for", label: "FOR", value: 0 },
+  { key: "con", label: "CON", value: 0 },
+  { key: "int", label: "INT", value: 0 },
+  { key: "sag", label: "SAG", value: 0 },
+  { key: "cha", label: "CHA", value: 0 },
+];
+
 export const defaultState = (): CharacterState => ({
+  systemId: "generic",
   profile: {
     characterName: "",
     role: "",
     mood: "",
     avatarDataUrl: "",
-    injuries: {
-      light: 0,
-      minor: 0,
-      major: 0,
-      fatal: 0,
-    },
+    injuries: { light: 0, minor: 0, major: 0, fatal: 0 },
   },
-  stats: [
-    { key: "dex", label: "DEX", value: 0 },
-    { key: "for", label: "FOR", value: 0 },
-    { key: "con", label: "CON", value: 0 },
-    { key: "int", label: "INT", value: 0 },
-    { key: "sag", label: "SAG", value: 0 },
-    { key: "cha", label: "CHA", value: 0 },
-  ],
+  systemData: {
+    stats: blankStats,
+    skills: [],
+    inventory: [],
+    notes: [],
+    spells: [],
+    injuries: { light: 0, minor: 0, major: 0, fatal: 0 },
+  },
+  stats: blankStats,
   skills: [],
   inventory: [],
   notes: [],
@@ -46,25 +52,43 @@ export const cloneDefault = () => structuredClone(defaultState());
 
 export const makeId = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 10)}`;
 
-export const sanitizeState = (payload: Partial<CharacterState>): CharacterState => ({
-  ...cloneDefault(),
-  ...payload,
-  profile: {
-    ...cloneDefault().profile,
-    ...payload.profile,
-    avatarDataUrl:
-      typeof payload.profile?.avatarDataUrl === "string" ? payload.profile.avatarDataUrl : "",
-    injuries: {
-      ...cloneDefault().profile.injuries,
-      ...payload.profile?.injuries,
-    },
+const pickSystemFields = (src: Partial<CharacterState>): Record<string, unknown> => ({
+  stats: Array.isArray(src.stats) ? src.stats : cloneDefault().stats,
+  skills: Array.isArray(src.skills) ? src.skills : cloneDefault().skills,
+  inventory: Array.isArray(src.inventory) ? src.inventory : cloneDefault().inventory,
+  notes: Array.isArray(src.notes) ? src.notes : cloneDefault().notes,
+  spells: Array.isArray(src.spells) ? src.spells : cloneDefault().spells,
+  injuries: {
+    ...cloneDefault().profile.injuries,
+    ...src.profile?.injuries,
   },
-  stats: Array.isArray(payload.stats) ? (payload.stats as Stat[]) : cloneDefault().stats,
-  skills: Array.isArray(payload.skills) ? (payload.skills as Skill[]) : cloneDefault().skills,
-  inventory: Array.isArray(payload.inventory) ? (payload.inventory as InventoryItem[]) : cloneDefault().inventory,
-  notes: Array.isArray(payload.notes) ? (payload.notes as NoteEntry[]) : cloneDefault().notes,
-  updatedAt: payload.updatedAt ?? new Date().toISOString(),
 });
+
+export const sanitizeState = (payload: Partial<CharacterState>): CharacterState => {
+  const base = cloneDefault();
+  const systemData = payload.systemData ?? pickSystemFields(payload);
+  return {
+    ...base,
+    ...payload,
+    systemId: payload.systemId ?? "generic",
+    systemData,
+    profile: {
+      ...base.profile,
+      ...payload.profile,
+      avatarDataUrl:
+        typeof payload.profile?.avatarDataUrl === "string" ? payload.profile.avatarDataUrl : "",
+      injuries: {
+        ...base.profile.injuries,
+        ...payload.profile?.injuries,
+      },
+    },
+    stats: Array.isArray(payload.stats) ? (payload.stats as Stat[]) : base.stats,
+    skills: Array.isArray(payload.skills) ? (payload.skills as Skill[]) : base.skills,
+    inventory: Array.isArray(payload.inventory) ? (payload.inventory as InventoryItem[]) : base.inventory,
+    notes: Array.isArray(payload.notes) ? (payload.notes as NoteEntry[]) : base.notes,
+    updatedAt: payload.updatedAt ?? new Date().toISOString(),
+  };
+};
 
 export const parseLegacySingle = (): StoredState => {
   const raw = window.localStorage.getItem(SINGLE_STORAGE_KEY);
