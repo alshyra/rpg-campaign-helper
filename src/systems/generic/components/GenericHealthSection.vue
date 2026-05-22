@@ -30,7 +30,7 @@
 
     <div
       class="grid"
-      :class="compact ? 'grid-cols-2 gap-2' : 'grid-cols-1 gap-2.5'"
+      :class="compact ? 'grid-cols-2 gap-2' : 'grid-cols-2 gap-2.5'"
     >
       <div
         v-for="tier in tiers"

@@ -3,7 +3,7 @@
     <NoCharacterEmpty v-if="!character" />
 
     <template v-else>
-      <section class="profile-section__layout grid grid-row-3 gap-2.5">
+      <section class="profile-section__layout">
         <article class="profile-identity rounded-2xl p-2.5">
           <div class="profile-identity__hero">
             <div class="profile-identity__avatar-shell">
@@ -56,15 +56,7 @@ const character = computed(() => state.value)
 </script>
 
 <style scoped>
-.profile-section {
-  min-height: calc(100dvh - 12.5rem);
-}
 
-.profile-section__layout {
-  align-content: start;
-  align-items: start;
-  grid-auto-rows: max-content;
-}
 
 .profile-identity__hero {
   display: grid;
