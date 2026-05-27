@@ -78,7 +78,7 @@ test.describe("Deletion", () => {
 
     await createPage.goto()
     await createPage.selectSystem("Warhammer Fantasy 4e")
-    await warhammerWizard.fillIdentity("Zarg", "Orc", "Guerrier", "Berserker")
+    await warhammerWizard.fillIdentity("Zarg", "Humain", "Warrior")
     await warhammerWizard.spendPoints(5)
     await warhammerWizard.clickCreate()
 
@@ -99,7 +99,7 @@ test.describe("Warhammer system", () => {
 
     await createPage.goto()
     await createPage.selectSystem("Warhammer Fantasy 4e")
-    await wizard.fillIdentity("Gorim", "Nain", "Guerrier", "Tueur")
+    await wizard.fillIdentity("Gorim", "Nain", "Warrior")
     await wizard.spendPoints(5)
     await expect(page.locator("body")).toContainText("20 / 45 pts")
     await wizard.clickCreate()
@@ -108,7 +108,7 @@ test.describe("Warhammer system", () => {
     expect(page.url()).toContain("/profile")
     await expect(page.locator("body")).toContainText("Gorim")
     await expect(page.locator("body")).toContainText("Nain")
-    await expect(page.locator("body")).toContainText("Guerrier")
+    await expect(page.locator("body")).toContainText("Warrior")
   })
 
   test("appears in campaign list with warhammer badge", async ({ page }) => {
@@ -118,13 +118,13 @@ test.describe("Warhammer system", () => {
 
     await createPage.goto()
     await createPage.selectSystem("Warhammer Fantasy 4e")
-    await wizard.fillIdentity("Thorgrim", "Humain", "Prêtre", "Prêtre guerrier")
+    await wizard.fillIdentity("Thorgrim", "Humain", "Initiate")
     await wizard.spendPoints(5)
     await wizard.clickCreate()
 
     await listPage.goto()
     await expect(page.locator("body")).toContainText("Thorgrim")
-    await expect(page.locator("body")).toContainText("Prêtre")
+    await expect(page.locator("body")).toContainText("Initiate")
     await expect(page.locator("body")).toContainText("Warhammer Fantasy 4e")
   })
 })

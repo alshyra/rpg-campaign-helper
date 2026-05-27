@@ -8,7 +8,7 @@
       <span class="font-mono font-black text-white/10">{{ systemData?.wounds.current ?? "?" }}/{{ systemData?.wounds.max ?? "?" }}</span>
     </div>
 
-    <div class="grid grid-cols-2 gap-3">
+    <div class="mt-3 grid grid-cols-2 gap-3">
       <div>
         <label class="mb-1 block text-[9px] font-bold uppercase tracking-widest text-stone-500">Actuelles</label>
         <StatsStepper
@@ -16,22 +16,21 @@
           label="Actuelles"
           :min="0"
           :max="systemData?.wounds.max ?? 20"
+          no-prefix
           @update:model-value="setWounds('current', $event)"
         />
       </div>
       <div>
-        <label class="mb-1 block text-[9px] font-bold uppercase tracking-widest text-stone-500">Maximum</label>
+        <label class="mb-1 block text-[9px] font-bold uppercase tracking-widest text-stone-500">Mag</label>
         <StatsStepper
-          :model-value="systemData?.wounds.max ?? 12"
-          label="Maximum"
-          :min="1"
-          :max="50"
-          @update:model-value="setWounds('max', $event)"
+          :model-value="systemData?.mag ?? 0"
+          label="Mag"
+          :min="0"
+          :max="20"
+          no-prefix
+          @update:model-value="setStat('mag', $event)"
         />
       </div>
-    </div>
-
-    <div class="mt-3 grid grid-cols-2 gap-3">
       <div>
         <label class="mb-1 block text-[9px] font-bold uppercase tracking-widest text-stone-500">Destin</label>
         <StatsStepper
@@ -39,6 +38,7 @@
           label="Destin"
           :min="0"
           :max="10"
+          no-prefix
           @update:model-value="setStat('fate', $event)"
         />
       </div>
@@ -49,6 +49,7 @@
           label="Folie"
           :min="0"
           :max="20"
+          no-prefix
           @update:model-value="setStat('insanity', $event)"
         />
       </div>
@@ -67,7 +68,7 @@ import StatsStepper from "../../../components/ui/StatStepper.vue"
 const characterStore = useCharacterStore()
 const systemData = computed(() => characterStore.getSystemData<WfrpSystemData>())
 
-const setWounds = (field: "current" | "max", val: number | string) => {
+const setWounds = (field: "current", val: number | string) => {
   const current = characterStore.getSystemData<WfrpSystemData>()
   if (!current) return
   characterStore.updateSystemData<WfrpSystemData>({
@@ -75,7 +76,7 @@ const setWounds = (field: "current" | "max", val: number | string) => {
   })
 }
 
-const setStat = (field: "fate" | "insanity", val: number | string) => {
+const setStat = (field: "mag" | "fate" | "insanity", val: number | string) => {
   const current = characterStore.getSystemData<WfrpSystemData>()
   if (!current) return
   characterStore.updateSystemData<WfrpSystemData>({

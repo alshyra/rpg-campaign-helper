@@ -4,6 +4,7 @@ export interface SeedCharacterOptions {
   species?: string
   career?: string
   role?: string
+  plan?: string
 }
 
 interface StoredCampaign {
@@ -108,10 +109,17 @@ export function buildWarhammerSeed(opts: SeedCharacterOptions = {}): Seed {
       current: { ws: 35, bs: 35, s: 35, t: 35, ag: 35, int: 35, wp: 35, fel: 35 },
     },
     wounds: { current: 12, max: 12 },
+    woundsAdvancements: 0,
+    attacks: 1,
+    strengthBonus: 3,
+    toughnessBonus: 3,
+    movement: 4,
+    mag: 0,
+    magAdvancements: 0,
     fate: 2,
     insanity: 0,
     xp: { total: 0, available: 0 },
-    career: { current: opts.career ?? "Sorcier", plan: "Sorcier", status: "Argent 1", promotions: 1 },
+    career: { current: opts.career ?? "Sorcier", plan: opts.plan ?? "", status: "Argent 1", promotions: 1 },
     skills: {},
     talents: [],
     spells: [],

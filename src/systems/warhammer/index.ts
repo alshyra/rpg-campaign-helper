@@ -1,6 +1,7 @@
 import { defineSystem } from "../registry"
 import { makeBlankCharacteristics, HUMAN_BASE, computeCurrent } from "./types"
 import type { WfrpSystemData } from "./types"
+import WarhammerAdvancementSection from "./components/WarhammerAdvancementSection.vue"
 import WarhammerCharacterWizard from "./components/WarhammerCharacterWizard.vue"
 import WarhammerProfileSection from "./components/WarhammerProfileSection.vue"
 import WarhammerHealthSection from "./components/WarhammerHealthSection.vue"
@@ -21,6 +22,7 @@ export default defineSystem<WfrpSystemData>({
     SpellsSection: WarhammerSpellsSection,
     InventorySection: WarhammerInventorySection,
     NotesSection: WarhammerNotesSection,
+    AdvancementSection: WarhammerAdvancementSection,
   },
   createBlankState: () => ({
     species: "Humain",
@@ -31,6 +33,13 @@ export default defineSystem<WfrpSystemData>({
       current: computeCurrent(HUMAN_BASE, makeBlankCharacteristics(), makeBlankCharacteristics()),
     },
     wounds: { current: 12, max: 12 },
+    woundsAdvancements: 0,
+    attacks: 1,
+    strengthBonus: 3,
+    toughnessBonus: 3,
+    movement: 4,
+    mag: 0,
+    magAdvancements: 0,
     fate: 2,
     insanity: 0,
     xp: { total: 0, available: 0 },

@@ -59,6 +59,7 @@ test.describe("Warhammer profile (read-only)", () => {
       name: "Brunhild",
       species: "Humain",
       career: "Guerrière",
+      plan: "Sorcier",
     })
     await page.addInitScript(seedInitScript(seed))
     await page.goto(`/characters/${CID}/profile`)
@@ -97,20 +98,6 @@ test.describe("Warhammer health", () => {
     await expect(health.woundsDisplay).toContainText("11")
     await health.incrementCurrent()
     await expect(health.woundsDisplay).toContainText("12")
-  })
-
-  test("increments max wounds", async ({ page }) => {
-    const seed = buildWarhammerSeedWithData({
-      id: CID,
-      name: "Ulfgar",
-      wounds: { current: 10, max: 10 },
-    })
-    await page.addInitScript(seedInitScript(seed))
-    await page.goto(`/characters/${CID}/profile`)
-    const health = new WarhammerHealthPage(page)
-
-    await health.incrementMax()
-    await expect(health.woundsDisplay).toContainText("11")
   })
 })
 

@@ -42,6 +42,10 @@ export const SPENT_MAX = 10
 export const BUDGET_TOTAL = 45
 export const STEP = 5
 
+export function computeBonus(value: number): number {
+  return Math.floor(value / 10)
+}
+
 export interface WfrpSpell {
   id: string
   name: string
@@ -80,6 +84,13 @@ export interface WfrpSystemData {
     current: Characteristics
   }
   wounds: { current: number; max: number }
+  woundsAdvancements: number
+  attacks: number
+  strengthBonus: number
+  toughnessBonus: number
+  movement: number
+  mag: number
+  magAdvancements: number
   fate: number
   insanity: number
   xp: { total: number; available: number }

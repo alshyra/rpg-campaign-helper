@@ -8,6 +8,7 @@ export interface SystemComponents {
   SpellsSection?: Component
   InventorySection?: Component
   NotesSection?: Component
+  AdvancementSection?: Component
 }
 
 export interface SystemDefinition<S = unknown> {

@@ -16,7 +16,7 @@
       </div>
 
       <div class="mb-2 flex items-center gap-2 text-xs text-stone-500">
-        <span>Plan : {{ systemData.career.plan || "—" }}</span>
+        <span v-if="systemData.career.plan">Plan : {{ systemData.career.plan }}</span>
         <span class="opacity-30">|</span>
         <span>Statut : {{ systemData.career.status }}</span>
         <span class="opacity-30">|</span>
@@ -35,7 +35,7 @@
         <div
           v-for="stat in CHARACTERISTICS"
           :key="stat.key"
-          class="rounded-lg border border-white/5 bg-black/30 p-2 text-center"
+          class="relative rounded-lg border border-white/5 bg-black/30 p-2 text-center"
         >
           <div class="text-[9px] font-black uppercase tracking-wider text-stone-500">{{ stat.label }}</div>
           <div class="text-lg font-black text-amber-400">{{ getCurrent(stat.key) }}</div>
@@ -44,6 +44,31 @@
             <span v-if="getSpent(stat.key) > 0" class="text-amber-600/60">+{{ getSpent(stat.key) }}</span>
             <span v-if="getAdvancement(stat.key) > 0" class="text-amber-400/60">+{{ getAdvancement(stat.key) }}</span>
           </div>
+          <span
+            v-if="isCareerCharacteristic(stat.key)"
+            class="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 text-[8px] font-black text-stone-950 shadow-sm"
+            title="Caractéristique de carrière"
+          >C</span>
+        </div>
+      </div>
+
+      <h4 class="mb-1 mt-3 text-[9px] font-black uppercase tracking-widest text-stone-500">Sous-stats</h4>
+      <div class="grid grid-cols-4 gap-1.5">
+        <div class="rounded-lg border border-white/5 bg-black/30 p-2 text-center">
+          <div class="text-[9px] font-black uppercase tracking-wider text-stone-500">A</div>
+          <div class="text-lg font-black text-amber-400">{{ systemData.attacks ?? 1 }}</div>
+        </div>
+        <div class="rounded-lg border border-white/5 bg-black/30 p-2 text-center">
+          <div class="text-[9px] font-black uppercase tracking-wider text-stone-500">B</div>
+          <div class="text-lg font-black text-amber-400">{{ (systemData.strengthBonus ?? computeBonus(getCurrent("s"))) }}</div>
+        </div>
+        <div class="rounded-lg border border-white/5 bg-black/30 p-2 text-center">
+          <div class="text-[9px] font-black uppercase tracking-wider text-stone-500">BE</div>
+          <div class="text-lg font-black text-amber-400">{{ (systemData.toughnessBonus ?? computeBonus(getCurrent("t"))) }}</div>
+        </div>
+        <div class="rounded-lg border border-white/5 bg-black/30 p-2 text-center">
+          <div class="text-[9px] font-black uppercase tracking-wider text-stone-500">M</div>
+          <div class="text-lg font-black text-amber-400">{{ systemData.movement ?? 4 }}</div>
         </div>
       </div>
     </article>
@@ -69,13 +94,24 @@ import { computed } from "vue"
 
 import { useCharacterStore } from "../../../stores/character"
 import type { CharacteristicKey, WfrpSystemData } from "../types"
-import { CHARACTERISTICS } from "../types"
+import { CHARACTERISTICS, computeBonus } from "../types"
+import { CAREER_DATA } from "../careers"
 
 const characterStore = useCharacterStore()
 const { state } = storeToRefs(characterStore)
 
 const profile = computed(() => state.value?.profile ?? null)
 const systemData = computed(() => characterStore.getSystemData<WfrpSystemData>())
+
+const careerInfo = computed(() => {
+  if (!systemData.value?.career.current) return null
+  return CAREER_DATA[systemData.value.career.current] ?? null
+})
+
+const isCareerCharacteristic = (key: CharacteristicKey): boolean => {
+  if (!careerInfo.value) return false
+  return (careerInfo.value.advances[key] ?? 0) > 0
+}
 
 const getCurrent = (key: CharacteristicKey) => systemData.value?.characteristics.current[key] ?? 0
 const getBase = (key: CharacteristicKey) => systemData.value?.characteristics.base[key] ?? 0

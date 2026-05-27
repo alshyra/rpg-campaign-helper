@@ -1,5 +1,6 @@
 import type { RouterOptions } from "vue-router";
 
+import AdvancementView from "../views/AdvancementView.vue";
 import CharacterTunnelView from "../views/CharacterTunnelView.vue";
 import GrimoireView from "../views/GrimoireView.vue";
 import InventoryView from "../views/InventoryView.vue";
@@ -55,6 +56,12 @@ export const routes: RouterOptions["routes"] = [
     name: "character-skills",
     component: SkillsView,
     meta: { label: "Compétences" },
+  },
+  {
+    path: "/characters/:id/advancement",
+    name: "character-advancement",
+    component: AdvancementView,
+    meta: { label: "Avancement" },
   },
   {
     path: "/characters/:id/edit",

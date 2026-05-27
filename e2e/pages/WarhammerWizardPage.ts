@@ -3,11 +3,18 @@ import type { Page } from "@playwright/test"
 export class WarhammerWizardPage {
   constructor(private page: Page) {}
 
-  async fillIdentity(name: string, species: string, career: string, careerPlan?: string) {
+  async fillIdentity(name: string, species: string, career: string) {
     await this.page.getByLabel("Nom").fill(name)
-    await this.page.getByLabel("Espèce").fill(species)
-    await this.page.getByLabel("Carrière actuelle").fill(career)
-    if (careerPlan) await this.page.getByLabel("Plan de carrière").fill(careerPlan)
+
+    const wrapper0 = this.page.locator(".select-wrapper").nth(0)
+    await wrapper0.locator("button").first().click()
+    await this.page.waitForTimeout(200)
+    await wrapper0.locator(".select-option", { hasText: species }).click()
+
+    const wrapper1 = this.page.locator(".select-wrapper").nth(1)
+    await wrapper1.locator("button").first().click()
+    await this.page.waitForTimeout(200)
+    await wrapper1.locator(".select-option", { hasText: career }).click()
   }
 
   async spendPoints(stats: number) {

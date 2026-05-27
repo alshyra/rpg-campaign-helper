@@ -38,10 +38,12 @@ const props = withDefaults(
     modelValue: number;
     min?: number;
     max?: number;
+    noPrefix?: boolean;
   }>(),
   {
     min: -5,
     max: 5,
+    noPrefix: false,
   },
 );
 
@@ -53,7 +55,7 @@ const decrement = () => emit("update:modelValue", Math.max(props.min, props.mode
 const increment = () => emit("update:modelValue", Math.min(props.max, props.modelValue + 1));
 
 const formatted = computed(() => {
-  if (props.modelValue > 0) return `+${props.modelValue}`;
+  if (!props.noPrefix && props.modelValue > 0) return `+${props.modelValue}`;
   return String(props.modelValue);
 });
 
