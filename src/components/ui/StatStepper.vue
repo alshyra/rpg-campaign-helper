@@ -1,6 +1,5 @@
 <template>
   <div class="stat-stepper">
-    <span class="stat-stepper__label">{{ label }}</span>
     <div class="stat-stepper__controls">
       <button
         type="button"
@@ -68,22 +67,16 @@ const valueClass = computed(() => {
 
 <style scoped>
 .stat-stepper {
-  display: grid;
-  gap: 4px;
-}
-
-.stat-stepper__label {
-  color: var(--text-soft);
-  font-size: 0.78rem;
+  display: flex;
+  justify-content: start;
 }
 
 .stat-stepper__controls {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   border: 1px solid rgba(221, 187, 123, 0.16);
   border-radius: 10px;
   background: rgba(13, 10, 8, 0.82);
-  overflow: hidden;
 }
 
 .stat-stepper__btn {
