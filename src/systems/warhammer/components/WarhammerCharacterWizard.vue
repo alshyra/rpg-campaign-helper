@@ -97,7 +97,7 @@ const species = ref("Humain")
 const career = ref("")
 const careerPlan = ref("")
 
-const charKeys: CharacteristicKey[] = ["ws", "bs", "s", "t", "i", "ag", "dex", "int", "wp", "fel"]
+const charKeys: CharacteristicKey[] = ["ws", "bs", "s", "t", "ag", "int", "wp", "fel"]
 const spent = reactive<Record<string, number>>(
   Object.fromEntries(charKeys.map((k) => [k, 0]))
 )
@@ -141,7 +141,7 @@ const submit = () => {
     },
     wounds: { current: 12, max: 12 },
     fate: 2,
-    resolve: 2,
+    insanity: 0,
     xp: { total: 0, available: 0 },
     career: { current: career.value, plan: careerPlan.value, status: "Argent 1", promotions: 1 },
     skills: {},

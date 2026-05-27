@@ -18,7 +18,7 @@ export class WarhammerWizardPage {
   }
 
   async budgetRemaining(): Promise<string> {
-    return (await this.page.locator("text=/\\d+ \\/ 25 pts/").textContent()) ?? ""
+    return (await this.page.locator("text=/\\d+ \\/ 45 pts/").textContent()) ?? ""
   }
 
   async clickCreate() {

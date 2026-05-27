@@ -102,14 +102,14 @@ export function buildWarhammerSeed(opts: SeedCharacterOptions = {}): Seed {
   char.systemData = {
     species: opts.species ?? "Humain",
     characteristics: {
-      base: { ws: 20, bs: 20, s: 20, t: 20, i: 20, ag: 20, dex: 20, int: 20, wp: 20, fel: 20 },
-      spent: { ws: 0, bs: 0, s: 0, t: 0, i: 0, ag: 0, dex: 0, int: 0, wp: 0, fel: 0 },
-      advancements: { ws: 0, bs: 0, s: 0, t: 0, i: 0, ag: 0, dex: 0, int: 0, wp: 0, fel: 0 },
-      current: { ws: 20, bs: 20, s: 20, t: 20, i: 20, ag: 20, dex: 20, int: 20, wp: 20, fel: 20 },
+      base: { ws: 35, bs: 35, s: 35, t: 35, ag: 35, int: 35, wp: 35, fel: 35 },
+      spent: { ws: 0, bs: 0, s: 0, t: 0, ag: 0, int: 0, wp: 0, fel: 0 },
+      advancements: { ws: 0, bs: 0, s: 0, t: 0, ag: 0, int: 0, wp: 0, fel: 0 },
+      current: { ws: 35, bs: 35, s: 35, t: 35, ag: 35, int: 35, wp: 35, fel: 35 },
     },
     wounds: { current: 12, max: 12 },
     fate: 2,
-    resolve: 2,
+    insanity: 0,
     xp: { total: 0, available: 0 },
     career: { current: opts.career ?? "Sorcier", plan: "Sorcier", status: "Argent 1", promotions: 1 },
     skills: {},
@@ -165,6 +165,42 @@ export function buildGenericSeedWithData(opts: SeedCharacterOptions & {
   char.notes = sd.notes ?? []
   char.spells = sd.spells ?? []
   return seed
+}
+
+export function buildAureliusSeed(): Seed {
+  return buildWarhammerSeedWithData({
+    name: "Aurélius Lebaro",
+    career: "Sorcier de village",
+    wounds: { current: 12, max: 12 },
+    money: { gold: 0, silver: 8, brass: 0 },
+    equipment: [
+      "Besace", "Bourse", "Épingle (x3)", "Morceau de silex",
+      "Plume (x3)", "Poignée de sable (x3)",
+    ],
+    weapons: [
+      { name: "Arme à une main", damage: "BF", qualities: "" },
+      { name: "Dague", damage: "BF-3", qualities: "" },
+    ],
+    armor: { head: 0, leftArm: 0, rightArm: 0, body: 0, leftLeg: 0, rightLeg: 0 },
+    skills: {
+      Canotage: 20, Charisme: 40, Commandement: 20, Commérage: 40,
+      "Conduite d'attelages": 20, "Connaissances générales (Empire)": 45,
+      Déguisement: 20, "Déplacement silencieux": 20, Dissimulation: 20,
+      Équitation: 20, Escalade: 20, Évaluation: 23, Focalisation: 50,
+      Fouille: 45, Intimidation: 20, Jeu: 23, "Langue (reikspiel)": 45,
+      Marchandage: 20, "Métier (apothicaire)": 45, Natation: 20,
+      Perception: 45, "Résistance à l'alcool": 20, "Sens de la magie": 50,
+      "Soins des animaux": 45, Soins: 45, Survie: 23,
+    },
+    spells: [
+      { id: "spell-1", name: "Choc", difficulty: "6", ingredients: "Une petite épingle", description: "" },
+      { id: "spell-2", name: "Flammerole", difficulty: "3", ingredients: "Un morceau de silex", description: "" },
+      { id: "spell-3", name: "Mauvaise fortune", difficulty: "5", ingredients: "Poupée représentant la victime", description: "" },
+      { id: "spell-4", name: "Pare-pluie", difficulty: "3", ingredients: "Une feuille fraichement cueillie", description: "" },
+      { id: "spell-5", name: "Rafale", difficulty: "4", ingredients: "Une plume d'oiseau", description: "" },
+      { id: "spell-6", name: "Sillage spectral", difficulty: "4", ingredients: "Une pincée de sable", description: "" },
+    ],
+  })
 }
 
 export function seedInitScript(seed: Seed): string {

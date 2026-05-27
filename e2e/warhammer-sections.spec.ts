@@ -31,6 +31,43 @@ test.describe("Warhammer profile (read-only)", () => {
     await expect(profile.woundsDisplay).toBeVisible()
     await expect(profile.xpDisplay).toBeVisible()
   })
+
+  test("displays all 8 characteristics at base 35", async ({ page }) => {
+    const seed = buildWarhammerSeed({
+      id: CID,
+      name: "Grimm",
+      species: "Humain",
+      career: "Ingénieur",
+    })
+    await page.addInitScript(seedInitScript(seed))
+    await page.goto(`/characters/${CID}/profile`)
+    const profile = new WarhammerProfilePage(page)
+
+    await expect(profile.characteristicValue("CC")).toHaveText("35")
+    await expect(profile.characteristicValue("CT")).toHaveText("35")
+    await expect(profile.characteristicValue("F")).toHaveText("35")
+    await expect(profile.characteristicValue("E")).toHaveText("35")
+    await expect(profile.characteristicValue("AG")).toHaveText("35")
+    await expect(profile.characteristicValue("INT")).toHaveText("35")
+    await expect(profile.characteristicValue("FM")).toHaveText("35")
+    await expect(profile.characteristicValue("SOC")).toHaveText("35")
+  })
+
+  test("displays career plan, status and promotions", async ({ page }) => {
+    const seed = buildWarhammerSeed({
+      id: CID,
+      name: "Brunhild",
+      species: "Humain",
+      career: "Guerrière",
+    })
+    await page.addInitScript(seedInitScript(seed))
+    await page.goto(`/characters/${CID}/profile`)
+    const profile = new WarhammerProfilePage(page)
+
+    await expect(profile.careerPlan).toContainText("Sorcier")
+    await expect(profile.careerStatus).toContainText("Argent 1")
+    await expect(profile.careerPromotions).toContainText("1")
+  })
 })
 
 test.describe("Warhammer health", () => {

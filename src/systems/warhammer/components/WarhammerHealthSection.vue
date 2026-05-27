@@ -31,9 +31,27 @@
       </div>
     </div>
 
-    <div class="mt-3 flex gap-4 text-xs text-stone-500">
-      <span>Destin : <strong class="text-amber-400">{{ systemData?.fate ?? 0 }}</strong></span>
-      <span>Résolution : <strong class="text-amber-400">{{ systemData?.resolve ?? 0 }}</strong></span>
+    <div class="mt-3 grid grid-cols-2 gap-3">
+      <div>
+        <label class="mb-1 block text-[9px] font-bold uppercase tracking-widest text-stone-500">Destin</label>
+        <StatsStepper
+          :model-value="systemData?.fate ?? 0"
+          label="Destin"
+          :min="0"
+          :max="10"
+          @update:model-value="setStat('fate', $event)"
+        />
+      </div>
+      <div>
+        <label class="mb-1 block text-[9px] font-bold uppercase tracking-widest text-stone-500">Folie</label>
+        <StatsStepper
+          :model-value="systemData?.insanity ?? 0"
+          label="Folie"
+          :min="0"
+          :max="20"
+          @update:model-value="setStat('insanity', $event)"
+        />
+      </div>
     </div>
   </article>
 </template>
@@ -54,6 +72,14 @@ const setWounds = (field: "current" | "max", val: number | string) => {
   if (!current) return
   characterStore.updateSystemData<WfrpSystemData>({
     wounds: { ...current.wounds, [field]: Number(val) },
+  })
+}
+
+const setStat = (field: "fate" | "insanity", val: number | string) => {
+  const current = characterStore.getSystemData<WfrpSystemData>()
+  if (!current) return
+  characterStore.updateSystemData<WfrpSystemData>({
+    [field]: Number(val),
   })
 }
 </script>

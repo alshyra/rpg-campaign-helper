@@ -23,14 +23,15 @@
         <span>Échelons : {{ systemData.career.promotions }}</span>
       </div>
 
-      <div class="mb-3 grid grid-cols-3 gap-2 rounded-xl bg-black/30 p-3 text-xs">
+      <div class="mb-3 grid grid-cols-4 gap-2 rounded-xl bg-black/30 p-3 text-xs">
         <div>XP total : <strong class="text-amber-400">{{ systemData.xp.total }}</strong></div>
         <div>XP dispo : <strong class="text-amber-400">{{ systemData.xp.available }}</strong></div>
         <div>Destin : <strong class="text-amber-400">{{ systemData.fate }}</strong></div>
+        <div>Folie : <strong class="text-amber-400">{{ systemData.insanity }}</strong></div>
       </div>
 
       <h3 class="mb-2 text-[10px] font-black uppercase tracking-widest text-amber-500">Profil</h3>
-      <div class="grid grid-cols-5 gap-1.5">
+      <div class="grid grid-cols-4 gap-1.5">
         <div
           v-for="stat in CHARACTERISTICS"
           :key="stat.key"

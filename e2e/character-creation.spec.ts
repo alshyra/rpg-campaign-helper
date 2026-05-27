@@ -101,7 +101,7 @@ test.describe("Warhammer system", () => {
     await createPage.selectSystem("Warhammer Fantasy 4e")
     await wizard.fillIdentity("Gorim", "Nain", "Guerrier", "Tueur")
     await wizard.spendPoints(5)
-    await expect(page.locator("body")).toContainText("0 / 25 pts")
+    await expect(page.locator("body")).toContainText("20 / 45 pts")
     await wizard.clickCreate()
 
     expect(page.url()).toContain("/characters/")

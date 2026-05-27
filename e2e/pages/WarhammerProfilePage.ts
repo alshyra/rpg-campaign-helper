@@ -12,11 +12,11 @@ export class WarhammerProfilePage {
   }
 
   get characteristicLabels(): Locator {
-    return this.page.locator("span").filter({ hasText: /^(CC|CT|F|E|I|Ag|Dex|Int|FM|Soc)$/ })
+    return this.page.locator("span").filter({ hasText: /^(CC|CT|F|E|AG|INT|FM|SOC)$/ })
   }
 
   characteristicValue(label: string): Locator {
-    return this.page.locator(`xpath=//span[text()="${label}"]/following-sibling::span[1]`)
+    return this.page.locator(`xpath=//div[contains(@class,'rounded-lg') and .//text()='${label}']/div[contains(@class,'text-lg')]`)
   }
 
   get moneyGold(): Locator {
@@ -37,5 +37,29 @@ export class WarhammerProfilePage {
 
   get xpDisplay(): Locator {
     return this.page.getByText("XP total")
+  }
+
+  get careerPlan(): Locator {
+    return this.page.getByText(/^Plan :/).first()
+  }
+
+  get careerStatus(): Locator {
+    return this.page.getByText(/^Statut :/).first()
+  }
+
+  get careerPromotions(): Locator {
+    return this.page.getByText(/^Échelons :/).first()
+  }
+
+  get insanityDisplay(): Locator {
+    return this.page.getByText("Folie")
+  }
+
+  get fateDisplay(): Locator {
+    return this.page.getByText("Destin")
+  }
+
+  characteristicValueLabel(label: string): Locator {
+    return this.page.locator(`text="${label}"`).first()
   }
 }

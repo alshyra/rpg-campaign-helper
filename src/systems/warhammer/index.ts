@@ -32,7 +32,7 @@ export default defineSystem<WfrpSystemData>({
     },
     wounds: { current: 12, max: 12 },
     fate: 2,
-    resolve: 2,
+    insanity: 0,
     xp: { total: 0, available: 0 },
     career: { current: "", plan: "", status: "Argent 1", promotions: 1 },
     skills: {},

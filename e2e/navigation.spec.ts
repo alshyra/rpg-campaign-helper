@@ -54,3 +54,33 @@ test.describe("Back to home navigation", () => {
     await expect(page).toHaveURL(/\/nav-card\/profile$/)
   })
 })
+
+test.describe("No character empty state", () => {
+  test("shows empty state when navigating without active character", async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem("rpg-player-helper::onboarding-seen", "true")
+    })
+    await page.goto("/characters/nonexistent/profile")
+    await expect(page.getByText("Aucun personnage actif")).toBeVisible()
+    await expect(page.getByRole("button", { name: "Aller à Persos" })).toBeVisible()
+    await expect(page.getByRole("button", { name: "Créer un perso" })).toBeVisible()
+  })
+
+  test("\"Aller à Persos\" navigates to character list", async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem("rpg-player-helper::onboarding-seen", "true")
+    })
+    await page.goto("/characters/nonexistent/profile")
+    await page.getByRole("button", { name: "Aller à Persos" }).click()
+    await expect(page).toHaveURL("/characters")
+  })
+
+  test("\"Créer un perso\" navigates to create page", async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem("rpg-player-helper::onboarding-seen", "true")
+    })
+    await page.goto("/characters/nonexistent/profile")
+    await page.getByRole("button", { name: "Créer un perso" }).click()
+    await expect(page).toHaveURL(/\/characters\/create$/)
+  })
+})

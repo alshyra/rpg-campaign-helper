@@ -38,4 +38,12 @@ export class WarhammerHealthPage {
   async decrementMax() {
     await this.maxWoundsDec.click()
   }
+
+  get fateInc(): Locator {
+    return this.page.getByLabel("Augmenter Destin")
+  }
+
+  get insanityInc(): Locator {
+    return this.page.getByLabel("Augmenter Folie")
+  }
 }
