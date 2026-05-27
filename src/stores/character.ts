@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 
-import type { CharacterState, InventoryItem, NoteEntry, Profile, Skill, Spell, Stat } from "../types/character";
 import { useDriveSync } from "../composables/useDriveSync";
+import type { CharacterState, InventoryItem, NoteEntry, Profile, Skill, Spell, Stat } from "../types/character";
 import {
   CAMPAIGNS_STORAGE_KEY,
   SINGLE_STORAGE_KEY,
@@ -66,7 +66,9 @@ export const useCharacterStore = defineStore("character", () => {
       return 0;
     }
 
-    const systemData = state.value.systemData as { injuries?: { light: number; minor: number; major: number; fatal: number } } | undefined;
+    const systemData = state.value.systemData as
+      | { injuries?: { light: number; minor: number; major: number; fatal: number } }
+      | undefined;
     const { light = 0, minor = 0, major = 0, fatal = 0 } = systemData?.injuries ?? state.value.profile.injuries;
     const usedSlots = light + minor + major + fatal;
     const totalSlots = 8;

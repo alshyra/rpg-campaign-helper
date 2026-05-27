@@ -1,14 +1,14 @@
-import { defineSystem } from "../registry"
-import { makeBlankCharacteristics, HUMAN_BASE, computeCurrent } from "./types"
-import type { WfrpSystemData } from "./types"
-import WarhammerAdvancementSection from "./components/WarhammerAdvancementSection.vue"
-import WarhammerCharacterWizard from "./components/WarhammerCharacterWizard.vue"
-import WarhammerProfileSection from "./components/WarhammerProfileSection.vue"
-import WarhammerHealthSection from "./components/WarhammerHealthSection.vue"
-import WarhammerSkillsSection from "./components/WarhammerSkillsSection.vue"
-import WarhammerSpellsSection from "./components/WarhammerSpellsSection.vue"
-import WarhammerInventorySection from "./components/WarhammerInventorySection.vue"
-import WarhammerNotesSection from "./components/WarhammerNotesSection.vue"
+import { defineSystem } from "../registry";
+import WarhammerAdvancementSection from "./components/WarhammerAdvancementSection.vue";
+import WarhammerCharacterWizard from "./components/WarhammerCharacterWizard.vue";
+import WarhammerHealthSection from "./components/WarhammerHealthSection.vue";
+import WarhammerInventorySection from "./components/WarhammerInventorySection.vue";
+import WarhammerNotesSection from "./components/WarhammerNotesSection.vue";
+import WarhammerProfileSection from "./components/WarhammerProfileSection.vue";
+import WarhammerSkillsSection from "./components/WarhammerSkillsSection.vue";
+import WarhammerSpellsSection from "./components/WarhammerSpellsSection.vue";
+import { makeBlankCharacteristics, HUMAN_BASE, computeCurrent } from "./types";
+import type { WfrpSystemData } from "./types";
 
 export default defineSystem<WfrpSystemData>({
   id: "warhammer",
@@ -52,4 +52,4 @@ export default defineSystem<WfrpSystemData>({
     equipment: [],
     money: { gold: 0, silver: 0, brass: 0 },
   }),
-})
+});

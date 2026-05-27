@@ -82,13 +82,11 @@
 </template>
 
 <script setup lang="ts">
-import { House, Settings, Pencil } from "@lucide/vue";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import { useCharacterStore } from "../../stores/character";
-import Button from "../ui/Button.vue";
 import IconButton from "../ui/IconButton.vue";
 import BottomNav from "./BottomNav.vue";
 
@@ -115,7 +113,9 @@ const title = computed(() => {
 const showHeader = computed(() => true);
 
 const showBottomNav = computed(
-  () => hasCharacter.value && !["character-edit", "character-create", "characters", "settings"].includes(route.name as string),
+  () =>
+    hasCharacter.value &&
+    !["character-edit", "character-create", "characters", "settings"].includes(route.name as string),
 );
 
 const showEditButton = computed(

@@ -8,7 +8,10 @@
         :class="showAddForm ? 'bg-red-500/20 text-red-500 rotate-45' : 'bg-amber-500/10 text-amber-500'"
         @click="showAddForm = !showAddForm"
       >
-        <Plus class="h-6 w-6" :stroke-width="2.2" />
+        <Plus
+          class="h-6 w-6"
+          :stroke-width="2.2"
+        />
       </IconButton>
     </div>
 
@@ -24,7 +27,10 @@
           class="h-8 w-8 p-0 text-stone-500 hover:text-white"
           @click="showAddForm = false"
         >
-          <X class="h-4 w-4" :stroke-width="2" />
+          <X
+            class="h-4 w-4"
+            :stroke-width="2"
+          />
         </IconButton>
       </div>
       <FormField
@@ -42,7 +48,10 @@
         class="w-full gap-2 py-3 font-black text-black transition-all hover:bg-amber-500 active:scale-[0.98]"
         @click="submitItem"
       >
-        <Package class="h-5 w-5" :stroke-width="2.2" />
+        <Package
+          class="h-5 w-5"
+          :stroke-width="2.2"
+        />
         AJOUTER AU SAC
       </Button>
     </section>
@@ -51,7 +60,10 @@
       v-if="inventory.length === 0"
       class="rounded-3xl border-2 border-dashed border-white/5 py-12 text-center text-stone-600"
     >
-      <Backpack class="mx-auto mb-2 h-12 w-12 opacity-20" :stroke-width="1.2" />
+      <Backpack
+        class="mx-auto mb-2 h-12 w-12 opacity-20"
+        :stroke-width="1.2"
+      />
       <p class="text-sm italic">Le sac est vide...</p>
     </div>
 
@@ -94,7 +106,10 @@
             class="h-8 w-8 rounded-lg border-transparent bg-transparent p-0 text-stone-400 transition-all hover:bg-white/5 hover:text-emerald-500"
             @click="increment(item)"
           >
-            <Plus class="h-4 w-4" :stroke-width="2.2" />
+            <Plus
+              class="h-4 w-4"
+              :stroke-width="2.2"
+            />
           </IconButton>
         </div>
       </div>
@@ -103,66 +118,71 @@
 </template>
 
 <script setup lang="ts">
-import { Backpack, Minus, Package, Plus, Trash2, X } from "@lucide/vue"
-import { computed, reactive, ref } from "vue"
+import { Backpack, Minus, Package, Plus, Trash2, X } from "@lucide/vue";
+import { computed, reactive, ref } from "vue";
 
-import type { InventoryItem } from "../../../types/character"
-import type { GenericSystemData } from "../types"
-import { useCharacterStore } from "../../../stores/character"
-import Button from "../../../components/ui/Button.vue"
-import FormField from "../../../components/ui/FormField.vue"
-import IconButton from "../../../components/ui/IconButton.vue"
+import Button from "../../../components/ui/Button.vue";
+import FormField from "../../../components/ui/FormField.vue";
+import IconButton from "../../../components/ui/IconButton.vue";
+import { useCharacterStore } from "../../../stores/character";
+import type { InventoryItem } from "../../../types/character";
+import type { GenericSystemData } from "../types";
 
-const characterStore = useCharacterStore()
-const systemData = computed(() => characterStore.getSystemData<GenericSystemData>())
+const characterStore = useCharacterStore();
+const systemData = computed(() => characterStore.getSystemData<GenericSystemData>());
 
-const inventory = computed(() => systemData.value?.inventory ?? [])
+const inventory = computed(() => systemData.value?.inventory ?? []);
 
-const showAddForm = ref(false)
+const showAddForm = ref(false);
 
 const draft = reactive({
   name: "",
   details: "",
   quantity: 1,
-})
+});
 
-const makeId = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 10)}`
+const makeId = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 10)}`;
 
 const submitItem = () => {
-  if (!draft.name.trim()) return
+  if (!draft.name.trim()) return;
 
-  const current = systemData.value?.inventory ?? []
+  const current = systemData.value?.inventory ?? [];
   characterStore.updateSystemData<GenericSystemData>({
     inventory: [
-      { id: makeId("item"), name: draft.name.trim(), details: draft.details.trim(), quantity: Math.max(1, draft.quantity) },
+      {
+        id: makeId("item"),
+        name: draft.name.trim(),
+        details: draft.details.trim(),
+        quantity: Math.max(1, draft.quantity),
+      },
       ...current,
     ],
-  })
+  });
 
-  draft.name = ""
-  draft.details = ""
-  showAddForm.value = false
-}
+  draft.name = "";
+  draft.details = "";
+  showAddForm.value = false;
+};
 
 const decrement = (item: InventoryItem) => {
-  const current = systemData.value?.inventory ?? []
+  const current = systemData.value?.inventory ?? [];
   if (item.quantity <= 1) {
     characterStore.updateSystemData<GenericSystemData>({
       inventory: current.filter((i) => i.id !== item.id),
-    })
+    });
   } else {
     characterStore.updateSystemData<GenericSystemData>({
       inventory: current.map((i) => (i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i)),
-    })
+    });
   }
-}
+};
 
 const increment = (item: InventoryItem) => {
-  const current = systemData.value?.inventory ?? []
+  const current = systemData.value?.inventory ?? [];
   characterStore.updateSystemData<GenericSystemData>({
     inventory: current.map((i) => (i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i)),
-  })
-}
+  });
+};
 </script>
 
 <style scoped>

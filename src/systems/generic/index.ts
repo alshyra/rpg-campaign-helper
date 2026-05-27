@@ -1,13 +1,12 @@
-import { defineSystem } from "../registry"
-import type { GenericSystemData } from "./types"
-
-import GenericCharacterWizard from "./components/GenericCharacterWizard.vue"
-import GenericProfileSection from "./components/GenericProfileSection.vue"
-import GenericHealthSection from "./components/GenericHealthSection.vue"
-import GenericSkillsSection from "./components/GenericSkillsSection.vue"
-import GenericSpellsSection from "./components/GenericSpellsSection.vue"
-import GenericInventorySection from "./components/GenericInventorySection.vue"
-import GenericNotesSection from "./components/GenericNotesSection.vue"
+import { defineSystem } from "../registry";
+import GenericCharacterWizard from "./components/GenericCharacterWizard.vue";
+import GenericHealthSection from "./components/GenericHealthSection.vue";
+import GenericInventorySection from "./components/GenericInventorySection.vue";
+import GenericNotesSection from "./components/GenericNotesSection.vue";
+import GenericProfileSection from "./components/GenericProfileSection.vue";
+import GenericSkillsSection from "./components/GenericSkillsSection.vue";
+import GenericSpellsSection from "./components/GenericSpellsSection.vue";
+import type { GenericSystemData } from "./types";
 
 export default defineSystem<GenericSystemData>({
   id: "generic",
@@ -37,4 +36,4 @@ export default defineSystem<GenericSystemData>({
     spells: [],
     injuries: { light: 0, minor: 0, major: 0, fatal: 0 },
   }),
-})
+});

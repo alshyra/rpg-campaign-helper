@@ -1,18 +1,18 @@
-import type { Characteristics } from "./types"
+import type { Characteristics } from "./types";
 
 export interface WfrpCareerSecondary {
-  attacks: number
-  wounds: number
-  mag: number
+  attacks: number;
+  wounds: number;
+  mag: number;
 }
 
 export interface WfrpCareerData {
-  type: "basic" | "advanced"
-  role: string
-  advances: Characteristics
-  secondary: WfrpCareerSecondary
-  entries: string[]
-  exits: string[]
+  type: "basic" | "advanced";
+  role: string;
+  advances: Characteristics;
+  secondary: WfrpCareerSecondary;
+  entries: string[];
+  exits: string[];
 }
 
 export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
@@ -24,7 +24,7 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     entries: ["Priest"],
     exits: ["Demagogue", "Flagellant", "High Priest", "Scholar", "Witch Hunter"],
   },
-  "Artisan": {
+  Artisan: {
     type: "advanced",
     role: "Peasants",
     advances: { ws: 0, bs: 0, s: 10, t: 10, ag: 20, int: 10, wp: 10, fel: 10 },
@@ -32,7 +32,7 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     entries: ["Engineer", "Militiaman", "Navigator", "Tradesman"],
     exits: ["Demagogue", "Engineer", "Guild Master", "Merchant", "Militiaman"],
   },
-  "Assassin": {
+  Assassin: {
     type: "advanced",
     role: "Warriors",
     advances: { ws: 25, bs: 25, s: 10, t: 10, ag: 30, int: 20, wp: 10, fel: 20 },
@@ -40,12 +40,21 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     entries: ["Champion", "Duellist", "Judicial Champion", "Outlaw Chief", "Spy", "Targeteer"],
     exits: ["Champion", "Outlaw Chief", "Rogue", "Sergeant", "Witch Hunter"],
   },
-  "Captain": {
+  Captain: {
     type: "advanced",
     role: "Warriors",
     advances: { ws: 30, bs: 20, s: 20, t: 20, ag: 20, int: 15, wp: 15, fel: 25 },
     secondary: { attacks: 2, wounds: 7, mag: 0 },
-    entries: ["Explorer", "Ghost Strider", "Knight", "Knight of the Inner Circle", "Noble Lord", "Outlaw Chief", "Sergeant", "Witch Hunter"],
+    entries: [
+      "Explorer",
+      "Ghost Strider",
+      "Knight",
+      "Knight of the Inner Circle",
+      "Noble Lord",
+      "Outlaw Chief",
+      "Sergeant",
+      "Witch Hunter",
+    ],
     exits: ["Agitator", "Explorer", "Merchant", "Outlaw Chief", "Politician"],
   },
   "Cat Burglar": {
@@ -56,23 +65,44 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     entries: ["Bone Picker", "Charlatan", "Grave Robber", "Rat Catcher", "Thief"],
     exits: ["Crime Lord", "Fence", "Master Thief", "Racketeer", "Vagabond"],
   },
-  "Champion": {
+  Champion: {
     type: "advanced",
     role: "Warriors",
     advances: { ws: 40, bs: 40, s: 25, t: 25, ag: 30, int: 0, wp: 20, fel: 0 },
     secondary: { attacks: 2, wounds: 8, mag: 0 },
-    entries: ["Assassin", "Duellist", "Judicial Champion", "Knight of the Inner Circle", "Targeteer", "Veteran", "Witch Hunter"],
+    entries: [
+      "Assassin",
+      "Duellist",
+      "Judicial Champion",
+      "Knight of the Inner Circle",
+      "Targeteer",
+      "Veteran",
+      "Witch Hunter",
+    ],
     exits: ["Assassin", "Scout", "Sergeant", "Witch Hunter"],
   },
-  "Charlatan": {
+  Charlatan: {
     type: "advanced",
     role: "Rogues",
     advances: { ws: 10, bs: 10, s: 5, t: 10, ag: 15, int: 15, wp: 15, fel: 25 },
     secondary: { attacks: 0, wounds: 4, mag: 0 },
-    entries: ["Agitator", "Camp Follower", "Courtier", "Entertainer", "Envoy", "Fence", "Hedge Wizard", "Journeyman Wizard", "Minstrel", "Rogue", "Smuggler", "Thief"],
+    entries: [
+      "Agitator",
+      "Camp Follower",
+      "Courtier",
+      "Entertainer",
+      "Envoy",
+      "Fence",
+      "Hedge Wizard",
+      "Journeyman Wizard",
+      "Minstrel",
+      "Rogue",
+      "Smuggler",
+      "Thief",
+    ],
     exits: ["Cat Burglar", "Demagogue", "Outlaw", "Politician", "Spy"],
   },
-  "Courtier": {
+  Courtier: {
     type: "advanced",
     role: "Nobles",
     advances: { ws: 5, bs: 5, s: 0, t: 0, ag: 10, int: 20, wp: 20, fel: 20 },
@@ -88,15 +118,31 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     entries: ["Giant Slayer"],
     exits: ["Glorious death"],
   },
-  "Demagogue": {
+  Demagogue: {
     type: "advanced",
     role: "Special",
     advances: { ws: 10, bs: 10, s: 0, t: 10, ag: 15, int: 20, wp: 15, fel: 30 },
     secondary: { attacks: 1, wounds: 4, mag: 0 },
-    entries: ["Agitator", "Anointed Priest", "Artisan", "Charlatan", "Crime Lord", "Flagellant", "Friar", "Initiate", "Minstrel", "Outlaw", "Outlaw Chief", "Politician", "Rogue", "Vampire Hunter", "Witch Hunter"],
+    entries: [
+      "Agitator",
+      "Anointed Priest",
+      "Artisan",
+      "Charlatan",
+      "Crime Lord",
+      "Flagellant",
+      "Friar",
+      "Initiate",
+      "Minstrel",
+      "Outlaw",
+      "Outlaw Chief",
+      "Politician",
+      "Rogue",
+      "Vampire Hunter",
+      "Witch Hunter",
+    ],
     exits: ["Crime Lord", "Friar", "Mercenary", "Outlaw Chief", "Politician"],
   },
-  "Duellist": {
+  Duellist: {
     type: "advanced",
     role: "Warriors",
     advances: { ws: 20, bs: 20, s: 10, t: 20, ag: 20, int: 15, wp: 15, fel: 10 },
@@ -104,7 +150,7 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     entries: ["Courtier", "Estalian Diestro", "Highwayman", "Pistolier", "Protagonist", "Sergeant", "Targeteer"],
     exits: ["Assassin", "Champion", "Highwayman", "Rogue", "Sergeant"],
   },
-  "Engineer": {
+  Engineer: {
     type: "advanced",
     role: "Academics",
     advances: { ws: 10, bs: 15, s: 5, t: 5, ag: 10, int: 20, wp: 10, fel: 0 },
@@ -112,23 +158,47 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     entries: ["Artisan", "Miner", "Student", "Tradesman"],
     exits: ["Artisan", "Explorer", "Guild Master", "Pistolier", "Smuggler"],
   },
-  "Explorer": {
+  Explorer: {
     type: "advanced",
     role: "Rangers",
     advances: { ws: 20, bs: 20, s: 10, t: 15, ag: 15, int: 25, wp: 20, fel: 15 },
     secondary: { attacks: 1, wounds: 6, mag: 0 },
-    entries: ["Captain", "Engineer", "Herald", "Master Thief", "Master Wizard", "Mate", "Navigator", "Scholar", "Scout", "Sea Captain", "Spy", "Wizard Lord"],
+    entries: [
+      "Captain",
+      "Engineer",
+      "Herald",
+      "Master Thief",
+      "Master Wizard",
+      "Mate",
+      "Navigator",
+      "Scholar",
+      "Scout",
+      "Sea Captain",
+      "Spy",
+      "Wizard Lord",
+    ],
     exits: ["Captain", "Merchant", "Sea Captain", "Spy"],
   },
-  "Fence": {
+  Fence: {
     type: "advanced",
     role: "Rogues",
     advances: { ws: 15, bs: 10, s: 10, t: 5, ag: 10, int: 5, wp: 10, fel: 10 },
     secondary: { attacks: 1, wounds: 4, mag: 0 },
-    entries: ["Bone Picker", "Burgher", "Cat Burglar", "Grave Robber", "Innkeeper", "Racketeer", "Smuggler", "Steward", "Thief", "Tomb Robber"],
+    entries: [
+      "Bone Picker",
+      "Burgher",
+      "Cat Burglar",
+      "Grave Robber",
+      "Innkeeper",
+      "Racketeer",
+      "Smuggler",
+      "Steward",
+      "Thief",
+      "Tomb Robber",
+    ],
     exits: ["Charlatan", "Crime Lord", "Master Thief", "Racketeer"],
   },
-  "Flagellant": {
+  Flagellant: {
     type: "advanced",
     role: "Priests",
     advances: { ws: 15, bs: 0, s: 10, t: 15, ag: 5, int: 0, wp: 20, fel: 10 },
@@ -136,7 +206,7 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     entries: ["Anointed Priest", "Friar", "Priest", "Zealot"],
     exits: ["Demagogue", "Interrogator", "Priest", "Soldier", "Veteran"],
   },
-  "Friar": {
+  Friar: {
     type: "advanced",
     role: "Priests",
     advances: { ws: 10, bs: 0, s: 5, t: 10, ag: 0, int: 15, wp: 15, fel: 15 },
@@ -168,7 +238,7 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     entries: ["Artisan", "Engineer", "Merchant", "Physician", "Wizard Lord"],
     exits: ["Crime Lord", "Politician", "Racketeer"],
   },
-  "Herald": {
+  Herald: {
     type: "advanced",
     role: "Nobles",
     advances: { ws: 10, bs: 10, s: 5, t: 5, ag: 15, int: 15, wp: 10, fel: 20 },
@@ -184,15 +254,25 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     entries: ["Anointed Priest"],
     exits: ["Politician", "Scholar", "Witch Hunter"],
   },
-  "Highwayman": {
+  Highwayman: {
     type: "advanced",
     role: "Rogues",
     advances: { ws: 20, bs: 20, s: 10, t: 10, ag: 30, int: 20, wp: 15, fel: 25 },
     secondary: { attacks: 1, wounds: 4, mag: 0 },
-    entries: ["Coachman", "Duellist", "Estalian Diestro", "Ferryman", "Minstrel", "Outlaw", "Outrider", "Roadwarden", "Toll Keeper"],
+    entries: [
+      "Coachman",
+      "Duellist",
+      "Estalian Diestro",
+      "Ferryman",
+      "Minstrel",
+      "Outlaw",
+      "Outrider",
+      "Roadwarden",
+      "Toll Keeper",
+    ],
     exits: ["Agitator", "Duellist", "Master Thief", "Outlaw Chief", "Sergeant"],
   },
-  "Innkeeper": {
+  Innkeeper: {
     type: "advanced",
     role: "Peasants",
     advances: { ws: 10, bs: 5, s: 5, t: 10, ag: 20, int: 10, wp: 10, fel: 20 },
@@ -200,7 +280,7 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     entries: ["Burgher", "Servant"],
     exits: ["Burgher", "Fence", "Merchant", "Outlaw", "Smuggler"],
   },
-  "Interrogator": {
+  Interrogator: {
     type: "advanced",
     role: "Special",
     advances: { ws: 15, bs: 0, s: 20, t: 10, ag: 10, int: 10, wp: 20, fel: 15 },
@@ -224,7 +304,7 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     entries: ["Sergeant", "Veteran"],
     exits: ["Assassin", "Champion", "Sergeant", "Witch Hunter", "Zealot"],
   },
-  "Knight": {
+  Knight: {
     type: "advanced",
     role: "Nobles",
     advances: { ws: 25, bs: 0, s: 15, t: 15, ag: 15, int: 5, wp: 15, fel: 5 },
@@ -256,7 +336,7 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     entries: ["Journeyman Wizard"],
     exits: ["Explorer", "Scholar", "Wizard Lord"],
   },
-  "Mate": {
+  Mate: {
     type: "advanced",
     role: "Warriors",
     advances: { ws: 15, bs: 15, s: 10, t: 15, ag: 10, int: 10, wp: 10, fel: 10 },
@@ -264,15 +344,27 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     entries: ["Marine", "Seaman"],
     exits: ["Explorer", "Merchant", "Navigator", "Sea Captain"],
   },
-  "Merchant": {
+  Merchant: {
     type: "advanced",
     role: "Peasants",
     advances: { ws: 10, bs: 10, s: 5, t: 5, ag: 10, int: 25, wp: 20, fel: 20 },
     secondary: { attacks: 0, wounds: 4, mag: 0 },
-    entries: ["Artisan", "Burgher", "Captain", "Envoy", "Explorer", "Fisherman", "Innkeeper", "Mate", "Scholar", "Steward", "Tradesman"],
+    entries: [
+      "Artisan",
+      "Burgher",
+      "Captain",
+      "Envoy",
+      "Explorer",
+      "Fisherman",
+      "Innkeeper",
+      "Mate",
+      "Scholar",
+      "Steward",
+      "Tradesman",
+    ],
     exits: ["Guild Master", "Militiaman", "Politician", "Racketeer", "Spy"],
   },
-  "Minstrel": {
+  Minstrel: {
     type: "advanced",
     role: "Rogues",
     advances: { ws: 10, bs: 10, s: 0, t: 0, ag: 15, int: 10, wp: 5, fel: 25 },
@@ -280,7 +372,7 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     entries: ["Entertainer"],
     exits: ["Charlatan", "Demagogue", "Highwayman", "Spy", "Student"],
   },
-  "Navigator": {
+  Navigator: {
     type: "advanced",
     role: "Special",
     advances: { ws: 10, bs: 10, s: 5, t: 5, ag: 10, int: 25, wp: 10, fel: 5 },
@@ -301,10 +393,19 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     role: "Rogues",
     advances: { ws: 20, bs: 30, s: 10, t: 20, ag: 10, int: 10, wp: 10, fel: 20 },
     secondary: { attacks: 2, wounds: 6, mag: 0 },
-    entries: ["Crime Lord", "Demagogue", "Ghost Strider", "Highwayman", "Master Thief", "Racketeer", "Scout", "Veteran"],
+    entries: [
+      "Crime Lord",
+      "Demagogue",
+      "Ghost Strider",
+      "Highwayman",
+      "Master Thief",
+      "Racketeer",
+      "Scout",
+      "Veteran",
+    ],
     exits: ["Assassin", "Captain", "Crime Lord", "Demagogue"],
   },
-  "Physician": {
+  Physician: {
     type: "advanced",
     role: "Academics",
     advances: { ws: 0, bs: 0, s: 10, t: 10, ag: 15, int: 30, wp: 20, fel: 15 },
@@ -312,7 +413,7 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     entries: ["Barber-Surgeon", "Interrogator", "Scholar", "Student"],
     exits: ["Friar", "Guild Master", "Scholar", "Spy"],
   },
-  "Pistolier": {
+  Pistolier: {
     type: "advanced",
     role: "Nobles",
     advances: { ws: 20, bs: 20, s: 10, t: 10, ag: 15, int: 0, wp: 15, fel: 15 },
@@ -320,15 +421,31 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     entries: ["Engineer", "Noble"],
     exits: ["Courtier", "Duellist", "Knight", "Sergeant", "Veteran"],
   },
-  "Politician": {
+  Politician: {
     type: "advanced",
     role: "Nobles",
     advances: { ws: 5, bs: 5, s: 5, t: 10, ag: 0, int: 20, wp: 10, fel: 20 },
     secondary: { attacks: 0, wounds: 4, mag: 0 },
-    entries: ["Agitator", "Bailiff", "Captain", "Charlatan", "Courtier", "Crime Lord", "Demagogue", "Guild Master", "Herald", "High Priest", "Merchant", "Noble", "Peasant", "Racketeer", "Toll Keeper"],
+    entries: [
+      "Agitator",
+      "Bailiff",
+      "Captain",
+      "Charlatan",
+      "Courtier",
+      "Crime Lord",
+      "Demagogue",
+      "Guild Master",
+      "Herald",
+      "High Priest",
+      "Merchant",
+      "Noble",
+      "Peasant",
+      "Racketeer",
+      "Toll Keeper",
+    ],
     exits: ["Courtier", "Crime Lord", "Demagogue", "Noble Lord", "Racketeer", "Steward"],
   },
-  "Priest": {
+  Priest: {
     type: "advanced",
     role: "Priests",
     advances: { ws: 10, bs: 10, s: 5, t: 10, ag: 5, int: 10, wp: 20, fel: 15 },
@@ -336,28 +453,69 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     entries: ["Flagellant", "Friar", "Initiate"],
     exits: ["Anointed Priest", "Flagellant", "Scholar", "Steward"],
   },
-  "Racketeer": {
+  Racketeer: {
     type: "advanced",
     role: "Rogues",
     advances: { ws: 20, bs: 15, s: 15, t: 10, ag: 10, int: 0, wp: 15, fel: 10 },
     secondary: { attacks: 1, wounds: 5, mag: 0 },
-    entries: ["Bailiff", "Bodyguard", "Cat Burglar", "Fence", "Guild Master", "Interrogator", "Merchant", "Politician", "Protagonist", "Spy", "Thug"],
+    entries: [
+      "Bailiff",
+      "Bodyguard",
+      "Cat Burglar",
+      "Fence",
+      "Guild Master",
+      "Interrogator",
+      "Merchant",
+      "Politician",
+      "Protagonist",
+      "Spy",
+      "Thug",
+    ],
     exits: ["Fence", "Master Thief", "Politician", "Outlaw Chief"],
   },
-  "Scholar": {
+  Scholar: {
     type: "advanced",
     role: "Academics",
     advances: { ws: 5, bs: 5, s: 5, t: 5, ag: 10, int: 30, wp: 15, fel: 15 },
     secondary: { attacks: 0, wounds: 4, mag: 0 },
-    entries: ["Anointed Priest", "Apprentice Wizard", "Friar", "High Priest", "Journeyman Wizard", "Master Wizard", "Navigator", "Noble Lord", "Physician", "Priest", "Scribe", "Sea Captain", "Student"],
+    entries: [
+      "Anointed Priest",
+      "Apprentice Wizard",
+      "Friar",
+      "High Priest",
+      "Journeyman Wizard",
+      "Master Wizard",
+      "Navigator",
+      "Noble Lord",
+      "Physician",
+      "Priest",
+      "Scribe",
+      "Sea Captain",
+      "Student",
+    ],
     exits: ["Apprentice Wizard", "Explorer", "Friar", "Merchant", "Physician", "Steward"],
   },
-  "Scout": {
+  Scout: {
     type: "advanced",
     role: "Rangers",
     advances: { ws: 20, bs: 20, s: 10, t: 10, ag: 15, int: 20, wp: 15, fel: 0 },
     secondary: { attacks: 1, wounds: 6, mag: 0 },
-    entries: ["Bounty Hunter", "Champion", "Charcoal-Burner", "Coachman", "Fieldwarden", "Hunter", "Kithband Warrior", "Messenger", "Miner", "Outrider", "Roadwarden", "Runebearer", "Vagabond", "Woodsman"],
+    entries: [
+      "Bounty Hunter",
+      "Champion",
+      "Charcoal-Burner",
+      "Coachman",
+      "Fieldwarden",
+      "Hunter",
+      "Kithband Warrior",
+      "Messenger",
+      "Miner",
+      "Outrider",
+      "Roadwarden",
+      "Runebearer",
+      "Vagabond",
+      "Woodsman",
+    ],
     exits: ["Explorer", "Outlaw Chief", "Sergeant", "Vampire Hunter", "Ghost Strider"],
   },
   "Sea Captain": {
@@ -368,23 +526,53 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     entries: ["Explorer", "Mate", "Navigator", "Noble Lord"],
     exits: ["Explorer", "Noble Lord", "Scholar", "Spy"],
   },
-  "Sergeant": {
+  Sergeant: {
     type: "advanced",
     role: "Warriors",
     advances: { ws: 20, bs: 15, s: 10, t: 10, ag: 10, int: 10, wp: 10, fel: 20 },
     secondary: { attacks: 1, wounds: 4, mag: 0 },
-    entries: ["Assassin", "Champion", "Duellist", "Highwayman", "Judicial Champion", "Kislevite Kossar", "Marine", "Mercenary", "Militiaman", "Norse Berserker", "Pistolier", "Roadwarden", "Scout", "Shieldbreaker", "Soldier", "Squire", "Targeteer", "Veteran", "Watchman"],
+    entries: [
+      "Assassin",
+      "Champion",
+      "Duellist",
+      "Highwayman",
+      "Judicial Champion",
+      "Kislevite Kossar",
+      "Marine",
+      "Mercenary",
+      "Militiaman",
+      "Norse Berserker",
+      "Pistolier",
+      "Roadwarden",
+      "Scout",
+      "Shieldbreaker",
+      "Soldier",
+      "Squire",
+      "Targeteer",
+      "Veteran",
+      "Watchman",
+    ],
     exits: ["Captain", "Duellist", "Judicial Champion", "Knight"],
   },
-  "Spy": {
+  Spy: {
     type: "advanced",
     role: "Rogues",
     advances: { ws: 15, bs: 15, s: 5, t: 10, ag: 20, int: 20, wp: 35, fel: 20 },
     secondary: { attacks: 1, wounds: 4, mag: 0 },
-    entries: ["Camp Follower", "Charlatan", "Courtier", "Explorer", "Merchant", "Minstrel", "Physician", "Sea Captain", "Servant"],
+    entries: [
+      "Camp Follower",
+      "Charlatan",
+      "Courtier",
+      "Explorer",
+      "Merchant",
+      "Minstrel",
+      "Physician",
+      "Sea Captain",
+      "Servant",
+    ],
     exits: ["Assassin", "Explorer", "Master Thief", "Racketeer"],
   },
-  "Steward": {
+  Steward: {
     type: "advanced",
     role: "Nobles",
     advances: { ws: 10, bs: 10, s: 10, t: 10, ag: 0, int: 30, wp: 20, fel: 25 },
@@ -392,7 +580,7 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     entries: ["Courtier", "Politician", "Priest", "Scholar", "Valet"],
     exits: ["Crime Lord", "Fence", "Merchant", "Noble"],
   },
-  "Targeteer": {
+  Targeteer: {
     type: "advanced",
     role: "Warriors",
     advances: { ws: 0, bs: 35, s: 10, t: 10, ag: 25, int: 10, wp: 20, fel: 15 },
@@ -408,12 +596,25 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     entries: ["Bounty Hunter", "Field Warden", "Ghost Strider", "Knight", "Scout", "Tomb Robber"],
     exits: ["Demagogue", "Initiate", "Knight", "Targeteer", "Witch Hunter"],
   },
-  "Veteran": {
+  Veteran: {
     type: "advanced",
     role: "Warriors",
     advances: { ws: 20, bs: 20, s: 10, t: 10, ag: 15, int: 0, wp: 15, fel: 0 },
     secondary: { attacks: 1, wounds: 6, mag: 0 },
-    entries: ["Flagellant", "Kislevite Kossar", "Kithband Warrior", "Mercenary", "Norse Berserker", "Outlaw", "Pistolier", "Pit Fighter", "Runebearer", "Shieldbreaker", "Soldier", "Squire"],
+    entries: [
+      "Flagellant",
+      "Kislevite Kossar",
+      "Kithband Warrior",
+      "Mercenary",
+      "Norse Berserker",
+      "Outlaw",
+      "Pistolier",
+      "Pit Fighter",
+      "Runebearer",
+      "Shieldbreaker",
+      "Soldier",
+      "Squire",
+    ],
     exits: ["Champion", "Judicial Champion", "Outlaw Chief", "Sergeant", "Targeteer"],
   },
   "Witch Hunter": {
@@ -421,7 +622,15 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     role: "Special",
     advances: { ws: 30, bs: 30, s: 15, t: 15, ag: 15, int: 15, wp: 35, fel: 20 },
     secondary: { attacks: 2, wounds: 6, mag: 0 },
-    entries: ["Anointed Priest", "Assassin", "Champion", "High Priest", "Judicial Champion", "Knight of the Inner Circle", "Vampire Hunter"],
+    entries: [
+      "Anointed Priest",
+      "Assassin",
+      "Champion",
+      "High Priest",
+      "Judicial Champion",
+      "Knight of the Inner Circle",
+      "Vampire Hunter",
+    ],
     exits: ["Captain", "Champion", "Demagogue", "Initiate", "Knight of the Inner Circle"],
   },
   "Wizard Lord": {
@@ -432,4 +641,4 @@ export const CAREER_DATA_ADVANCED: Record<string, WfrpCareerData> = {
     entries: ["Master Wizard"],
     exits: ["Explorer", "Guild Master"],
   },
-}
+};

@@ -8,20 +8,43 @@
         :class="showForm ? 'bg-red-500/20 text-red-500 rotate-45' : 'bg-amber-500/10 text-amber-500'"
         @click="showForm = !showForm"
       >
-        <Plus class="h-5 w-5" :stroke-width="2.2" />
+        <Plus
+          class="h-5 w-5"
+          :stroke-width="2.2"
+        />
       </IconButton>
     </div>
 
-    <div v-if="showForm" class="mb-4 flex gap-2">
-      <FormField v-model="draftName" placeholder="Ex: Focalisation" class="flex-1" @keydown.enter="addSkill" />
-      <FormField v-model="draftValue" type="number" placeholder="%" class="w-20" @keydown.enter="addSkill" />
+    <div
+      v-if="showForm"
+      class="mb-4 flex gap-2"
+    >
+      <FormField
+        v-model="draftName"
+        placeholder="Ex: Focalisation"
+        class="flex-1"
+        @keydown.enter="addSkill"
+      />
+      <FormField
+        v-model="draftValue"
+        type="number"
+        placeholder="%"
+        class="w-20"
+        @keydown.enter="addSkill"
+      />
     </div>
 
-    <div v-if="skillEntries.length === 0" class="py-4 text-center text-xs italic text-stone-600">
+    <div
+      v-if="skillEntries.length === 0"
+      class="py-4 text-center text-xs italic text-stone-600"
+    >
       Aucune compétence
     </div>
 
-    <div v-else class="grid gap-1">
+    <div
+      v-else
+      class="grid gap-1"
+    >
       <div
         v-for="[name, value] in skillEntries"
         :key="name"
@@ -45,37 +68,37 @@
 </template>
 
 <script setup lang="ts">
-import { Plus, X } from "@lucide/vue"
-import { computed, ref } from "vue"
+import { Plus, X } from "@lucide/vue";
+import { computed, ref } from "vue";
 
-import { useCharacterStore } from "../../../stores/character"
-import type { WfrpSystemData } from "../types"
-import FormField from "../../../components/ui/FormField.vue"
-import IconButton from "../../../components/ui/IconButton.vue"
+import FormField from "../../../components/ui/FormField.vue";
+import IconButton from "../../../components/ui/IconButton.vue";
+import { useCharacterStore } from "../../../stores/character";
+import type { WfrpSystemData } from "../types";
 
-const characterStore = useCharacterStore()
-const systemData = computed(() => characterStore.getSystemData<WfrpSystemData>())
+const characterStore = useCharacterStore();
+const systemData = computed(() => characterStore.getSystemData<WfrpSystemData>());
 
-const skillEntries = computed(() => Object.entries(systemData.value?.skills ?? {}))
+const skillEntries = computed(() => Object.entries(systemData.value?.skills ?? {}));
 
-const showForm = ref(false)
-const draftName = ref("")
-const draftValue = ref(30)
+const showForm = ref(false);
+const draftName = ref("");
+const draftValue = ref(30);
 
 const addSkill = () => {
-  if (!draftName.value.trim()) return
-  const current = systemData.value?.skills ?? {}
+  if (!draftName.value.trim()) return;
+  const current = systemData.value?.skills ?? {};
   characterStore.updateSystemData<WfrpSystemData>({
     skills: { ...current, [draftName.value.trim()]: Number(draftValue.value) },
-  })
-  draftName.value = ""
-  draftValue.value = 30
-  showForm.value = false
-}
+  });
+  draftName.value = "";
+  draftValue.value = 30;
+  showForm.value = false;
+};
 
 const removeSkill = (name: string) => {
-  const current = { ...(systemData.value?.skills ?? {}) }
-  delete current[name]
-  characterStore.updateSystemData<WfrpSystemData>({ skills: current })
-}
+  const current = { ...(systemData.value?.skills ?? {}) };
+  delete current[name];
+  characterStore.updateSystemData<WfrpSystemData>({ skills: current });
+};
 </script>

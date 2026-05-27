@@ -8,7 +8,10 @@
         :class="showAddForm ? 'bg-red-500/20 text-red-500 rotate-45' : 'bg-amber-500/10 text-amber-500'"
         @click="showAddForm = !showAddForm"
       >
-        <Plus class="h-6 w-6" :stroke-width="2.2" />
+        <Plus
+          class="h-6 w-6"
+          :stroke-width="2.2"
+        />
       </IconButton>
     </div>
 
@@ -24,7 +27,10 @@
           class="h-8 w-8 p-0 text-stone-500 hover:text-white"
           @click="showAddForm = false"
         >
-          <X class="h-4 w-4" :stroke-width="2" />
+          <X
+            class="h-4 w-4"
+            :stroke-width="2"
+          />
         </IconButton>
       </div>
       <form
@@ -46,7 +52,10 @@
           class="w-full gap-2 py-3 font-black text-black transition-all hover:bg-amber-500 active:scale-[0.98]"
           type="submit"
         >
-          <Save class="h-5 w-5" :stroke-width="1.8" />
+          <Save
+            class="h-5 w-5"
+            :stroke-width="1.8"
+          />
           SCELER LA NOTE
         </Button>
       </form>
@@ -56,7 +65,10 @@
       v-if="notes.length === 0"
       class="rounded-3xl border-2 border-dashed border-white/5 py-12 text-center text-stone-600"
     >
-      <BookOpen class="mx-auto mb-2 h-12 w-12 opacity-20" :stroke-width="1.2" />
+      <BookOpen
+        class="mx-auto mb-2 h-12 w-12 opacity-20"
+        :stroke-width="1.2"
+      />
       <p class="text-sm italic">Le journal est vide... Commence à écrire l'histoire.</p>
     </div>
 
@@ -75,7 +87,10 @@
           aria-label="Supprimer cette note"
           @click="removeNote(note.id)"
         >
-          <X class="h-3.5 w-3.5" :stroke-width="1.8" />
+          <X
+            class="h-3.5 w-3.5"
+            :stroke-width="1.8"
+          />
         </IconButton>
         <span class="font-mono text-[10px] uppercase text-stone-500">{{ note.createdAt }}</span>
         <h4 class="m-0 mt-0.5 font-(family-name:--serif) text-lg text-amber-200">
@@ -88,48 +103,53 @@
 </template>
 
 <script setup lang="ts">
-import { BookOpen, Plus, Save, X } from "@lucide/vue"
-import { computed, reactive, ref } from "vue"
+import { BookOpen, Plus, Save, X } from "@lucide/vue";
+import { computed, reactive, ref } from "vue";
 
-import { useCharacterStore } from "../../../stores/character"
-import type { GenericSystemData } from "../types"
-import Button from "../../../components/ui/Button.vue"
-import FormField from "../../../components/ui/FormField.vue"
-import IconButton from "../../../components/ui/IconButton.vue"
+import Button from "../../../components/ui/Button.vue";
+import FormField from "../../../components/ui/FormField.vue";
+import IconButton from "../../../components/ui/IconButton.vue";
+import { useCharacterStore } from "../../../stores/character";
+import type { GenericSystemData } from "../types";
 
-const characterStore = useCharacterStore()
-const systemData = computed(() => characterStore.getSystemData<GenericSystemData>())
+const characterStore = useCharacterStore();
+const systemData = computed(() => characterStore.getSystemData<GenericSystemData>());
 
-const notes = computed(() => systemData.value?.notes ?? [])
-const showAddForm = ref(false)
+const notes = computed(() => systemData.value?.notes ?? []);
+const showAddForm = ref(false);
 
 const draft = reactive({
   title: "",
   content: "",
-})
+});
 
-const makeId = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 10)}`
+const makeId = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 10)}`;
 
 const submitNote = () => {
-  if (!draft.title.trim() || !draft.content.trim()) return
+  if (!draft.title.trim() || !draft.content.trim()) return;
 
-  const current = systemData.value?.notes ?? []
+  const current = systemData.value?.notes ?? [];
   characterStore.updateSystemData<GenericSystemData>({
     notes: [
-      { id: makeId("note"), title: draft.title.trim(), content: draft.content.trim(), createdAt: new Date().toISOString().slice(0, 10) },
+      {
+        id: makeId("note"),
+        title: draft.title.trim(),
+        content: draft.content.trim(),
+        createdAt: new Date().toISOString().slice(0, 10),
+      },
       ...current,
     ],
-  })
+  });
 
-  draft.title = ""
-  draft.content = ""
-  showAddForm.value = false
-}
+  draft.title = "";
+  draft.content = "";
+  showAddForm.value = false;
+};
 
 const removeNote = (id: string) => {
-  const current = systemData.value?.notes ?? []
+  const current = systemData.value?.notes ?? [];
   characterStore.updateSystemData<GenericSystemData>({
     notes: current.filter((n) => n.id !== id),
-  })
-}
+  });
+};
 </script>

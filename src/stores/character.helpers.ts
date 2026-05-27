@@ -1,4 +1,4 @@
-import type { CharacterState, InventoryItem, NoteEntry, Skill, Spell, Stat } from "../types/character";
+import type { CharacterState, InventoryItem, NoteEntry, Skill, Stat } from "../types/character";
 
 export const SINGLE_STORAGE_KEY = "rpg-player-helper::character";
 export const CAMPAIGNS_STORAGE_KEY = "rpg-player-helper::campaigns";
@@ -75,8 +75,7 @@ export const sanitizeState = (payload: Partial<CharacterState>): CharacterState 
     profile: {
       ...base.profile,
       ...payload.profile,
-      avatarDataUrl:
-        typeof payload.profile?.avatarDataUrl === "string" ? payload.profile.avatarDataUrl : "",
+      avatarDataUrl: typeof payload.profile?.avatarDataUrl === "string" ? payload.profile.avatarDataUrl : "",
       injuries: {
         ...base.profile.injuries,
         ...payload.profile?.injuries,
@@ -140,7 +139,7 @@ export const parseStoredState = (): StoredState => {
     return {
       activeCampaignId,
       campaigns,
-      updatedAt: typeof parsed.updatedAt === 'string' ? parsed.updatedAt : undefined,
+      updatedAt: typeof parsed.updatedAt === "string" ? parsed.updatedAt : undefined,
     };
   } catch {
     return parseLegacySingle();

@@ -1,21 +1,21 @@
-import type { Component } from "vue"
+import type { Component } from "vue";
 
 export interface SystemComponents {
-  CharacterWizard: Component
-  ProfileSection: Component
-  HealthSection?: Component
-  SkillsSection?: Component
-  SpellsSection?: Component
-  InventorySection?: Component
-  NotesSection?: Component
-  AdvancementSection?: Component
+  CharacterWizard: Component;
+  ProfileSection: Component;
+  HealthSection?: Component;
+  SkillsSection?: Component;
+  SpellsSection?: Component;
+  InventorySection?: Component;
+  NotesSection?: Component;
+  AdvancementSection?: Component;
 }
 
 export interface SystemDefinition<S = unknown> {
-  id: string
-  name: string
-  description: string
-  components: SystemComponents
-  createBlankState: () => S
-  migrate?: (data: unknown) => S
+  id: string;
+  name: string;
+  description: string;
+  components: SystemComponents;
+  createBlankState: () => S;
+  migrate?: (data: unknown) => S;
 }

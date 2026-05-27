@@ -8,7 +8,10 @@
         :class="showAddForm ? 'bg-red-500/20 text-red-500 rotate-45' : 'bg-amber-500/10 text-amber-500'"
         @click="showAddForm = !showAddForm"
       >
-        <Plus class="h-6 w-6" :stroke-width="2.2" />
+        <Plus
+          class="h-6 w-6"
+          :stroke-width="2.2"
+        />
       </IconButton>
     </div>
 
@@ -26,11 +29,17 @@
           class="h-8 w-8 p-0 text-stone-500 hover:text-white"
           @click="closeForm"
         >
-          <X class="h-4 w-4" :stroke-width="2" />
+          <X
+            class="h-4 w-4"
+            :stroke-width="2"
+          />
         </IconButton>
       </div>
 
-      <form class="grid gap-3" @submit.prevent="saveSpell">
+      <form
+        class="grid gap-3"
+        @submit.prevent="saveSpell"
+      >
         <FormField
           v-model="form.name"
           label="Nom du sort"
@@ -58,7 +67,10 @@
           variant="primary"
           class="w-full gap-2 py-3 font-black text-black transition-all hover:bg-amber-500 active:scale-[0.98]"
         >
-          <Wand2 class="h-5 w-5" :stroke-width="2.2" />
+          <Wand2
+            class="h-5 w-5"
+            :stroke-width="2.2"
+          />
           {{ editingSpell?.id ? "METTRE À JOUR" : "AJOUTER AU GRIMOIRE" }}
         </Button>
       </form>
@@ -68,7 +80,10 @@
       v-if="spells.length === 0"
       class="rounded-3xl border-2 border-dashed border-white/5 py-12 text-center text-stone-600"
     >
-      <Wand2 class="mx-auto mb-2 h-12 w-12 opacity-20" :stroke-width="1.2" />
+      <Wand2
+        class="mx-auto mb-2 h-12 w-12 opacity-20"
+        :stroke-width="1.2"
+      />
       <p class="text-sm italic">Aucun sort... Lance le formulaire pour en ajouter un.</p>
     </div>
 
@@ -103,7 +118,10 @@
               @click="editSpell(spell)"
               aria-label="Modifier le sort"
             >
-              <Pencil class="h-4 w-4" :stroke-width="1.8" />
+              <Pencil
+                class="h-4 w-4"
+                :stroke-width="1.8"
+              />
             </IconButton>
             <IconButton
               type="button"
@@ -113,7 +131,10 @@
               @click="deleteSpell(spell.id)"
               aria-label="Supprimer le sort"
             >
-              <Trash2 class="h-4 w-4" :stroke-width="1.8" />
+              <Trash2
+                class="h-4 w-4"
+                :stroke-width="1.8"
+              />
             </IconButton>
           </div>
         </div>
@@ -123,79 +144,79 @@
 </template>
 
 <script setup lang="ts">
-import { Pencil, Plus, Trash2, Wand2, X } from "@lucide/vue"
-import { computed, reactive, ref } from "vue"
+import { Pencil, Plus, Trash2, Wand2, X } from "@lucide/vue";
+import { computed, reactive, ref } from "vue";
 
-import { useCharacterStore } from "../../../stores/character"
-import type { Spell } from "../../../types/character"
-import type { GenericSystemData } from "../types"
-import Button from "../../../components/ui/Button.vue"
-import FormField from "../../../components/ui/FormField.vue"
-import IconButton from "../../../components/ui/IconButton.vue"
+import Button from "../../../components/ui/Button.vue";
+import FormField from "../../../components/ui/FormField.vue";
+import IconButton from "../../../components/ui/IconButton.vue";
+import { useCharacterStore } from "../../../stores/character";
+import type { Spell } from "../../../types/character";
+import type { GenericSystemData } from "../types";
 
-const characterStore = useCharacterStore()
-const systemData = computed(() => characterStore.getSystemData<GenericSystemData>())
+const characterStore = useCharacterStore();
+const systemData = computed(() => characterStore.getSystemData<GenericSystemData>());
 
-const spells = computed(() => systemData.value?.spells ?? [])
+const spells = computed(() => systemData.value?.spells ?? []);
 
-const showAddForm = ref(false)
-const editingSpell = ref<Spell | null>(null)
+const showAddForm = ref(false);
+const editingSpell = ref<Spell | null>(null);
 
 const form = reactive({
   name: "",
   school: "",
   description: "",
-})
+});
 
-const makeId = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 10)}`
+const makeId = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 10)}`;
 
 const editSpell = (spell: Spell) => {
-  form.name = spell.name
-  form.school = spell.school
-  form.description = spell.description
-  editingSpell.value = spell
-  showAddForm.value = true
-}
+  form.name = spell.name;
+  form.school = spell.school;
+  form.description = spell.description;
+  editingSpell.value = spell;
+  showAddForm.value = true;
+};
 
 const closeForm = () => {
-  showAddForm.value = false
-  editingSpell.value = null
-  form.name = ""
-  form.school = ""
-  form.description = ""
-}
+  showAddForm.value = false;
+  editingSpell.value = null;
+  form.name = "";
+  form.school = "";
+  form.description = "";
+};
 
 const saveSpell = () => {
-  if (!form.name.trim() || !form.school.trim() || !form.description.trim()) return
+  if (!form.name.trim() || !form.school.trim() || !form.description.trim()) return;
 
   const payload = {
     name: form.name.trim(),
     school: form.school.trim(),
     description: form.description.trim(),
-  }
+  };
 
-  const current = systemData.value?.spells ?? []
+  const current = systemData.value?.spells ?? [];
 
   if (editingSpell.value) {
     characterStore.updateSystemData<GenericSystemData>({
       spells: current.map((s) => (s.id === editingSpell.value!.id ? { ...s, ...payload } : s)),
-    })
+    });
   } else {
     characterStore.updateSystemData<GenericSystemData>({
       spells: [{ ...payload, id: makeId("spell") }, ...current],
-    })
+    });
   }
 
-  closeForm()
-}
+  closeForm();
+};
 
 const deleteSpell = (id: string) => {
-  const confirmed = window.confirm("Supprimer ce sort ?")
+  const confirmed = window.confirm("Supprimer ce sort ?");
   if (confirmed) {
-    const current = systemData.value?.spells ?? []
+    const current = systemData.value?.spells ?? [];
     characterStore.updateSystemData<GenericSystemData>({
       spells: current.filter((s) => s.id !== id),
-    })
+    });
   }
-}
+};
 </script>

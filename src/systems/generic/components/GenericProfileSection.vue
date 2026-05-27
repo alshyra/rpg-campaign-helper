@@ -22,7 +22,10 @@
               :stats="character.stats"
             />
 
-            <section class="profile-identity__mobile-table" aria-label="Caractéristiques">
+            <section
+              class="profile-identity__mobile-table"
+              aria-label="Caractéristiques"
+            >
               <ul class="profile-identity__mobile-grid">
                 <li
                   v-for="stat in character.stats"
@@ -30,7 +33,9 @@
                   class="profile-identity__mobile-item"
                 >
                   <span class="profile-identity__mobile-label">{{ stat.label }}</span>
-                  <strong class="profile-identity__mobile-value">{{ stat.value >= 0 ? `+${stat.value}` : stat.value }}</strong>
+                  <strong class="profile-identity__mobile-value">{{
+                    stat.value >= 0 ? `+${stat.value}` : stat.value
+                  }}</strong>
                 </li>
               </ul>
             </section>
@@ -42,22 +47,20 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from "pinia"
-import { computed } from "vue"
+import { storeToRefs } from "pinia";
+import { computed } from "vue";
 
-import NoCharacterEmpty from "../../../components/character/NoCharacterEmpty.vue"
-import StatsRadar from "../../../components/profile/StatsRadar.vue"
-import { useCharacterStore } from "../../../stores/character"
+import NoCharacterEmpty from "../../../components/character/NoCharacterEmpty.vue";
+import StatsRadar from "../../../components/profile/StatsRadar.vue";
+import { useCharacterStore } from "../../../stores/character";
 
-const characterStore = useCharacterStore()
-const { state } = storeToRefs(characterStore)
+const characterStore = useCharacterStore();
+const { state } = storeToRefs(characterStore);
 
-const character = computed(() => state.value)
+const character = computed(() => state.value);
 </script>
 
 <style scoped>
-
-
 .profile-identity__hero {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -81,7 +84,9 @@ const character = computed(() => state.value)
   font-family: var(--serif);
   font-size: 1.7rem;
   font-weight: 700;
-  box-shadow: inset 0 0 0 1px rgba(255, 210, 140, 0.12), 0 10px 18px rgba(0, 0, 0, 0.35);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 210, 140, 0.12),
+    0 10px 18px rgba(0, 0, 0, 0.35);
 }
 
 .profile-identity__avatar img {

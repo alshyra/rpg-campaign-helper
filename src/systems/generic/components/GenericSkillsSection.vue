@@ -8,7 +8,10 @@
         :class="showForm ? 'bg-red-500/20 text-red-500 rotate-45' : 'bg-amber-500/10 text-amber-500'"
         @click="toggleForm"
       >
-        <Plus class="h-6 w-6" :stroke-width="2.2" />
+        <Plus
+          class="h-6 w-6"
+          :stroke-width="2.2"
+        />
       </IconButton>
     </div>
 
@@ -58,7 +61,10 @@
       v-if="skills.length === 0"
       class="rounded-3xl border-2 border-dashed border-white/5 py-12 text-center text-stone-600"
     >
-      <Swords class="mx-auto mb-2 h-12 w-12 opacity-20" :stroke-width="1.2" />
+      <Swords
+        class="mx-auto mb-2 h-12 w-12 opacity-20"
+        :stroke-width="1.2"
+      />
       <p class="text-sm italic">Aucune compétence... Ouvre le formulaire pour en ajouter.</p>
     </div>
 
@@ -70,10 +76,14 @@
       >
         <div>
           <h4 class="m-0 font-bold text-amber-100">{{ skill.name || "Compétence" }}</h4>
-          <p class="m-0 mt-0.5 text-[10px] uppercase tracking-tighter text-stone-500">{{ skill.category || "Général" }}</p>
+          <p class="m-0 mt-0.5 text-[10px] uppercase tracking-tighter text-stone-500">
+            {{ skill.category || "Général" }}
+          </p>
         </div>
         <div class="flex items-center gap-2">
-          <strong class="rounded-lg border border-amber-500/25 bg-black/30 px-3 py-1.5 font-mono text-lg font-black text-amber-500">
+          <strong
+            class="rounded-lg border border-amber-500/25 bg-black/30 px-3 py-1.5 font-mono text-lg font-black text-amber-500"
+          >
             {{ skill.value > 0 ? `+${skill.value}` : skill.value }}
           </strong>
           <IconButton
@@ -82,7 +92,10 @@
             @click="editSkill(skill)"
             aria-label="Modifier la compétence"
           >
-            <Pencil class="h-4 w-4" :stroke-width="2" />
+            <Pencil
+              class="h-4 w-4"
+              :stroke-width="2"
+            />
           </IconButton>
           <IconButton
             square
@@ -90,7 +103,10 @@
             @click="deleteSkill(skill.id)"
             aria-label="Supprimer la compétence"
           >
-            <Trash2 class="h-4 w-4" :stroke-width="2" />
+            <Trash2
+              class="h-4 w-4"
+              :stroke-width="2"
+            />
           </IconButton>
         </div>
       </article>
@@ -99,92 +115,92 @@
 </template>
 
 <script setup lang="ts">
-import { Pencil, Plus, Swords, Trash2 } from "@lucide/vue"
-import { computed, reactive, ref } from "vue"
+import { Pencil, Plus, Swords, Trash2 } from "@lucide/vue";
+import { computed, reactive, ref } from "vue";
 
-import { useCharacterStore } from "../../../stores/character"
-import type { Skill } from "../../../types/character"
-import type { GenericSystemData } from "../types"
-import Button from "../../../components/ui/Button.vue"
-import FormField from "../../../components/ui/FormField.vue"
-import IconButton from "../../../components/ui/IconButton.vue"
-import StatsStepper from "../../../components/ui/StatStepper.vue"
+import Button from "../../../components/ui/Button.vue";
+import FormField from "../../../components/ui/FormField.vue";
+import IconButton from "../../../components/ui/IconButton.vue";
+import StatsStepper from "../../../components/ui/StatStepper.vue";
+import { useCharacterStore } from "../../../stores/character";
+import type { Skill } from "../../../types/character";
+import type { GenericSystemData } from "../types";
 
-const characterStore = useCharacterStore()
-const systemData = computed(() => characterStore.getSystemData<GenericSystemData>())
+const characterStore = useCharacterStore();
+const systemData = computed(() => characterStore.getSystemData<GenericSystemData>());
 
-const skills = computed(() => systemData.value?.skills ?? [])
+const skills = computed(() => systemData.value?.skills ?? []);
 
-const showForm = ref(false)
-const editingSkill = ref<Skill | null>(null)
+const showForm = ref(false);
+const editingSkill = ref<Skill | null>(null);
 
 const draft = reactive({
   name: "",
   category: "",
   value: 0,
-})
+});
 
 const resetDraft = () => {
-  draft.name = ""
-  draft.category = ""
-  draft.value = 0
-}
+  draft.name = "";
+  draft.category = "";
+  draft.value = 0;
+};
 
 const toggleForm = () => {
   if (showForm.value) {
-    closeForm()
-    return
+    closeForm();
+    return;
   }
-  showForm.value = true
-}
+  showForm.value = true;
+};
 
 const closeForm = () => {
-  showForm.value = false
-  editingSkill.value = null
-  resetDraft()
-}
+  showForm.value = false;
+  editingSkill.value = null;
+  resetDraft();
+};
 
 const editSkill = (skill: Skill) => {
-  draft.name = skill.name
-  draft.category = skill.category
-  draft.value = skill.value
-  editingSkill.value = skill
-  showForm.value = true
-}
+  draft.name = skill.name;
+  draft.category = skill.category;
+  draft.value = skill.value;
+  editingSkill.value = skill;
+  showForm.value = true;
+};
 
-const makeId = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 10)}`
+const makeId = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 10)}`;
 
 const saveSkill = () => {
   const payload = {
     name: draft.name.trim(),
     category: draft.category.trim(),
     value: Math.max(0, Math.min(10, Number(draft.value))),
-  }
+  };
 
-  if (!payload.name) return
+  if (!payload.name) return;
 
-  const current = systemData.value?.skills ?? []
+  const current = systemData.value?.skills ?? [];
 
   if (editingSkill.value) {
     characterStore.updateSystemData<GenericSystemData>({
       skills: current.map((s) => (s.id === editingSkill.value!.id ? { ...s, ...payload } : s)),
-    })
+    });
   } else {
     characterStore.updateSystemData<GenericSystemData>({
       skills: [{ ...payload, id: makeId("skill") }, ...current],
-    })
+    });
   }
 
-  closeForm()
-}
+  closeForm();
+};
 
 const deleteSkill = (id: string) => {
-  const confirmed = window.confirm("Supprimer cette compétence ?")
+  const confirmed = window.confirm("Supprimer cette compétence ?");
   if (confirmed) {
-    const current = systemData.value?.skills ?? []
+    const current = systemData.value?.skills ?? [];
     characterStore.updateSystemData<GenericSystemData>({
       skills: current.filter((s) => s.id !== id),
-    })
+    });
   }
-}
+};
 </script>

@@ -15,8 +15,7 @@ export class GenericWizardPage {
   }
 
   async adjustStat(label: string, clicks: number) {
-    const stepper = this.page.locator(".stat-stepper").filter({ hasText: label })
-    const plus = stepper.getByRole("button").last()
+    const plus = this.page.getByRole("button", { name: `Augmenter ${label}` })
     for (let i = 0; i < clicks; i++) await plus.click()
   }
 

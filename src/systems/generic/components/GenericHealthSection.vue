@@ -25,7 +25,8 @@
       <span
         class="font-mono font-black leading-none text-white/10"
         :class="compact ? 'text-lg' : 'text-2xl'"
-      >{{ usedSlots }}/8</span>
+        >{{ usedSlots }}/8</span
+      >
     </div>
 
     <div
@@ -39,9 +40,8 @@
         <span
           class="block px-1 font-bold uppercase tracking-widest text-stone-500"
           :class="compact ? 'mb-1 text-[8px]' : 'mb-2 text-[9px]'"
-        >{{
-          tier.label
-        }}</span>
+          >{{ tier.label }}</span
+        >
         <div
           class="flex"
           :class="compact ? 'gap-1.5' : 'gap-2'"
@@ -69,72 +69,75 @@
 </template>
 
 <script setup lang="ts">
-import { HeartPulse } from "@lucide/vue"
-import { computed, ref } from "vue"
+import { HeartPulse } from "@lucide/vue";
+import { computed, ref } from "vue";
 
-import type { GenericSystemData, Injuries } from "../types"
-import { useCharacterStore } from "../../../stores/character"
+import { useCharacterStore } from "../../../stores/character";
+import type { GenericSystemData, Injuries } from "../types";
 
 withDefaults(
   defineProps<{
-    compact?: boolean
+    compact?: boolean;
   }>(),
   {
     compact: false,
   },
-)
+);
 
-const characterStore = useCharacterStore()
-const systemData = computed(() => characterStore.getSystemData<GenericSystemData>())
+const characterStore = useCharacterStore();
+const systemData = computed(() => characterStore.getSystemData<GenericSystemData>());
 
-const emptyInjuries: Injuries = { light: 0, minor: 0, major: 0, fatal: 0 }
-const injuries = computed(() => systemData.value?.injuries ?? emptyInjuries)
+const emptyInjuries: Injuries = { light: 0, minor: 0, major: 0, fatal: 0 };
+const injuries = computed(() => systemData.value?.injuries ?? emptyInjuries);
 
 const tiers: Array<{ key: keyof Injuries; label: string; color: string }> = [
   { key: "light", label: "Légère", color: "from-emerald-500 to-emerald-700" },
   { key: "minor", label: "Moyenne", color: "from-amber-500 to-amber-700" },
   { key: "major", label: "Grave", color: "from-orange-600 to-orange-800" },
   { key: "fatal", label: "Fatale", color: "from-red-700 to-red-900" },
-]
+];
 
-const tierOrder = ["light", "minor", "major", "fatal"] as const
-const activeImpact = ref<string | null>(null)
-let impactTimeout: ReturnType<typeof setTimeout> | null = null
+const tierOrder = ["light", "minor", "major", "fatal"] as const;
+const activeImpact = ref<string | null>(null);
+let impactTimeout: ReturnType<typeof setTimeout> | null = null;
 
-const usedSlots = computed(() => Object.values(injuries.value).reduce((total, value) => total + value, 0))
+const usedSlots = computed(() => Object.values(injuries.value).reduce((total, value) => total + value, 0));
 
 const status = computed(() => {
-  const inj = injuries.value
-  if ((inj.fatal || 0) >= 2) return { text: "AGONISANT / MORT", color: "text-red-600" }
-  if ((inj.major || 0) >= 1) return { text: "BLESSURES GRAVES", color: "text-orange-500" }
-  if ((inj.minor || 0) >= 1) return { text: "MAL EN POINT", color: "text-amber-500" }
-  if ((inj.light || 0) >= 1) return { text: "ÉGRATIGNÉ", color: "text-emerald-500" }
-  return { text: "INDEMNE", color: "text-stone-500" }
-})
+  const inj = injuries.value;
+  if ((inj.fatal || 0) >= 2) return { text: "AGONISANT / MORT", color: "text-red-600" };
+  if ((inj.major || 0) >= 1) return { text: "BLESSURES GRAVES", color: "text-orange-500" };
+  if ((inj.minor || 0) >= 1) return { text: "MAL EN POINT", color: "text-amber-500" };
+  if ((inj.light || 0) >= 1) return { text: "ÉGRATIGNÉ", color: "text-emerald-500" };
+  return { text: "INDEMNE", color: "text-stone-500" };
+});
 
 const handleBoxClick = (tierId: keyof Injuries, boxIdx: number) => {
-  activeImpact.value = `${tierId}-${boxIdx}`
-  if (impactTimeout) clearTimeout(impactTimeout)
-  impactTimeout = setTimeout(() => { activeImpact.value = null; impactTimeout = null }, 360)
+  activeImpact.value = `${tierId}-${boxIdx}`;
+  if (impactTimeout) clearTimeout(impactTimeout);
+  impactTimeout = setTimeout(() => {
+    activeImpact.value = null;
+    impactTimeout = null;
+  }, 360);
 
-  const newInjuries = { ...injuries.value }
-  const currentVal = newInjuries[tierId] || 0
+  const newInjuries = { ...injuries.value };
+  const currentVal = newInjuries[tierId] || 0;
 
   if (boxIdx < currentVal) {
-    newInjuries[tierId] = Math.max(0, currentVal - 1)
+    newInjuries[tierId] = Math.max(0, currentVal - 1);
   } else {
-    const startIdx = tierOrder.indexOf(tierId)
+    const startIdx = tierOrder.indexOf(tierId);
     for (let i = startIdx; i < tierOrder.length; i++) {
-      const tId = tierOrder[i]
+      const tId = tierOrder[i];
       if ((newInjuries[tId] || 0) < 2) {
-        newInjuries[tId] = (newInjuries[tId] || 0) + 1
-        break
+        newInjuries[tId] = (newInjuries[tId] || 0) + 1;
+        break;
       }
     }
   }
 
-  characterStore.updateSystemData<GenericSystemData>({ injuries: newInjuries })
-}
+  characterStore.updateSystemData<GenericSystemData>({ injuries: newInjuries });
+};
 </script>
 
 <style scoped>

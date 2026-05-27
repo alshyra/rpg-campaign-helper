@@ -35,7 +35,9 @@ withDefaults(
   cursor: pointer;
   font: inherit;
   color: inherit;
-  transition: border-color 0.15s, background 0.15s;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
 }
 
 .button:disabled {
