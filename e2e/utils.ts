@@ -119,7 +119,7 @@ export function buildWarhammerSeed(opts: SeedCharacterOptions = {}): Seed {
     fate: 2,
     insanity: 0,
     xp: { total: 0, available: 0 },
-    career: { current: opts.career ?? "Sorcier", plan: opts.plan ?? "", status: "Argent 1", promotions: 1 },
+    career: { current: opts.career ?? "Sorcier", plan: opts.plan ?? "", status: "Argent 1", promotions: 1, history: [] },
     skills: {},
     talents: [],
     spells: [],

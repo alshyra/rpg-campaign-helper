@@ -305,6 +305,7 @@ const submit = () => {
             plan: "",
             status: "Argent 1",
             promotions: 1,
+            history: [],
         },
         skills: {},
         talents: [],

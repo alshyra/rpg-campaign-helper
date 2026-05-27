@@ -1,7 +1,6 @@
 <template>
   <nav
-    class="bottom-nav fixed bottom-3.5 left-1/2 z-10 grid w-[min(96vw,620px)] -translate-x-1/2 md:left-0 md:w-full md:translate-x-0 gap-1.5 rounded-3xl border border-(--line) bg-[rgba(17,12,9,0.94)] p-2 shadow-[0_22px_50px_rgba(0,0,0,0.45)] backdrop-blur-[18px]"
-    :class="colsClass"
+    class="bottom-nav fixed bottom-3.5 left-1/2 z-10 grid w-[min(96vw,620px)] -translate-x-1/2 md:left-0 md:w-full md:translate-x-0 grid-cols-5 gap-1.5 rounded-3xl border border-(--line) bg-[rgba(17,12,9,0.94)] p-2 shadow-[0_22px_50px_rgba(0,0,0,0.45)] backdrop-blur-[18px]"
     aria-label="Navigation principale"
   >
     <RouterLink
@@ -23,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { Backpack, NotebookText, Sword, TrendingUp, UserRound, Wand2 } from "@lucide/vue";
+import { Backpack, NotebookText, Sword, UserRound, Wand2 } from "@lucide/vue";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
 import { RouterLink, useRoute } from "vue-router";
@@ -32,30 +31,22 @@ import { useCharacterStore } from "../../stores/character";
 
 const route = useRoute();
 const characterStore = useCharacterStore();
-const { state, activeCampaignId } = storeToRefs(characterStore);
+const { activeCampaignId } = storeToRefs(characterStore);
 
 const characterId = computed(() => activeCampaignId.value || (route.params.id as string));
-
-const isWarhammer = computed(() => state.value?.systemId === "warhammer")
-const colsClass = computed(() => isWarhammer.value ? "grid-cols-6" : "grid-cols-5")
 
 const itemDefs = [
   { name: "profile", label: "Profil", icon: UserRound },
   { name: "inventory", label: "Inventaire", icon: Backpack },
   { name: "spells", label: "Grimoire", icon: Wand2 },
   { name: "skills", label: "Compétences", icon: Sword },
-  { name: "advancement", label: "Avancement", icon: TrendingUp, condition: isWarhammer },
   { name: "notes", label: "Notes", icon: NotebookText },
 ];
 
-const getItemPath = (name: string) => `/characters/${characterId.value}/${name}`;
-
 const items = computed(() =>
-  itemDefs
-    .filter((def) => def.condition === undefined || def.condition.value)
-    .map(({ condition: _c, ...def }) => ({
-      ...def,
-      to: getItemPath(def.name),
-    })),
+  itemDefs.map((def) => ({
+    ...def,
+    to: `/characters/${characterId.value}/${def.name}`,
+  })),
 );
 </script>

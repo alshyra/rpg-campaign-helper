@@ -17,6 +17,8 @@
           </div>
         </div>
         <div class="mt-3 flex flex-wrap gap-2">
+          <Button variant="ghost" small @click="earnXp(25)">+25 XP</Button>
+          <Button variant="ghost" small @click="earnXp(50)">+50 XP</Button>
           <Button variant="ghost" small @click="earnXp(100)">+100 XP</Button>
           <Button variant="ghost" small @click="earnXp(200)">+200 XP</Button>
           <Button variant="ghost" small @click="earnXp(500)">+500 XP</Button>
@@ -39,7 +41,25 @@
           </div>
         </div>
         <div v-if="!isCareerComplete && careerInfo" class="mt-2 text-[9px] text-stone-600">
-          Max : {{ maxCaracLabel }}<span v-if="careerInfo.secondary.wounds > 0">, Blessures +{{ careerInfo.secondary.wounds }}</span><span v-if="careerInfo.secondary.mag > 0">, PM +{{ careerInfo.secondary.mag }}</span>
+          <p>Max : {{ maxCaracLabel }}<span v-if="careerInfo.secondary.wounds > 0">, Blessures +{{ careerInfo.secondary.wounds }}</span><span v-if="careerInfo.secondary.mag > 0">, PM +{{ careerInfo.secondary.mag }}</span></p>
+          <div class="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5">
+            <span v-for="stat in careerAdvancementBreakdown" :key="stat.label" class="text-stone-500">
+              {{ stat.label }} <span :class="stat.current >= stat.max ? 'text-emerald-400' : 'text-amber-400'">{{ stat.current }}/{{ stat.max }}</span>
+            </span>
+          </div>
+        </div>
+        <div v-if="careerInfo" class="mt-3">
+          <div class="flex items-center justify-between text-[9px] text-stone-600">
+            <span>Avancement carrière</span>
+            <span>{{ careerProgressPct }}%</span>
+          </div>
+          <div class="mt-1 h-2 overflow-hidden rounded-full bg-black/40">
+            <div
+              class="h-full rounded-full transition-all duration-300"
+              :class="careerProgressPct >= 100 ? 'bg-emerald-600' : 'bg-amber-700'"
+              :style="{ width: careerProgressPct + '%' }"
+            />
+          </div>
         </div>
         <div v-if="isCareerComplete && !data?.career.plan" class="mt-3 flex flex-wrap items-center gap-2">
           <span class="text-[10px] text-stone-500">Prochaine carrière :</span>
@@ -129,19 +149,6 @@
               </Button>
             </div>
           </div>
-          <div v-if="careerInfo" class="mt-3">
-            <div class="flex items-center justify-between text-[9px] text-stone-600">
-              <span>Avancement carrière</span>
-              <span>{{ woundsAdvancementsDisplay }} / {{ careerInfo.secondary.wounds }}</span>
-            </div>
-            <div class="mt-1 h-2 overflow-hidden rounded-full bg-black/40">
-              <div
-                class="h-full rounded-full transition-all duration-300"
-                :class="woundsAdvancementsPct >= 100 ? 'bg-emerald-600' : 'bg-amber-700'"
-                :style="{ width: woundsAdvancementsPct + '%' }"
-              />
-            </div>
-          </div>
         </div>
       </div>
 
@@ -220,8 +227,17 @@
             Ajouter
           </Button>
         </div>
-      </div>
-    </div>
+          </div>
+        </div>
+        <div v-if="careerHistory.length > 0" class="mt-3 border-t border-white/5 pt-3">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-stone-600">Carrières complétées</p>
+          <div class="mt-1 flex flex-wrap gap-1.5">
+            <span
+              v-for="(c, i) in careerHistory" :key="i"
+              class="rounded bg-stone-800 px-2 py-0.5 text-[10px] text-stone-400"
+            >{{ c }}</span>
+          </div>
+        </div>
   </article>
 </template>
 
@@ -298,22 +314,28 @@ const canAdvanceWounds = computed(() => {
   return (data.value.woundsAdvancements ?? 0) < careerInfo.value.secondary.wounds
 })
 
-const woundsAdvancementsDisplay = computed(() => {
-  if (!data.value) return 0
-  return data.value.woundsAdvancements ?? 0
-})
-
-const woundsAdvancementsPct = computed(() => {
-  if (!careerInfo.value) return 0
-  const maxW = careerInfo.value.secondary.wounds
-  if (maxW <= 0) return 100
-  return Math.min(100, ((data.value?.woundsAdvancements ?? 0) / maxW) * 100)
-})
-
 const canAdvanceMag = computed(() => {
   if (!data.value || !careerInfo.value) return false
   if (data.value.xp.available < 100) return false
   return (data.value.magAdvancements ?? 0) < careerInfo.value.secondary.mag
+})
+
+const careerProgressPct = computed(() => {
+  if (!careerInfo.value || !data.value) return 0
+  const cinfo = careerInfo.value
+  let maxSteps = 0
+  let curSteps = 0
+  for (const key of ["ws", "bs", "s", "t", "ag", "int", "wp", "fel"] as CharacteristicKey[]) {
+    const maxAdv = cinfo.advances[key] ?? 0
+    maxSteps += maxAdv / 5
+    curSteps += Math.min(data.value.characteristics.advancements[key] ?? 0, maxAdv) / 5
+  }
+  maxSteps += cinfo.secondary.wounds
+  curSteps += Math.min(data.value.woundsAdvancements ?? 0, cinfo.secondary.wounds)
+  maxSteps += cinfo.secondary.mag
+  curSteps += Math.min(data.value.magAdvancements ?? 0, cinfo.secondary.mag)
+  if (maxSteps <= 0) return 100
+  return Math.round((curSteps / maxSteps) * 100)
 })
 
 const isCareerComplete = computed(() => {
@@ -348,6 +370,30 @@ const careerExits = computed(() => {
   return careerInfo.value.exits
 })
 
+const careerHistory = computed(() => {
+  return data.value?.career.history ?? []
+})
+
+const careerAdvancementBreakdown = computed(() => {
+  if (!careerInfo.value || !data.value) return []
+  const cinfo = careerInfo.value
+  const labelMap: Record<string, string> = { ws: "CC", bs: "CT", s: "F", t: "E", ag: "AG", int: "INT", wp: "FM", fel: "SOC" }
+  const result: { label: string; current: number; max: number }[] = []
+  for (const key of ["ws", "bs", "s", "t", "ag", "int", "wp", "fel"] as CharacteristicKey[]) {
+    const max = cinfo.advances[key] ?? 0
+    if (max > 0) {
+      result.push({ label: labelMap[key], current: data.value.characteristics.advancements[key] ?? 0, max })
+    }
+  }
+  if (cinfo.secondary.wounds > 0) {
+    result.push({ label: "PV", current: data.value.woundsAdvancements ?? 0, max: cinfo.secondary.wounds })
+  }
+  if (cinfo.secondary.mag > 0) {
+    result.push({ label: "PM", current: data.value.magAdvancements ?? 0, max: cinfo.secondary.mag })
+  }
+  return result
+})
+
 const careerExitOptions = computed(() => {
   return careerExits.value.map(name => ({ value: name, label: name }))
 })
@@ -359,8 +405,15 @@ const setPlan = () => {
   const current = characterStore.getSystemData<WfrpSystemData>()
   if (!current) return
   characterStore.updateSystemData<WfrpSystemData>({
-    career: { ...current.career, plan: planDraft.value },
+    career: {
+      current: planDraft.value,
+      plan: "",
+      status: current.career.status,
+      promotions: (current.career.promotions ?? 0) + 1,
+      history: [...(current.career.history ?? []), current.career.current],
+    },
   })
+  planDraft.value = ""
 }
 
 const clearPlan = () => {

@@ -15,12 +15,25 @@
         </div>
       </div>
 
-      <div class="mb-2 flex items-center gap-2 text-xs text-stone-500">
+      <div class="mb-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-stone-500">
         <span v-if="systemData.career.plan">Plan : {{ systemData.career.plan }}</span>
-        <span class="opacity-30">|</span>
+        <span v-if="systemData.career.plan" class="opacity-30">|</span>
         <span>Statut : {{ systemData.career.status }}</span>
         <span class="opacity-30">|</span>
         <span>Échelons : {{ systemData.career.promotions }}</span>
+        <span v-if="careerHistory.length > 0" class="opacity-30">|</span>
+        <span v-if="careerHistory.length > 0" class="text-stone-500">
+          Anciennes carrières :
+          <span v-for="(c, i) in careerHistory" :key="i" class="text-stone-400">
+            {{ c }}<span v-if="i < careerHistory.length - 1">, </span>
+          </span>
+        </span>
+      </div>
+
+      <div class="mb-3">
+        <Button variant="ghost" small @click="goToAdvancement">
+          Gain de niveau →
+        </Button>
       </div>
 
       <div class="mb-3 grid grid-cols-4 gap-2 rounded-xl bg-black/30 p-3 text-xs">
@@ -91,14 +104,23 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia"
 import { computed } from "vue"
+import { useRouter } from "vue-router"
 
 import { useCharacterStore } from "../../../stores/character"
+import Button from "../../../components/ui/Button.vue"
 import type { CharacteristicKey, WfrpSystemData } from "../types"
 import { CHARACTERISTICS, computeBonus } from "../types"
 import { CAREER_DATA } from "../careers"
 
 const characterStore = useCharacterStore()
-const { state } = storeToRefs(characterStore)
+const router = useRouter()
+const { state, activeCampaignId } = storeToRefs(characterStore)
+
+const characterId = computed(() => activeCampaignId.value || (router.currentRoute.value.params.id as string))
+
+const goToAdvancement = () => {
+  router.push(`/characters/${characterId.value}/advancement`)
+}
 
 const profile = computed(() => state.value?.profile ?? null)
 const systemData = computed(() => characterStore.getSystemData<WfrpSystemData>())
@@ -113,6 +135,9 @@ const isCareerCharacteristic = (key: CharacteristicKey): boolean => {
   return (careerInfo.value.advances[key] ?? 0) > 0
 }
 
+const careerHistory = computed(() => {
+  return systemData.value?.career.history ?? []
+})
 const getCurrent = (key: CharacteristicKey) => systemData.value?.characteristics.current[key] ?? 0
 const getBase = (key: CharacteristicKey) => systemData.value?.characteristics.base[key] ?? 0
 const getSpent = (key: CharacteristicKey) => systemData.value?.characteristics.spent[key] ?? 0

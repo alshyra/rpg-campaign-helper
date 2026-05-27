@@ -94,7 +94,7 @@ export interface WfrpSystemData {
   fate: number
   insanity: number
   xp: { total: number; available: number }
-  career: { current: string; plan: string; status: string; promotions: number }
+  career: { current: string; plan: string; status: string; promotions: number; history: string[] }
   skills: Record<string, number>
   talents: string[]
   spells: WfrpSpell[]
