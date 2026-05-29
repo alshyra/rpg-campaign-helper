@@ -18,7 +18,7 @@
             >Créer mon personnage</Button
           >
           <FileImportLabel
-            label="Importer un personnage JSON"
+            label="Importer un personnage"
             @file-selected="onFileChange"
           />
         </div>

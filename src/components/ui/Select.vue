@@ -5,7 +5,7 @@
   >
     <button
       type="button"
-      class="select-trigger flex w-full items-center justify-between gap-2 px-3 py-2 text-left"
+      class="flex w-full items-center justify-between gap-2 rounded-xl border border-[rgba(221,187,123,0.16)] bg-[rgba(13,10,8,0.82)] px-3 py-[10px] text-left cursor-pointer font-inherit text-inherit hover:border-[rgba(196,147,44,0.3)] hover:bg-[rgba(13,10,8,0.9)]"
       :class="triggerClass"
       @click="toggle"
       @keydown.enter.prevent="toggle"
@@ -16,12 +16,11 @@
     >
       <span
         v-if="selectedLabel"
-        class="text-xs text-amber-200"
         >{{ selectedLabel }}</span
       >
       <span
         v-else
-        class="text-xs text-stone-500"
+        class="text-stone-500"
         >{{ placeholder || "— Choisir —" }}</span
       >
       <svg
@@ -48,7 +47,7 @@
         v-for="opt in options"
         :key="opt.value"
         type="button"
-        class="select-option w-full px-3 py-2 text-left text-xs transition-colors"
+        class="w-full cursor-pointer px-3 py-2 text-left text-xs transition-colors"
         :class="
           modelValue === opt.value
             ? 'bg-amber-950/50 text-amber-300'
@@ -133,29 +132,6 @@ watch(open, (val) => {
 </script>
 
 <style scoped>
-.select-trigger {
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.25);
-  cursor: pointer;
-  font: inherit;
-  color: inherit;
-}
-
-.select-trigger:hover {
-  border-color: rgba(196, 147, 44, 0.3);
-  background: rgba(0, 0, 0, 0.35);
-}
-
-.select-option {
-  cursor: pointer;
-  font: inherit;
-}
-
-.select-option:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-
 .dropdown-enter-active,
 .dropdown-leave-active {
   transition:

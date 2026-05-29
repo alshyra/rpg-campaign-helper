@@ -8,33 +8,47 @@
         {{ isEditing ? "Modifier le personnage Warhammer" : "Nouveau personnage Warhammer" }}
       </h2>
 
-      <div class="grid grid-cols-2 gap-3 max-[420px]:grid-cols-1">
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <FormField
           v-model="name"
           label="Nom"
           required
         />
-        <div>
-          <p class="mb-1 text-[0.85rem] text-(--text-soft)">Espèce</p>
+        <FormField label="Espèce">
           <Select
             v-model="species"
             :options="speciesOptions"
           />
-        </div>
-        <div>
-          <p class="mb-1 text-[0.85rem] text-(--text-soft)">Carrière actuelle</p>
+        </FormField>
+        <FormField label="Carrière actuelle">
           <Select
             v-model="career"
             :options="careerSelectOptions"
             placeholder="Ex: Sorcier de village"
           />
-        </div>
+        </FormField>
         <FormField
-          v-model.number="woundsMax"
           label="Blessures max"
-          type="number"
-          full
-        />
+          :full="true"
+        >
+          <div class="grid gap-2 rounded-xl border border-white/5 bg-black/20 p-3">
+            <div class="flex items-center justify-between gap-3">
+              <p class="text-sm text-stone-300">Réserve de blessures de départ</p>
+              <span class="rounded-full border border-amber-500/20 bg-amber-950/20 px-2 py-1 text-[10px] font-black uppercase tracking-wider text-amber-300">
+                {{ woundsMax }} PV
+              </span>
+            </div>
+            <StatStepper
+              label="Blessures max"
+              :model-value="woundsMax"
+              :min="6"
+              :max="30"
+              no-prefix
+              @update:model-value="(value) => (woundsMax = value)"
+            />
+            <p class="text-[10px] text-stone-500">Ajustable rapidement au doigt. Sera ensuite calculé depuis l'endurance.</p>
+          </div>
+        </FormField>
         <!-- TODO: sera calculé depuis T (Endurance) -->
       </div>
 
@@ -63,11 +77,11 @@
 
       <p class="-mt-2 text-[10px] text-stone-500">Race : {{ species || "Humain" }} — base raciale + points d'achat</p>
 
-      <div class="grid gap-2">
+      <div class="grid gap-2.5">
         <div
           v-for="stat in CHARACTERISTICS"
           :key="stat.key"
-          class="flex items-center gap-3 rounded-xl border border-white/5 bg-black/30 px-4 py-3"
+          class="grid grid-cols-[auto_1fr] gap-3 rounded-xl border border-white/5 bg-black/30 px-4 py-3"
         >
           <div class="min-w-10 text-center">
             <div class="text-[9px] font-black uppercase tracking-wider text-stone-500">
@@ -78,61 +92,72 @@
             </div>
           </div>
 
-          <div class="flex flex-1 items-center gap-2">
-            <div class="flex flex-col items-center">
-              <IconButton
-                ghost
-                class="h-7 w-7 rounded-lg border-white/10 text-xs text-stone-400 hover:border-amber-500/40 hover:text-amber-400 disabled:opacity-20"
-                :disabled="spent[stat.key] < STEP"
-                @click="adjust(stat.key, -STEP)"
-                >−5</IconButton
-              >
-              <div class="pt-0.5 text-[9px] text-stone-600">dép.</div>
-              <IconButton
-                ghost
-                class="h-7 w-7 rounded-lg border-white/10 text-xs text-stone-400 hover:border-amber-500/40 hover:text-amber-400 disabled:opacity-20"
-                :disabled="spent[stat.key] >= SPENT_MAX || budgetRemaining < STEP"
-                @click="adjust(stat.key, STEP)"
-                >+5</IconButton
-              >
+          <div class="grid min-w-0 gap-2">
+            <div class="flex items-center justify-between gap-3">
+              <div class="inline-flex items-center rounded-xl border border-white/10 bg-black/35 p-1">
+                <IconButton
+                  ghost
+                  class="h-10 w-10 rounded-lg border-white/10 text-sm text-stone-300 hover:border-amber-500/40 hover:text-amber-400 disabled:opacity-20"
+                  :disabled="spent[stat.key] < STEP"
+                  @click="adjust(stat.key, -STEP)"
+                  >−5</IconButton
+                >
+                <div class="min-w-18 px-2 text-center">
+                  <div class="text-[9px] font-black uppercase tracking-wider text-stone-500">Investi</div>
+                  <div class="font-mono text-sm text-amber-300">+{{ spent[stat.key] }}</div>
+                </div>
+                <IconButton
+                  ghost
+                  class="h-10 w-10 rounded-lg border-white/10 text-sm text-stone-300 hover:border-amber-500/40 hover:text-amber-400 disabled:opacity-20"
+                  :disabled="spent[stat.key] >= SPENT_MAX || budgetRemaining < STEP"
+                  @click="adjust(stat.key, STEP)"
+                  >+5</IconButton
+                >
+              </div>
+
+              <div class="text-right text-[10px] leading-tight text-stone-500">
+                <div>base {{ getBase(stat.key) }}</div>
+                <div>cap {{ BAR_MAX }}</div>
+              </div>
             </div>
 
-            <div class="h-6 flex-1 overflow-hidden rounded-full bg-black/40">
-              <div
-                class="h-full rounded-full bg-linear-to-r from-amber-900 to-amber-600 transition-all"
-                :style="{ width: barPercent(stat.key) + '%' }"
-              />
-            </div>
-          </div>
-
-          <div class="text-right text-[10px] leading-tight text-stone-600">
-            <div>base {{ getBase(stat.key) }}</div>
-            <div
-              v-if="spent[stat.key] > 0"
-              class="text-amber-500/70"
-            >
-              +{{ spent[stat.key] }}
+            <div class="grid gap-1">
+              <div class="h-6 overflow-hidden rounded-full bg-black/40">
+                <div
+                  class="h-full rounded-full bg-linear-to-r from-amber-900 via-amber-700 to-amber-500 transition-all"
+                  :style="{ width: barPercent(stat.key) + '%' }"
+                />
+              </div>
+              <div class="flex items-center justify-between text-[9px] uppercase tracking-wider text-stone-600">
+                <span>raciale</span>
+                <span>{{ currentValue(stat.key) }} / {{ BAR_MAX }}</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <div class="rounded-xl border border-white/5 bg-black/20 p-3">
-        <h4 class="mb-2 text-[9px] font-black uppercase tracking-widest text-stone-500">Sous-stats</h4>
-        <div class="grid grid-cols-4 gap-2 text-center text-xs">
-          <div>
-            <span class="text-stone-500">A </span><span class="font-bold text-amber-400">{{ attacks }}</span>
+        <div class="mb-3 flex items-center justify-between gap-3">
+          <h4 class="m-0 text-[9px] font-black uppercase tracking-widest text-stone-500">Sous-stats</h4>
+          <span class="text-[10px] text-stone-500">Résumé des valeurs dérivées</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-left sm:grid-cols-4">
+          <div class="rounded-lg border border-white/5 bg-black/20 px-3 py-2">
+            <div class="text-[9px] font-black uppercase tracking-widest text-stone-500">Attaques</div>
+            <div class="text-base font-bold text-amber-400">{{ attacks }}</div>
           </div>
-          <div>
-            <span class="text-stone-500">B </span
-            ><span class="font-bold text-amber-400">{{ computeBonus(currentValue("s")) }}</span>
+          <div class="rounded-lg border border-white/5 bg-black/20 px-3 py-2">
+            <div class="text-[9px] font-black uppercase tracking-widest text-stone-500">Bonus Force</div>
+            <div class="text-base font-bold text-amber-400">{{ computeBonus(currentValue("s")) }}</div>
           </div>
-          <div>
-            <span class="text-stone-500">BE </span
-            ><span class="font-bold text-amber-400">{{ computeBonus(currentValue("t")) }}</span>
+          <div class="rounded-lg border border-white/5 bg-black/20 px-3 py-2">
+            <div class="text-[9px] font-black uppercase tracking-widest text-stone-500">Bonus Endurance</div>
+            <div class="text-base font-bold text-amber-400">{{ computeBonus(currentValue("t")) }}</div>
           </div>
-          <div>
-            <span class="text-stone-500">M </span><span class="font-bold text-amber-400">{{ movement }}</span>
+          <div class="rounded-lg border border-white/5 bg-black/20 px-3 py-2">
+            <div class="text-[9px] font-black uppercase tracking-widest text-stone-500">Mouvement</div>
+            <div class="text-base font-bold text-amber-400">{{ movement }}</div>
           </div>
         </div>
       </div>
@@ -156,6 +181,7 @@ import AppCard from "../../../components/ui/AppCard.vue";
 import Button from "../../../components/ui/Button.vue";
 import FormField from "../../../components/ui/FormField.vue";
 import IconButton from "../../../components/ui/IconButton.vue";
+import StatStepper from "../../../components/ui/StatStepper.vue";
 import Select from "../../../components/ui/Select.vue";
 import { useCharacterStore } from "../../../stores/character";
 import type { CharacterState } from "../../../types/character";

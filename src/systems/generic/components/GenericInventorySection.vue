@@ -36,12 +36,12 @@
       <FormField
         v-model="draft.name"
         placeholder="Nom..."
-        class="inventory-field"
+        class="[&_input]:border-white/10 [&_input]:bg-black/60 [&_input]:text-amber-100 [&_input]:px-4 [&_input]:py-3 [&_input::placeholder]:text-stone-600 [&_input:focus]:border-amber-500 [&_input:focus]:outline-none"
       />
       <FormField
         v-model="draft.details"
         placeholder="Détails (poids, effet...)"
-        class="inventory-field"
+        class="[&_input]:border-white/10 [&_input]:bg-black/60 [&_input]:text-amber-100 [&_input]:px-4 [&_input]:py-3 [&_input::placeholder]:text-stone-600 [&_input:focus]:border-amber-500 [&_input:focus]:outline-none"
       />
       <Button
         variant="primary"
@@ -185,20 +185,4 @@ const increment = (item: InventoryItem) => {
 };
 </script>
 
-<style scoped>
-.inventory-field :deep(input) {
-  border-color: rgb(255 255 255 / 0.1);
-  background: rgb(0 0 0 / 0.6);
-  color: rgb(254 243 199 / 1);
-  padding: 0.75rem 1rem;
-}
-
-.inventory-field :deep(input)::placeholder {
-  color: rgb(87 83 78 / 1);
-}
-
-.inventory-field :deep(input:focus) {
-  border-color: rgb(245 158 11 / 1);
-  outline: none;
-}
-</style>
+<style scoped></style>

@@ -13,14 +13,6 @@
 
 No `bun run test` or `bun run lint` scripts in `package.json`.
 
-## Architecture
-
-**Multi-system registry** — `src/systems/`. Each game system (currently `generic`, `warhammer`) registers via `defineSystem()` in its `index.ts`. Systems are imported in `src/main.ts` for side-effect registration.
-
-Views are thin shells (5-7 lines of logic): check `NoCharacterEmpty`, resolve component from `useSystemComponents(systemId)`, render `<component :is="...">`. **No `if (systemId === ...)` anywhere** — all system-specific code lives in `src/systems/{system}/components/`.
-
-`CharacterState` has `systemData: unknown`. System components type it via `store.getSystemData<T>()` and `store.updateSystemData()`.
-
 ## Architecture Vue
 
 ### Philosophie
@@ -29,24 +21,27 @@ Views are thin shells (5-7 lines of logic): check `NoCharacterEmpty`, resolve co
 - **Pas de prop-drilling** au-delà de 2 niveaux — préférer le store Pinia.
 - **Pas d'emits en cascade** : si plusieurs composants partagent une action, la centraliser dans un store ou composable.
 - **Views = orchestration uniquement** : une view monte les composants, branche le store, gère le cycle de vie (`onMounted`/`onUnmounted`). Pas de logique métier inline.
+- **Registre multi-système** : `src/systems/`. Chaque système (`generic`, `warhammer`) s'enregistre via `defineSystem()` dans son `index.ts`, puis `src/main.ts` importe ces systèmes pour leur enregistrement par effet de bord.
+- **Views système** : shells minces (5-7 lignes de logique) qui vérifient `NoCharacterEmpty`, résolvent le composant via `useSystemComponents(systemId)` et rendent `<component :is="...">`. Aucun `if (systemId === ...)` hors `src/systems/{system}/components/`.
+- **`CharacterState` et migration incomplète** : `systemData` reste typé `unknown`, les composants système passent par `store.getSystemData<T>()` et `store.updateSystemData()`. Tant que la migration n'est pas terminée, suivre le pattern legacy actuel : conserver les champs top-level (`stats`, `skills`, `inventory`, `notes`, `spells`) en plus de `systemData`, ne pas faire appeler `createBlankState()` depuis le registre dans `sanitizeState()`, et ne pas supprimer les champs top-level existants.
 
 ### Règles par couche
 
 **Composants UI (`src/components/ui/`)**
 - Props + slots + emit uniquement. Jamais de store, jamais d'appel API.
-- Taille cible : **< 100 lignes**.
+- Taille cible : **< 100 lignes** (fichier entier : script + template + style combinés).
 
 **Feature components (`src/components/`)**
 - Consomment le store via `useXxxStore()`.
 - Délèguent toute mutation au store (actions Pinia).
 - Logique complexe extraite en composable.
-- Taille cible : **< 200 lignes**.
+- Taille cible : **< 200 lignes** (fichier entier : script + template + style combinés).
 
 **Views (`src/views/`)**
 - Montent les composants + branchent le store + cycle de vie.
 - **Pas de logique métier inline** dans `<script setup>`.
 - Toute logique modale, filtres, sélection → extraire dans un composable dédié.
-- Taille cible : **< 150 lignes** (template inclus).
+- Taille cible : **< 150 lignes** (fichier entier : script + template + style combinés).
 
 **Stores Pinia (`src/stores/`)**
 - Un store par domaine métier. Dès qu'un store dépasse ~200 lignes, le découper.
@@ -119,6 +114,8 @@ Le store dépasse ~200 lignes ?
 
 Env var `VITE_GOOGLE_CLIENT_ID` is required at build time for the Drive sync feature. In CI it's a GitHub Actions secret. Missing it shows "Google Client ID manquant" at runtime and Drive login fails.
 
+Quand tu génères des instructions de setup ou un `.env.example`, ajoute toujours `VITE_GOOGLE_CLIENT_ID=` comme entrée requise avec un commentaire indiquant qu'il faut la renseigner avant `bun run build`.
+
 ## CI/CD
 
 GitHub Actions deploys to Netlify on push/PR to `main`: `bun install` → `bun run build` → deploy `dist/`. Secrets needed: `VITE_GOOGLE_CLIENT_ID`, `NETLIFY_AUTH_TOKEN`, `NETLIFY_SITE_ID`.
@@ -134,4 +131,8 @@ GitHub Actions deploys to Netlify on push/PR to `main`: `bun install` → `bun r
 
 **Prefer UI components over native HTML.** Do not use bare `<button>` / `<input>` / `<label>` — use `<Button>`, `<FormField>`, `<FileImportLabel>`, `<IconButton>`, `<AppCard>`, `<StatStepper>`, `<SectionHeading>` from `src/components/ui/`.
 
-**Components must be autonomous.** Avoid parent→child props drilling. Prefer consuming the Pinia store directly inside the component. When splitting a component, move all associated code (template, logic, styles) into the new component so it stands alone — no shared reactive state via props.
+**Components must be autonomous.** Avoid parent→child props drilling. For feature components, prefer consuming the Pinia store directly inside the component; for UI components in `src/components/ui/`, keep them store-free and driven only by props, slots, and emits. When splitting a component, move all associated code (template, logic, styles) into the new component so it stands alone without shared reactive state via props.
+
+**Wrap `<Select>` in `<FormField>` for consistency.** Ne jamais utiliser `<Select>` dans un `<div>` manuel avec un `<p>` comme label — toujours le placer dans `<FormField label="...">` pour bénéficier du même gap, fonte et cohérence visuelle que les inputs texte.
+
+**Classes conditionnelles → computed.** Ne pas utiliser de tableaux de classes conditionnelles inline dans le template (`:class="[cond && '...', cond2 && '...']"`). Extraire dans une `computed` property dédiée avec un nom explicite (`buttonClass`, `labelClass`, etc.). Les objets `:class="{ 'cls': cond }"` courts (1-2 clés) sont tolérés.

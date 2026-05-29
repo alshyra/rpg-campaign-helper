@@ -1,6 +1,6 @@
 <template>
   <button
-    :class="['button', `button--${variant}`, { 'button--sm': small }]"
+    :class="buttonClass"
     :type="type"
     v-bind="$attrs"
   >
@@ -9,7 +9,9 @@
 </template>
 
 <script setup lang="ts">
-withDefaults(
+import { computed } from "vue";
+
+const props = withDefaults(
   defineProps<{
     variant?: "primary" | "secondary" | "danger" | "success" | "ghost";
     type?: "button" | "submit" | "reset";
@@ -21,80 +23,38 @@ withDefaults(
     small: false,
   },
 );
+
+const buttonClass = computed(() => {
+  const base = [
+    "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3",
+    "cursor-pointer transition-colors duration-150",
+    "disabled:opacity-30 disabled:cursor-default",
+  ];
+
+  if (props.small) {
+    base.push("!rounded-lg !px-2.5 !py-1.5", "text-[0.65rem] font-bold tracking-wider uppercase");
+  }
+
+  switch (props.variant) {
+    case "primary":
+      base.push("border-(--line-strong)", "bg-linear-to-b from-[#c6932c] to-[#a6751f] text-[#1d130c] font-bold");
+      break;
+    case "secondary":
+      base.push("border-(--line-strong)", "bg-[rgba(27,20,16,0.84)] text-(--text)");
+      break;
+    case "danger":
+      base.push("border-red-600/30 bg-red-900/15 text-red-400", "hover:border-red-600/50 hover:bg-red-900/25");
+      break;
+    case "success":
+      base.push("border-emerald-500/30 bg-emerald-900/20 text-emerald-400", "hover:border-emerald-500/50 hover:bg-emerald-900/30");
+      break;
+    case "ghost":
+      base.push("border-white/10 bg-transparent text-(--text-soft)", "hover:border-white/20 hover:text-(--text)");
+      break;
+  }
+
+  return base.join(" ");
+});
 </script>
 
-<style scoped>
-.button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border-radius: 14px;
-  border: 1px solid var(--line-strong);
-  padding: 12px 16px;
-  cursor: pointer;
-  font: inherit;
-  color: inherit;
-  transition:
-    border-color 0.15s,
-    background 0.15s;
-}
-
-.button:disabled {
-  opacity: 0.3;
-  cursor: default;
-}
-
-.button--sm {
-  padding: 6px 10px;
-  border-radius: 10px;
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-.button--primary {
-  background: linear-gradient(180deg, #c6932c, #a6751f);
-  color: #1d130c;
-  font-weight: 700;
-}
-
-.button--secondary {
-  background: rgba(27, 20, 16, 0.84);
-  color: var(--text);
-}
-
-.button--danger {
-  border-color: rgba(220, 38, 38, 0.3);
-  background: rgba(127, 29, 29, 0.15);
-  color: #f87171;
-}
-
-.button--danger:hover {
-  border-color: rgba(220, 38, 38, 0.5);
-  background: rgba(127, 29, 29, 0.25);
-}
-
-.button--success {
-  border-color: rgba(16, 185, 129, 0.3);
-  background: rgba(6, 78, 59, 0.2);
-  color: #34d399;
-}
-
-.button--success:hover {
-  border-color: rgba(16, 185, 129, 0.5);
-  background: rgba(6, 78, 59, 0.3);
-}
-
-.button--ghost {
-  border-color: rgba(255, 255, 255, 0.1);
-  background: transparent;
-  color: var(--text-soft);
-}
-
-.button--ghost:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-  color: var(--text);
-}
-</style>
+<style scoped></style>
