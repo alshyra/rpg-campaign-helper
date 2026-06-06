@@ -7,6 +7,8 @@ import App from "./App.vue";
 import { routerOptions } from "./router";
 
 import "./tailwind.css";
+import "./systems/generic";
+import "./systems/warhammer";
 
 const app = createApp(App);
 const pinia = createPinia();

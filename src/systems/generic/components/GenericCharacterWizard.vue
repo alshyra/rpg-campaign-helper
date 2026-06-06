@@ -4,28 +4,25 @@
       class="character-editor flex min-h-[calc(100dvh-8rem)] flex-col gap-3"
       @submit.prevent="submitCharacter"
     >
-      <!-- Indicateur d'étapes -->
       <div class="wizard-steps flex items-center gap-1.5">
         <template
           v-for="(step, index) in steps"
           :key="step.id"
         >
           <div
-            class="wizard-steps__item flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-(--text-soft) transition-all duration-200"
-            :class="{
-              'wizard-steps__item--active': currentStep === index,
-              'wizard-steps__item--done': currentStep > index,
-              'flex-1': currentStep === index,
-              'shrink-0': currentStep !== index,
-            }"
+            class="flex items-center gap-2 rounded-lg px-2.5 py-1.5 transition-all duration-200"
+            :class="stepItemClasses(index)"
           >
-            <span class="grid h-5 w-5 shrink-0 place-items-center rounded-full border border-[rgba(221,187,123,0.2)] text-[0.65rem] font-bold">{{
-              index + 1
-            }}</span>
+            <span
+              class="grid h-5 w-5 shrink-0 place-items-center rounded-full text-[0.65rem] font-bold transition-all duration-200"
+              :class="stepDotClasses(index)"
+              >{{ index + 1 }}</span
+            >
             <strong
               v-if="currentStep === index"
               class="truncate text-[0.7rem] uppercase tracking-[0.06em]"
-            >{{ step.label }}</strong>
+              >{{ step.label }}</strong
+            >
           </div>
           <div
             v-if="index < steps.length - 1"
@@ -35,39 +32,39 @@
         </template>
       </div>
 
-      <!-- Étapes (prend l'espace disponible) -->
       <div class="flex-1">
-        <!-- Étape : Identité -->
         <div
           v-if="currentStepId === 'identity'"
           class="grid grid-cols-2 gap-3.5 max-[420px]:grid-cols-1"
         >
-          <div class="character-editor__avatar field field--full">
-            <span>Portrait</span>
+          <div class="grid gap-2 col-span-full">
+            <span class="text-(--text-soft) text-sm">Portrait</span>
 
-            <div class="character-editor__avatar-row">
+            <div class="flex items-center gap-2.5 flex-wrap">
               <div
                 v-if="draft.profile.avatarDataUrl"
-                class="character-editor__avatar-preview"
+                class="size-14 shrink-0 rounded-2xl overflow-hidden border border-[rgba(221,187,123,0.26)]"
               >
                 <img
                   :src="draft.profile.avatarDataUrl"
                   alt="Aperçu du portrait"
+                  class="w-full h-full object-cover block"
                 />
               </div>
               <div
                 v-else
-                class="character-editor__avatar-fallback"
+                class="size-14 shrink-0 rounded-2xl overflow-hidden border border-[rgba(221,187,123,0.26)] grid place-items-center text-[#fcd98e] bg-[rgba(124,68,16,0.4)] font-(family-name:--serif) text-xl font-bold"
                 aria-hidden="true"
               >
                 {{ (draft.profile.characterName || "?").slice(0, 1).toUpperCase() }}
               </div>
 
-              <label class="character-editor__avatar-upload">
+              <label class="relative overflow-hidden inline-flex items-center justify-center min-h-10 rounded-xl border border-white/10 bg-[rgba(28,20,15,0.5)] text-(--text) font-bold text-[0.9rem] px-3.5 cursor-pointer hover:border-amber-500/50">
                 <span>{{ draft.profile.avatarDataUrl ? "Changer le portrait" : "Ajouter un portrait" }}</span>
                 <input
                   type="file"
                   accept="image/*"
+                  class="absolute inset-0 opacity-0 cursor-pointer"
                   @change="onAvatarSelected"
                 />
               </label>
@@ -102,7 +99,6 @@
           />
         </div>
 
-        <!-- Étape : Stats -->
         <div
           v-if="currentStepId === 'stats'"
           class="grid gap-3 border-t border-white/5 pt-1"
@@ -124,10 +120,8 @@
             />
           </div>
         </div>
-
       </div>
 
-      <!-- Navigation wizard -->
       <div class="wizard-actions mt-auto grid grid-cols-2 gap-2.5 pt-4 max-[420px]:grid-cols-1">
         <Button
           v-if="currentStep > 0"
@@ -159,43 +153,49 @@
 
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { computed } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
-import { useCharacterDraftWizard } from "../../composables/useCharacterDraftWizard";
-import { useCharacterStore } from "../../stores/character";
-import type { CharacterState } from "../../types/character";
-import AppCard from "../ui/AppCard.vue";
-import Button from "../ui/Button.vue";
-import FormField from "../ui/FormField.vue";
-import StatsStepper from "../ui/StatStepper.vue";
+import AppCard from "../../../components/ui/AppCard.vue";
+import Button from "../../../components/ui/Button.vue";
+import FormField from "../../../components/ui/FormField.vue";
+import StatsStepper from "../../../components/ui/StatStepper.vue";
+import { useCharacterDraftWizard } from "../../../composables/useCharacterDraftWizard";
+import { useCharacterStore } from "../../../stores/character";
+import type { CharacterState, Stat } from "../../../types/character";
 
 const characterStore = useCharacterStore();
 const { hasCharacter, state, activeCampaignId } = storeToRefs(characterStore);
 const route = useRoute();
 const router = useRouter();
 
+const blankStats = [
+  { key: "dex" as const, label: "DEX", value: 0 },
+  { key: "for" as const, label: "FOR", value: 0 },
+  { key: "con" as const, label: "CON", value: 0 },
+  { key: "int" as const, label: "INT", value: 0 },
+  { key: "sag" as const, label: "SAG", value: 0 },
+  { key: "cha" as const, label: "CHA", value: 0 },
+];
+
 const emptyCharacter = (): CharacterState => ({
+  systemId: "generic",
   profile: {
     characterName: "",
     role: "",
     mood: "",
     avatarDataUrl: "",
-    injuries: {
-      light: 0,
-      minor: 0,
-      major: 0,
-      fatal: 0,
-    },
+    injuries: { light: 0, minor: 0, major: 0, fatal: 0 },
   },
-  stats: [
-    { key: "dex", label: "DEX", value: 0 },
-    { key: "for", label: "FOR", value: 0 },
-    { key: "con", label: "CON", value: 0 },
-    { key: "int", label: "INT", value: 0 },
-    { key: "sag", label: "SAG", value: 0 },
-    { key: "cha", label: "CHA", value: 0 },
-  ],
+  systemData: {
+    stats: blankStats,
+    skills: [],
+    inventory: [],
+    notes: [],
+    spells: [],
+    injuries: { light: 0, minor: 0, major: 0, fatal: 0 },
+  },
+  stats: blankStats,
   skills: [],
   inventory: [],
   notes: [],
@@ -207,16 +207,8 @@ const isNewMode = computed(() => route.query.new === "1");
 const character = computed(() => (isNewMode.value || !state.value ? emptyCharacter() : state.value));
 const submitLabel = computed(() => (hasCharacter.value ? "Enregistrer" : "Créer le personnage"));
 
-const {
-  steps,
-  currentStep,
-  currentStepId,
-  draft,
-  nextStep,
-  previousStep,
-  updateStat,
-  snapshot,
-} = useCharacterDraftWizard(character);
+const { steps, currentStep, currentStepId, draft, nextStep, previousStep, updateStat, snapshot } =
+  useCharacterDraftWizard(character);
 
 const submitCharacter = () => {
   const payload = snapshot();
@@ -264,7 +256,6 @@ const resizeAvatar = (dataUrl: string) =>
         return;
       }
 
-      // Crop center square then normalize to fixed output size.
       ctx.drawImage(img, sourceX, sourceY, cropSize, cropSize, 0, 0, outputSize, outputSize);
       resolve(canvas.toDataURL("image/jpeg", 0.82));
     };
@@ -293,77 +284,22 @@ const onAvatarSelected = async (event: Event) => {
 const removeAvatar = () => {
   draft.profile.avatarDataUrl = "";
 };
+
+const stepItemClasses = (index: number) => {
+  const activeOrDone = currentStep.value >= index;
+  return {
+    "text-(--gold) border-[rgba(221,187,123,0.35)]": activeOrDone,
+    "text-(--text-soft)": !activeOrDone,
+    "flex-1": currentStep.value === index,
+    "shrink-0": currentStep.value !== index,
+  };
+};
+
+const stepDotClasses = (index: number) => {
+  return currentStep.value >= index
+    ? "border border-[rgba(221,187,123,0.55)]"
+    : "border border-[rgba(221,187,123,0.2)]";
+};
 </script>
-<style scoped>
-.wizard-steps__item--active,
-.wizard-steps__item--done {
-  color: var(--gold);
-  border-color: rgba(221, 187, 123, 0.35);
-}
 
-.wizard-steps__item--done span,
-.wizard-steps__item--active span {
-  border-color: rgba(221, 187, 123, 0.55);
-}
-
-.character-editor__avatar-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.character-editor__avatar-preview,
-.character-editor__avatar-fallback {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid rgba(221, 187, 123, 0.26);
-}
-
-.character-editor__avatar-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.character-editor__avatar-fallback {
-  display: grid;
-  place-items: center;
-  color: #fcd98e;
-  background: rgba(124, 68, 16, 0.4);
-  font-family: var(--serif);
-  font-size: 1.2rem;
-  font-weight: 700;
-}
-
-.character-editor__avatar-upload {
-  position: relative;
-  overflow: hidden;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 40px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(28, 20, 15, 0.5);
-  color: var(--text);
-  font-weight: 700;
-  font-size: 0.9rem;
-  padding: 0 14px;
-  cursor: pointer;
-}
-
-.character-editor__avatar-upload:hover {
-  border-color: rgba(245, 158, 11, 0.5);
-}
-
-.character-editor__avatar-upload input {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-</style>
+<style scoped></style>

@@ -3,7 +3,6 @@
     class="rounded-3xl border border-white/5 bg-stone-900/60 shadow-inner"
     :class="compact ? 'p-3' : 'p-5'"
   >
-    <!-- En-tête -->
     <div
       class="flex items-end justify-between px-1"
       :class="compact ? 'mb-2' : 'mb-6'"
@@ -26,13 +25,13 @@
       <span
         class="font-mono font-black leading-none text-white/10"
         :class="compact ? 'text-lg' : 'text-2xl'"
-      >{{ usedSlots }}/8</span>
+        >{{ usedSlots }}/8</span
+      >
     </div>
 
-    <!-- Tiers de blessures -->
     <div
       class="grid"
-      :class="compact ? 'grid-cols-2 gap-2' : 'grid-cols-1 gap-2.5'"
+      :class="compact ? 'grid-cols-2 gap-2' : 'grid-cols-2 gap-2.5'"
     >
       <div
         v-for="tier in tiers"
@@ -41,9 +40,8 @@
         <span
           class="block px-1 font-bold uppercase tracking-widest text-stone-500"
           :class="compact ? 'mb-1 text-[8px]' : 'mb-2 text-[9px]'"
-        >{{
-          tier.label
-        }}</span>
+          >{{ tier.label }}</span
+        >
         <div
           class="flex"
           :class="compact ? 'gap-1.5' : 'gap-2'"
@@ -55,7 +53,7 @@
             class="health-box relative shrink-0 overflow-hidden border-2 p-0 transition-all duration-300"
             :class="[
               compact ? 'h-16 w-16 rounded-lg' : 'h-16 w-16 rounded-lg',
-              (profile.injuries[tier.key] || 0) > boxIdx
+              (injuries[tier.key] || 0) > boxIdx
                 ? `bg-linear-to-br ${tier.color} border-transparent scale-[1.02]`
                 : 'border-white/5 bg-black/40 hover:border-white/20',
               activeImpact === `${tier.key}-${boxIdx}` ? 'health-box--impact' : '',
@@ -72,11 +70,10 @@
 
 <script setup lang="ts">
 import { HeartPulse } from "@lucide/vue";
-import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 
-import type { Profile } from "../../types/character";
-import { useCharacterStore } from "../../stores/character";
+import { useCharacterStore } from "../../../stores/character";
+import type { GenericSystemData, Injuries } from "../types";
 
 withDefaults(
   defineProps<{
@@ -88,18 +85,12 @@ withDefaults(
 );
 
 const characterStore = useCharacterStore();
-const { state } = storeToRefs(characterStore);
+const systemData = computed(() => characterStore.getSystemData<GenericSystemData>());
 
-const emptyProfileInjuries: Profile["injuries"] = {
-  light: 0,
-  minor: 0,
-  major: 0,
-  fatal: 0,
-};
+const emptyInjuries: Injuries = { light: 0, minor: 0, major: 0, fatal: 0 };
+const injuries = computed(() => systemData.value?.injuries ?? emptyInjuries);
 
-const profile = computed(() => state.value?.profile ?? { injuries: emptyProfileInjuries });
-
-const tiers: Array<{ key: keyof Profile["injuries"]; label: string; color: string }> = [
+const tiers: Array<{ key: keyof Injuries; label: string; color: string }> = [
   { key: "light", label: "Légère", color: "from-emerald-500 to-emerald-700" },
   { key: "minor", label: "Moyenne", color: "from-amber-500 to-amber-700" },
   { key: "major", label: "Grave", color: "from-orange-600 to-orange-800" },
@@ -110,10 +101,10 @@ const tierOrder = ["light", "minor", "major", "fatal"] as const;
 const activeImpact = ref<string | null>(null);
 let impactTimeout: ReturnType<typeof setTimeout> | null = null;
 
-const usedSlots = computed(() => Object.values(profile.value.injuries).reduce((total, value) => total + value, 0));
+const usedSlots = computed(() => Object.values(injuries.value).reduce((total, value) => total + value, 0));
 
 const status = computed(() => {
-  const inj = profile.value.injuries;
+  const inj = injuries.value;
   if ((inj.fatal || 0) >= 2) return { text: "AGONISANT / MORT", color: "text-red-600" };
   if ((inj.major || 0) >= 1) return { text: "BLESSURES GRAVES", color: "text-orange-500" };
   if ((inj.minor || 0) >= 1) return { text: "MAL EN POINT", color: "text-amber-500" };
@@ -121,17 +112,15 @@ const status = computed(() => {
   return { text: "INDEMNE", color: "text-stone-500" };
 });
 
-const handleBoxClick = (tierId: keyof Profile["injuries"], boxIdx: number) => {
+const handleBoxClick = (tierId: keyof Injuries, boxIdx: number) => {
   activeImpact.value = `${tierId}-${boxIdx}`;
-  if (impactTimeout) {
-    clearTimeout(impactTimeout);
-  }
+  if (impactTimeout) clearTimeout(impactTimeout);
   impactTimeout = setTimeout(() => {
     activeImpact.value = null;
     impactTimeout = null;
   }, 360);
 
-  const newInjuries = { ...profile.value.injuries };
+  const newInjuries = { ...injuries.value };
   const currentVal = newInjuries[tierId] || 0;
 
   if (boxIdx < currentVal) {
@@ -147,7 +136,7 @@ const handleBoxClick = (tierId: keyof Profile["injuries"], boxIdx: number) => {
     }
   }
 
-  characterStore.updateProfile({ injuries: newInjuries });
+  characterStore.updateSystemData<GenericSystemData>({ injuries: newInjuries });
 };
 </script>
 

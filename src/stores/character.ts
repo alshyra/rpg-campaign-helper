@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 
-import type { CharacterState, InventoryItem, NoteEntry, Profile, Skill, Spell, Stat } from "../types/character";
 import { useDriveSync } from "../composables/useDriveSync";
+import type { CharacterState, InventoryItem, NoteEntry, Profile, Skill, Spell, Stat } from "../types/character";
 import {
   CAMPAIGNS_STORAGE_KEY,
   SINGLE_STORAGE_KEY,
@@ -55,6 +55,7 @@ export const useCharacterStore = defineStore("character", () => {
       role: campaign.character.profile.role || "Sans rôle",
       avatarDataUrl: campaign.character.profile.avatarDataUrl || "",
       updatedAt: campaign.character.updatedAt,
+      systemId: campaign.character.systemId,
     })),
   );
 
@@ -65,7 +66,10 @@ export const useCharacterStore = defineStore("character", () => {
       return 0;
     }
 
-    const { light, minor, major, fatal } = state.value.profile.injuries;
+    const systemData = state.value.systemData as
+      | { injuries?: { light: number; minor: number; major: number; fatal: number } }
+      | undefined;
+    const { light = 0, minor = 0, major = 0, fatal = 0 } = systemData?.injuries ?? state.value.profile.injuries;
     const usedSlots = light + minor + major + fatal;
     const totalSlots = 8;
 
@@ -254,6 +258,19 @@ export const useCharacterStore = defineStore("character", () => {
     createNewCharacter(sanitizeState(parsed));
   };
 
+  const getSystemData = <T>(): T | null => {
+    if (!state.value) return null;
+    return (state.value.systemData ?? {}) as T;
+  };
+
+  const updateSystemData = <T>(patch: Partial<T>) => {
+    updateActiveCharacter((character) => ({
+      ...character,
+      systemData: { ...(character.systemData as object), ...patch },
+      updatedAt: new Date().toISOString(),
+    }));
+  };
+
   const clearCharacter = () => {
     stored.value.activeCampaignId = null;
   };
@@ -304,6 +321,8 @@ export const useCharacterStore = defineStore("character", () => {
     addSpell,
     removeSpell,
     updateSpell,
+    getSystemData,
+    updateSystemData,
     serialize,
     importFromObject,
     clearCharacter,

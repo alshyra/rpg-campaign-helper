@@ -8,12 +8,18 @@
         class="w-full gap-3 p-5 text-lg font-black shadow-lg shadow-amber-900/20 transition-all hover:bg-amber-500 active:scale-95"
         @click="goToTunnel"
       >
-        <Plus class="h-6 w-6" :stroke-width="2.2" />
+        <Plus
+          class="h-6 w-6"
+          :stroke-width="2.2"
+        />
         NOUVEAU HÉROS
       </Button>
       <div class="relative">
         <FileImportLabel @file-selected="onFileChange">
-          <Download class="h-5 w-5 text-amber-500" :stroke-width="1.8" />
+          <Download
+            class="h-5 w-5 text-amber-500"
+            :stroke-width="1.8"
+          />
           IMPORTER JSON
         </FileImportLabel>
       </div>

@@ -9,10 +9,16 @@
         @click="exportJson"
       >
         <div class="flex items-center gap-3">
-          <FileDown class="h-5 w-5" :stroke-width="1.8" />
+          <FileDown
+            class="h-5 w-5"
+            :stroke-width="1.8"
+          />
           <span>Exporter JSON</span>
         </div>
-        <Download class="h-4 w-4 opacity-60" :stroke-width="1.8" />
+        <Download
+          class="h-4 w-4 opacity-60"
+          :stroke-width="1.8"
+        />
       </Button>
 
       <!-- Import JSON -->
@@ -23,7 +29,10 @@
         @file-selected="onFileChange"
       >
         <div class="flex items-center gap-3">
-          <FileUp class="h-5 w-5" :stroke-width="1.8" />
+          <FileUp
+            class="h-5 w-5"
+            :stroke-width="1.8"
+          />
           <span>Importer JSON</span>
         </div>
       </FileImportLabel>
@@ -34,7 +43,10 @@
         class="w-full justify-start gap-3 rounded-xl border-transparent bg-stone-800/30 p-4 font-bold text-red-500/50 transition-all hover:text-red-500"
         @click="deleteCharacter"
       >
-        <Trash2 class="h-5 w-5" :stroke-width="1.8" />
+        <Trash2
+          class="h-5 w-5"
+          :stroke-width="1.8"
+        />
         <span>Supprimer ce personnage</span>
       </Button>
     </div>

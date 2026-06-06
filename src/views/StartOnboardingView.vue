@@ -18,7 +18,7 @@
             >Créer mon personnage</Button
           >
           <FileImportLabel
-            label="Importer un personnage JSON"
+            label="Importer un personnage"
             @file-selected="onFileChange"
           />
         </div>
@@ -37,14 +37,20 @@
             class="justify-center gap-2"
             @click="handleDriveConnect"
           >
-            <CloudUpload class="h-4 w-4" :stroke-width="1.8" />
+            <CloudUpload
+              class="h-4 w-4"
+              :stroke-width="1.8"
+            />
             {{ isConnecting ? "Connexion…" : "Récupérer depuis Google Drive" }}
           </Button>
           <div
             v-else
             class="flex items-center justify-center gap-2 rounded-xl bg-stone-800/40 p-3 text-sm text-green-400"
           >
-            <Loader2 class="h-4 w-4 animate-spin" :stroke-width="1.8" />
+            <Loader2
+              class="h-4 w-4 animate-spin"
+              :stroke-width="1.8"
+            />
             Chargement depuis Google Drive…
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { ref } from "vue";
+
 import type { StoredState } from "../stores/character.helpers";
 
 const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
@@ -126,10 +127,7 @@ async function parseDriveError(response: Response): Promise<string> {
   return details ? `${base} - ${details}` : base;
 }
 
-async function driveRequest(
-  url: string,
-  options: RequestInit = {},
-): Promise<Response> {
+async function driveRequest(url: string, options: RequestInit = {}): Promise<Response> {
   if (!accessToken) {
     throw new Error("No access token – user must reconnect");
   }
@@ -203,9 +201,7 @@ async function uploadFile(data: StoredState, fileId: string | null): Promise<voi
 }
 
 async function downloadFile(fileId: string): Promise<StoredState | null> {
-  const res = await driveRequest(
-    `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
-  );
+  const res = await driveRequest(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`);
   if (!res.ok) throw new Error(`Drive download failed: ${await parseDriveError(res)}`);
   return res.json() as Promise<StoredState>;
 }

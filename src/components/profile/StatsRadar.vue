@@ -1,10 +1,10 @@
 <template>
   <AppCard v-bind="$attrs">
-    <div class="radar-card grid h-full place-items-center">
+    <div class="grid h-full place-items-center">
       <svg
         viewBox="0 0 260 260"
-        class="radar-chart w-full"
-        :class="compact ? 'radar-chart--compact max-w-62' : 'max-w-80'"
+        class="w-full"
+        :class="compact ? 'max-w-62' : 'max-w-80'"
         role="img"
         aria-label="Radar des caractéristiques"
       >
@@ -13,7 +13,7 @@
             v-for="ring in rings"
             :key="ring"
             :points="ringPoints(ring)"
-            class="radar-chart__ring"
+            class="fill-none stroke-[rgba(220,183,116,0.14)] [stroke-width:1]"
           />
           <line
             v-for="axis in axes"
@@ -22,11 +22,11 @@
             y1="0"
             :x2="axis.x"
             :y2="axis.y"
-            class="radar-chart__axis"
+            class="fill-none stroke-[rgba(220,183,116,0.14)] [stroke-width:1]"
           />
           <polygon
             :points="valuePoints"
-            class="radar-chart__shape"
+            class="fill-[rgba(210,160,51,0.18)] stroke-(--gold) [stroke-width:2]"
           />
           <circle
             v-for="axis in valueAxes"
@@ -34,14 +34,16 @@
             :cx="axis.x"
             :cy="axis.y"
             r="4"
-            class="radar-chart__dot"
+            class="fill-(--gold)"
           />
           <text
             v-for="valueLabel in valueLabels"
             :key="`${valueLabel.key}-value`"
             :x="valueLabel.x"
             :y="valueLabel.y"
-            class="radar-chart__value"
+            text-anchor="middle"
+            class="fill-(--gold) font-bold"
+            :class="compact ? 'text-[10px]' : 'text-[11px]'"
           >
             {{ valueLabel.value }}
           </text>
@@ -50,7 +52,9 @@
             :key="label.key"
             :x="label.x"
             :y="label.y"
-            class="radar-chart__label"
+            text-anchor="middle"
+            class="fill-(--text-soft)"
+            :class="compact ? 'text-[10px]' : 'text-xs'"
           >
             {{ label.label }}
           </text>
@@ -153,42 +157,4 @@ const valuePoints = computed(() =>
     .join(" "),
 );
 </script>
-<style scoped>
-.radar-chart__ring,
-.radar-chart__axis {
-  fill: none;
-  stroke: rgba(220, 183, 116, 0.14);
-  stroke-width: 1;
-}
-
-.radar-chart__shape {
-  fill: rgba(210, 160, 51, 0.18);
-  stroke: var(--gold);
-  stroke-width: 2;
-}
-
-.radar-chart__dot {
-  fill: var(--gold);
-}
-
-.radar-chart__label {
-  fill: var(--text-soft);
-  font-size: 12px;
-  text-anchor: middle;
-}
-
-.radar-chart__value {
-  fill: var(--gold);
-  font-size: 11px;
-  font-weight: 700;
-  text-anchor: middle;
-}
-
-.radar-chart--compact .radar-chart__label {
-  font-size: 10px;
-}
-
-.radar-chart--compact .radar-chart__value {
-  font-size: 10px;
-}
-</style>
+<style scoped></style>

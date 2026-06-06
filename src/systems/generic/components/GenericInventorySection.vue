@@ -1,6 +1,5 @@
 <template>
   <div class="grid gap-6">
-    <!-- Header avec toggle -->
     <div class="flex items-center justify-between px-2">
       <h2 class="m-0 font-(family-name:--serif) text-2xl italic text-amber-100">Sac à dos</h2>
       <IconButton
@@ -9,11 +8,13 @@
         :class="showAddForm ? 'bg-red-500/20 text-red-500 rotate-45' : 'bg-amber-500/10 text-amber-500'"
         @click="showAddForm = !showAddForm"
       >
-        <Plus class="h-6 w-6" :stroke-width="2.2" />
+        <Plus
+          class="h-6 w-6"
+          :stroke-width="2.2"
+        />
       </IconButton>
     </div>
 
-    <!-- Formulaire ajout (collapsible) -->
     <section
       v-if="showAddForm"
       class="grid gap-4 rounded-3xl border border-amber-500/30 bg-stone-900/80 p-6"
@@ -26,39 +27,46 @@
           class="h-8 w-8 p-0 text-stone-500 hover:text-white"
           @click="showAddForm = false"
         >
-          <X class="h-4 w-4" :stroke-width="2" />
+          <X
+            class="h-4 w-4"
+            :stroke-width="2"
+          />
         </IconButton>
       </div>
       <FormField
         v-model="draft.name"
         placeholder="Nom..."
-        class="inventory-field"
+        class="[&_input]:border-white/10 [&_input]:bg-black/60 [&_input]:text-amber-100 [&_input]:px-4 [&_input]:py-3 [&_input::placeholder]:text-stone-600 [&_input:focus]:border-amber-500 [&_input:focus]:outline-none"
       />
       <FormField
         v-model="draft.details"
         placeholder="Détails (poids, effet...)"
-        class="inventory-field"
+        class="[&_input]:border-white/10 [&_input]:bg-black/60 [&_input]:text-amber-100 [&_input]:px-4 [&_input]:py-3 [&_input::placeholder]:text-stone-600 [&_input:focus]:border-amber-500 [&_input:focus]:outline-none"
       />
       <Button
         variant="primary"
         class="w-full gap-2 py-3 font-black text-black transition-all hover:bg-amber-500 active:scale-[0.98]"
         @click="submitItem"
       >
-        <Package class="h-5 w-5" :stroke-width="2.2" />
+        <Package
+          class="h-5 w-5"
+          :stroke-width="2.2"
+        />
         AJOUTER AU SAC
       </Button>
     </section>
 
-    <!-- État vide -->
     <div
       v-if="inventory.length === 0"
       class="rounded-3xl border-2 border-dashed border-white/5 py-12 text-center text-stone-600"
     >
-      <Backpack class="mx-auto mb-2 h-12 w-12 opacity-20" :stroke-width="1.2" />
+      <Backpack
+        class="mx-auto mb-2 h-12 w-12 opacity-20"
+        :stroke-width="1.2"
+      />
       <p class="text-sm italic">Le sac est vide...</p>
     </div>
 
-    <!-- Liste des objets -->
     <section class="grid gap-3">
       <div
         v-for="item in inventory"
@@ -74,7 +82,6 @@
             {{ item.details }}
           </p>
         </div>
-        <!-- Contrôle quantité -->
         <div class="flex items-center gap-1 rounded-xl border border-white/5 bg-black/40 p-1">
           <IconButton
             square
@@ -82,7 +89,6 @@
             :class="item.quantity === 1 ? 'hover:text-red-500' : 'hover:text-red-400'"
             @click="decrement(item)"
           >
-            <!-- Trash si qty=1, Minus sinon -->
             <Trash2
               v-if="item.quantity === 1"
               class="h-3.5 w-3.5"
@@ -100,7 +106,10 @@
             class="h-8 w-8 rounded-lg border-transparent bg-transparent p-0 text-stone-400 transition-all hover:bg-white/5 hover:text-emerald-500"
             @click="increment(item)"
           >
-            <Plus class="h-4 w-4" :stroke-width="2.2" />
+            <Plus
+              class="h-4 w-4"
+              :stroke-width="2.2"
+            />
           </IconButton>
         </div>
       </div>
@@ -110,19 +119,19 @@
 
 <script setup lang="ts">
 import { Backpack, Minus, Package, Plus, Trash2, X } from "@lucide/vue";
-import { storeToRefs } from "pinia";
 import { computed, reactive, ref } from "vue";
 
-import type { InventoryItem } from "../../types/character";
-import { useCharacterStore } from "../../stores/character";
-import Button from "../ui/Button.vue";
-import FormField from "../ui/FormField.vue";
-import IconButton from "../ui/IconButton.vue";
+import Button from "../../../components/ui/Button.vue";
+import FormField from "../../../components/ui/FormField.vue";
+import IconButton from "../../../components/ui/IconButton.vue";
+import { useCharacterStore } from "../../../stores/character";
+import type { InventoryItem } from "../../../types/character";
+import type { GenericSystemData } from "../types";
 
 const characterStore = useCharacterStore();
-const { state } = storeToRefs(characterStore);
+const systemData = computed(() => characterStore.getSystemData<GenericSystemData>());
 
-const inventory = computed(() => state.value?.inventory ?? []);
+const inventory = computed(() => systemData.value?.inventory ?? []);
 
 const showAddForm = ref(false);
 
@@ -132,15 +141,22 @@ const draft = reactive({
   quantity: 1,
 });
 
-const submitItem = () => {
-  if (!draft.name.trim()) {
-    return;
-  }
+const makeId = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 10)}`;
 
-  characterStore.addInventoryItem({
-    name: draft.name.trim(),
-    details: draft.details.trim(),
-    quantity: Math.max(1, draft.quantity),
+const submitItem = () => {
+  if (!draft.name.trim()) return;
+
+  const current = systemData.value?.inventory ?? [];
+  characterStore.updateSystemData<GenericSystemData>({
+    inventory: [
+      {
+        id: makeId("item"),
+        name: draft.name.trim(),
+        details: draft.details.trim(),
+        quantity: Math.max(1, draft.quantity),
+      },
+      ...current,
+    ],
   });
 
   draft.name = "";
@@ -149,33 +165,24 @@ const submitItem = () => {
 };
 
 const decrement = (item: InventoryItem) => {
+  const current = systemData.value?.inventory ?? [];
   if (item.quantity <= 1) {
-    characterStore.removeInventoryItem(item.id);
-    return;
+    characterStore.updateSystemData<GenericSystemData>({
+      inventory: current.filter((i) => i.id !== item.id),
+    });
+  } else {
+    characterStore.updateSystemData<GenericSystemData>({
+      inventory: current.map((i) => (i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i)),
+    });
   }
-
-  characterStore.updateInventoryItem(item.id, { quantity: item.quantity - 1 });
 };
 
 const increment = (item: InventoryItem) => {
-  characterStore.updateInventoryItem(item.id, { quantity: item.quantity + 1 });
+  const current = systemData.value?.inventory ?? [];
+  characterStore.updateSystemData<GenericSystemData>({
+    inventory: current.map((i) => (i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i)),
+  });
 };
 </script>
 
-<style scoped>
-.inventory-field :deep(input) {
-  border-color: rgb(255 255 255 / 0.1);
-  background: rgb(0 0 0 / 0.6);
-  color: rgb(254 243 199 / 1);
-  padding: 0.75rem 1rem;
-}
-
-.inventory-field :deep(input)::placeholder {
-  color: rgb(87 83 78 / 1);
-}
-
-.inventory-field :deep(input:focus) {
-  border-color: rgb(245 158 11 / 1);
-  outline: none;
-}
-</style>
+<style scoped></style>

@@ -1,6 +1,6 @@
 <template>
   <AppShell>
-    <StartOnboardingView v-if="!hasCharacter && route.name !== 'character-create' && route.name !== 'settings'" />
+    <StartOnboardingView v-if="!hasCharacter && route.name === 'characters'" />
     <template v-else>
       <RouterView />
       <OnboardingOverlay v-if="hasCharacter" />

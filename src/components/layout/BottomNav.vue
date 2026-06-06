@@ -16,7 +16,9 @@
         :stroke-width="1.8"
         aria-hidden="true"
       />
-      <span class="bottom-nav__label max-[420px]:hidden whitespace-nowrap text-[0.64rem] uppercase tracking-[0.04em]">{{ item.label }}</span>
+      <span class="bottom-nav__label max-[420px]:hidden whitespace-nowrap text-[0.64rem] uppercase tracking-[0.04em]">{{
+        item.label
+      }}</span>
     </RouterLink>
   </nav>
 </template>
@@ -43,12 +45,10 @@ const itemDefs = [
   { name: "notes", label: "Notes", icon: NotebookText },
 ];
 
-const getItemPath = (name: string) => `/characters/${characterId.value}/${name}`;
-
 const items = computed(() =>
   itemDefs.map((def) => ({
     ...def,
-    to: getItemPath(def.name),
+    to: `/characters/${characterId.value}/${def.name}`,
   })),
 );
 </script>
