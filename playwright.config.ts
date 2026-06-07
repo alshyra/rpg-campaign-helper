@@ -12,6 +12,9 @@ export default defineConfig({
   use: {
     baseURL: "http://127.0.0.1:5174",
     trace: "on-first-retry",
+    launchOptions: {
+      executablePath: "/snap/chromium/3459/usr/lib/chromium-browser/chrome",
+    },
   },
   webServer: {
     command: "bun run dev --host 127.0.0.1 --port 5174",
