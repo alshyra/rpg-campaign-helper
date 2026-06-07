@@ -66,6 +66,16 @@ export const useCharacterStore = defineStore("character", () => {
       return 0;
     }
 
+    // Warhammer système : ratio basé sur les wounds, pas les blessures génériques
+    if (state.value.systemId === "warhammer") {
+      const systemData = state.value.systemData as { wounds?: { current: number; max: number } } | undefined;
+      const max = systemData?.wounds?.max ?? 12;
+      const current = systemData?.wounds?.current ?? 12;
+      if (max <= 0) return 1;
+      return Math.max(0, Math.min(1, 1 - current / max));
+    }
+
+    // Système Generic : ratio basé sur les slots de blessures
     const systemData = state.value.systemData as
       | { injuries?: { light: number; minor: number; major: number; fatal: number } }
       | undefined;
