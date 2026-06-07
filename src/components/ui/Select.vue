@@ -48,7 +48,8 @@
         v-for="opt in options"
         :key="opt.value"
         type="button"
-        class="select-option w-full cursor-pointer px-3 py-2 text-left text-xs transition-colors"
+        data-testid="select-option"
+        class="w-full cursor-pointer px-3 py-2 text-left text-xs transition-colors"
         :class="
           modelValue === opt.value
             ? 'bg-amber-950/50 text-amber-300'

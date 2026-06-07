@@ -9,12 +9,12 @@ export class WarhammerWizardPage {
     const wrapper0 = this.page.locator(".select-wrapper").nth(0)
     await wrapper0.locator("button").first().click()
     await this.page.waitForTimeout(200)
-    await wrapper0.locator(".select-option", { hasText: species }).click()
+    await wrapper0.locator('[data-testid="select-option"]', { hasText: species }).click()
 
     const wrapper1 = this.page.locator(".select-wrapper").nth(1)
     await wrapper1.locator("button").first().click()
     await this.page.waitForTimeout(200)
-    await wrapper1.locator(".select-option", { hasText: career }).click()
+    await wrapper1.locator('[data-testid="select-option"]', { hasText: career }).click()
   }
 
   async clickNext() {

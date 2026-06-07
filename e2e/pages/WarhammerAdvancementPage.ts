@@ -85,7 +85,7 @@ export class WarhammerAdvancementPage {
   async selectPlan(careerName: string) {
     await this.planSelectTrigger.click()
     await this.page.waitForTimeout(200)
-    await this.page.locator(".select-option", { hasText: careerName }).click()
+    await this.page.locator('[data-testid="select-option"]', { hasText: careerName }).click()
   }
 
   async clickDefinir() {
