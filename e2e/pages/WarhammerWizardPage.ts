@@ -9,23 +9,28 @@ export class WarhammerWizardPage {
     const wrapper0 = this.page.locator(".select-wrapper").nth(0)
     await wrapper0.locator("button").first().click()
     await this.page.waitForTimeout(200)
-    await wrapper0.locator(".select-option", { hasText: species }).click()
+    await wrapper0.locator('[data-testid="select-option"]', { hasText: species }).click()
 
     const wrapper1 = this.page.locator(".select-wrapper").nth(1)
     await wrapper1.locator("button").first().click()
     await this.page.waitForTimeout(200)
-    await wrapper1.locator(".select-option", { hasText: career }).click()
+    await wrapper1.locator('[data-testid="select-option"]', { hasText: career }).click()
+  }
+
+  async clickNext() {
+    await this.page.getByRole("button", { name: "Suivant" }).click()
+    await this.page.waitForTimeout(200)
   }
 
   async spendPoints(stats: number) {
-    const plusButtons = this.page.locator('button:has-text("+5")')
+    const plusButtons = this.page.locator('button:has-text("Ajouter 5")')
     for (let i = 0; i < stats; i++) {
       await plusButtons.nth(i).click()
     }
   }
 
   async budgetRemaining(): Promise<string> {
-    return (await this.page.locator("text=/\\d+ \\/ 45 pts/").textContent()) ?? ""
+    return (await this.page.locator("text=/\\d+ \\/ 5 pts/").textContent()) ?? ""
   }
 
   async clickCreate() {

@@ -14,6 +14,10 @@ export function getRegisteredSystems(): SystemDefinition[] {
   return Array.from(systems.values());
 }
 
+export function getSystemDefinition(id: string): SystemDefinition | undefined {
+  return systems.get(id) ?? systems.get("generic");
+}
+
 export function useSystemComponents(systemId: Ref<string | null> | ComputedRef<string | null>) {
   const id = computed(() => systemId.value);
   const system = computed(() => {

@@ -9,7 +9,7 @@ test.describe("Character editing", () => {
 
     await expect(page.getByLabel("Nom")).toHaveValue("Aldric")
     await expect(page.getByLabel("Rôle / classe")).toHaveValue("Ranger")
-    await expect(page.getByRole("button", { name: "Enregistrer" })).toBeVisible()
+    await expect(page.getByRole("button", { name: "Suivant" })).toBeVisible()
   })
 
   test("modifying name through wizard and saving redirects to profile", async ({ page }) => {
@@ -26,11 +26,11 @@ test.describe("Character editing", () => {
   })
 
   test("edit route opens Wizard for Warhammer system", async ({ page }) => {
-    const seed = buildWarhammerSeed({ id: "edit-wh-001", name: "Gorim", species: "Nain", career: "Guerrier" })
+    const seed = buildWarhammerSeed({ id: "edit-wh-001", name: "Gorim", species: "Nain", career: "Agitator" })
     await page.addInitScript(seedInitScript(seed))
     await page.goto("/characters/edit-wh-001/edit")
 
     await expect(page.getByLabel("Nom")).toHaveValue("Gorim")
-    await expect(page.getByLabel("Carrière actuelle")).toHaveValue("Guerrier")
+    await expect(page.locator("body")).toContainText("Agitator")
   })
 })

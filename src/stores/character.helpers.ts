@@ -1,4 +1,5 @@
 import type { CharacterState, InventoryItem, NoteEntry, Skill, Stat } from "../types/character";
+import { getSystemDefinition } from "../systems/registry";
 
 export const SINGLE_STORAGE_KEY = "rpg-player-helper::character";
 export const CAMPAIGNS_STORAGE_KEY = "rpg-player-helper::campaigns";
@@ -66,6 +67,37 @@ const pickSystemFields = (src: Partial<CharacterState>): Record<string, unknown>
 
 export const sanitizeState = (payload: Partial<CharacterState>): CharacterState => {
   const base = cloneDefault();
+  const systemId = payload.systemId ?? "generic";
+
+  // Pour un système non-generic, utiliser createBlankState du registry
+  // et ne pas forcer les champs génériques
+  if (systemId !== "generic") {
+    const def = getSystemDefinition(systemId);
+    const systemData = payload.systemData ?? (def ? def.createBlankState() : {});
+    return {
+      ...base,
+      ...payload,
+      systemId,
+      systemData,
+      profile: {
+        ...base.profile,
+        ...payload.profile,
+        avatarDataUrl: typeof payload.profile?.avatarDataUrl === "string" ? payload.profile.avatarDataUrl : "",
+        injuries: {
+          ...base.profile.injuries,
+          ...payload.profile?.injuries,
+        },
+      },
+      stats: base.stats,
+      skills: [],
+      inventory: [],
+      notes: [],
+      spells: [],
+      updatedAt: payload.updatedAt ?? new Date().toISOString(),
+    };
+  }
+
+  // Système Generic : comportement existant
   const systemData = payload.systemData ?? pickSystemFields(payload);
   return {
     ...base,

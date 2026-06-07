@@ -15,12 +15,12 @@ export interface WfrpCareerData {
   exits: string[];
 }
 
-import { CAREER_DATA_ADVANCED } from "./careers-data-advanced";
-import { CAREER_DATA_BASIC } from "./careers-data-basic";
+import CAREER_DATA_BASIC_RAW from "./careers-data-basic.json";
+import CAREER_DATA_ADVANCED_RAW from "./careers-data-advanced.json";
 
 export const CAREER_DATA: Record<string, WfrpCareerData> = {
-  ...CAREER_DATA_BASIC,
-  ...CAREER_DATA_ADVANCED,
+  ...CAREER_DATA_BASIC_RAW,
+  ...CAREER_DATA_ADVANCED_RAW,
 };
 
 export function getCareerData(name: string): WfrpCareerData | undefined {
@@ -32,5 +32,5 @@ export function getAllCareerNames(): string[] {
 }
 
 export function getBasicCareerNames(): string[] {
-  return Object.keys(CAREER_DATA_BASIC).sort();
+  return Object.keys(CAREER_DATA_BASIC_RAW).sort();
 }
